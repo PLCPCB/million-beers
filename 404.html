@@ -822,14 +822,24 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // The crew code travels in the link (#code). Without it the page is read-only.
   const normCode = c => String(c || '').trim().toLowerCase().replace(/\s+/g, '');
   // The crew code rides in the link: /million-beers/<code> (served by 404.html on GitHub Pages) or #<code>.
-  let CREW = (() => {
+  const urlCode = (() => {
     let c = '';
     try { const seg = decodeURIComponent(location.pathname.replace(/\/+$/, '').split('/').pop() || '');
       if (seg && seg !== 'million-beers' && !/\.html?$/.test(seg)) c = normCode(seg); } catch {}
     if (!c) try { c = normCode(decodeURIComponent(location.hash.slice(1))); } catch {}
-    if (c){ try { localStorage.setItem('mcb.crew', c); } catch {} return c; }
-    try { return localStorage.getItem('mcb.crew') || ''; } catch { return ''; } })();
+    return c; })();
+  // The link decides: a code in the address wins; with no code in the address, only a code typed by hand on this phone counts.
+  let CREW = urlCode || (() => { try { return localStorage.getItem('mcb.crewTyped') || ''; } catch { return ''; } })();
+  try { localStorage.removeItem('mcb.crew'); } catch {}
+  let verified = (() => { try { return !!CREW && localStorage.getItem('mcb.crewVerified') === CREW; } catch { return false; } })();
   let crewOk = !!CREW;
+  function markVerified(){ verified = true; crewOk = true; try { localStorage.setItem('mcb.crewVerified', CREW); } catch {} }
+  function dropCrew(){ CREW = ''; verified = false; crewOk = false; try { localStorage.removeItem('mcb.crewTyped'); localStorage.removeItem('mcb.crewVerified'); } catch {} }
+  async function checkCrew(code){
+    try { const res = await api('rpc/check_crew', {method: 'POST', body: JSON.stringify({p_crew: code})});
+      if (!res.ok) return res.status >= 500 ? null : false; return (await res.json()) === true; }
+    catch { return null; }   // null = could not reach the server
+  }
   // One-time code prompt: the link stays clean, each phone types the crew code once.
   let crewPending = null;
   function askCrew(who, btn){
@@ -842,14 +852,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     e.preventDefault();
     const code = normCode($('crewInput').value); if (!code) return;
     const btn = $('crewOkBtn'); btn.disabled = true; btn.textContent = '…';
-    let ok = false, net = false;
-    try { const res = await api('rpc/check_crew', {method: 'POST', body: JSON.stringify({p_crew: code})}); if (res.ok) ok = (await res.json()) === true; else net = res.status >= 500; }
-    catch { net = true; }
+    const r = await checkCrew(code);
     btn.disabled = false; btn.textContent = 'Valider';
-    if (!ok && !net){ $('crewErr').textContent = 'Mauvais code. Demande-le à la bande.'; $('crewErr').hidden = false; return; }
-    if (net){ $('crewErr').textContent = 'Pas de réseau pour vérifier. Code gardé, il sera vérifié au prochain envoi.'; $('crewErr').hidden = false; }
-    CREW = code; crewOk = true; try { localStorage.setItem('mcb.crew', code); } catch {}
-    setTimeout(() => { $('crewModal').hidden = true; }, net ? 1400 : 0);
+    if (r !== true){ $('crewErr').textContent = r === false ? 'Mauvais code. Demande-le à la bande.' : 'Pas de réseau pour vérifier. Réessaie dans un instant.'; $('crewErr').hidden = false; return; }
+    CREW = code; try { localStorage.setItem('mcb.crewTyped', code); } catch {} markVerified();
+    $('crewModal').hidden = true;
     toast('Code accepté. 干杯 !');
     const pend = crewPending; crewPending = null;
     if (pend) addBeer(pend.who, pend.btn);
@@ -876,7 +883,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         if (o.op === 'add') res = await api('rpc/add_beer', {method: 'POST', body: JSON.stringify({p_id: o.row.id, p_who: o.row.who, p_brand: o.row.brand, p_at: o.row.at, p_crew: CREW})});
         else res = await api('rpc/remove_beer', {method: 'POST', body: JSON.stringify({p_id: o.id, p_crew: CREW})});
         if (!res.ok){
-          if (res.status === 401 || res.status === 403){ crewOk = false; CREW = ''; try { localStorage.removeItem('mcb.crew'); } catch {}
+          if (res.status === 401 || res.status === 403){ dropCrew();
             setStatus('pending', `${outbox.length} en attente · code à retaper`); askCrew(); break; }
           if (res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429){ console.warn('Supabase a refusé', res.status, await res.text()); outbox.shift(); saveOutbox(); continue; }
           throw new Error('http ' + res.status);
@@ -938,6 +945,14 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   function addBeer(who, btn){
     if (!canWrite) return;
     if (!CREW){ askCrew(who, btn); return; }
+    if (!verified){
+      checkCrew(CREW).then(r => {
+        if (r === true){ markVerified(); addBeer(who, btn); }
+        else if (r === false){ dropCrew(); toast('Ce lien n\'est pas celui de la bande.'); askCrew(who, btn); }
+        else toast('Pas de réseau pour vérifier le lien. Réessaie dans un instant.');
+      });
+      return;
+    }
     const p = PBY[who]; const r = btn.getBoundingClientRect();
     const at = Date.now(), fl = airportOf(at, who);
     burst(r.left + r.width/2, r.top + r.height/2, p.color); if (!fl) gong(); shake();
@@ -1109,6 +1124,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- start ----------
   if (!CONFIGURED){ setStatus('setup'); readOnly("<b>Base non configurée.</b> Il manque l'URL et la clé Supabase en haut du script."); }
   else {
+    if (CREW && !verified) checkCrew(CREW).then(r => { if (r === true) markVerified(); else if (r === false) dropCrew(); });
     applyData(0);
     sync();
     setInterval(() => { if (document.visibilityState === 'visible') sync(); }, 4000);
