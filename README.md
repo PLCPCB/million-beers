@@ -39,6 +39,7 @@ On ouvre le lien de la bande sur son téléphone, on tape **+1** à chaque bièr
 - La marque est en option : par défaut c'est « Bière », on choisit Tsingtao, Harbin, Snow, Chongqing ou Yanjing seulement si on veut.
 - **Annuler** juste après un mauvais tap, ou **↩ Retirer ma dernière bière** pendant 15 minutes.
 - Fonctionne avec un réseau capricieux : chaque bière est gardée sur le téléphone et part dès que le VPN revient.
+- **Ta photo à la place de l'emoji** : tape sur ton avatar, choisis une photo, cadre-la dans le rond doré. Toute la bande la voit, et « Revenir à l'emoji » remet l'avatar d'origine.
 
 **🎆 Le spectacle**
 - À chaque bière, une animation tirée au sort : feux d'artifice, pluie de pièces et d'enveloppes rouges 红包, lanternes, pétards, ou un dragon 龙 qui traverse l'écran.

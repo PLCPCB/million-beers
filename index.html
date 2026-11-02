@@ -73,7 +73,6 @@ button:focus-visible,select:focus-visible{outline:3px solid var(--jade);outline-
 .mm-score{position:absolute;width:30px;height:30px;top:-12px;right:-10px;transform:rotate(14deg);box-shadow:0 2px 6px rgba(0,0,0,.5)}
 .mm-tick{display:inline-block;width:20px;height:20px;border-width:1.5px;vertical-align:-4px;margin:0 6px 0 0}
 .board-wrap{position:relative}
-.mm-peek{position:absolute;width:44px;height:44px;left:44%;bottom:-24px;z-index:0;transform:rotate(-8deg);border-width:2px}
 .board-wrap .board{position:relative;z-index:1}
 .mm-foot{width:96px;height:auto;margin:6px auto 4px;border-radius:14px;border:2px solid var(--gold);cursor:pointer;display:block}
 .mm-empty{width:64px;height:64px;margin:0 auto 6px}
@@ -159,6 +158,25 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .medal.mn{background:transparent;color:var(--ink-dim);font-family:var(--f-display);font-size:13px}
 .av{width:50px;height:50px;border-radius:50%;background:radial-gradient(circle at 50% 60%, var(--c), rgba(0,0,0,0) 72%);display:block}
 .av svg{width:100%;height:100%;display:block;overflow:visible}
+.av{cursor:pointer;border:none;padding:0;position:relative}
+.av:focus-visible{outline:3px solid var(--jade);outline-offset:2px}
+.pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 0 2px var(--lacquer-deep),0 0 12px rgba(255,201,60,.35);background:var(--lacquer-deep)}
+.log .mini .pic{border-width:1.5px;box-shadow:none}
+#stampAv .pic{border-width:6px;box-shadow:0 0 0 5px var(--lacquer-deep),0 0 40px rgba(255,201,60,.7)}
+#avModal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(30,2,4,.8);padding:0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px))}
+#avModal[hidden]{display:none}
+.avc{width:min(100%,360px);background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:16px;box-shadow:0 0 0 4px var(--lacquer-deep),0 0 40px rgba(255,201,60,.35);display:flex;flex-direction:column;align-items:center;gap:10px}
+.avc-t{margin:0;align-self:stretch;font-family:var(--f-display);font-size:18px;color:var(--gold)}
+.avc-t b{font-family:var(--f-cn);font-weight:400;color:#fff;margin-right:8px;font-size:21px}
+.avc-s{margin:0;align-self:stretch;font-size:13.5px;color:var(--ink-dim)}
+#avCanvas{width:220px;height:220px;border-radius:50%;border:5px solid var(--gold);box-shadow:0 0 0 4px var(--lacquer-deep),0 0 30px rgba(255,201,60,.4);background:var(--lacquer-deep);touch-action:none;cursor:grab}
+#avZoom{width:220px;accent-color:var(--gold)}
+.avc-b{display:flex;flex-wrap:wrap;gap:8px;align-self:stretch}
+.avc-b button,.avc-b label{flex:1 1 45%;min-height:44px;border-radius:10px;border:none;font:700 15px var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;padding:4px 8px}
+.avc-b .pri{background:var(--gold);color:var(--lacquer-deep)}
+.avc-b .sec{background:transparent;border:1.5px solid rgba(255,243,217,.3);color:var(--ink-dim)}
+.avc-b .wide{flex-basis:100%}
+.avc-err{margin:0;align-self:stretch;font-size:13.5px;color:#FF9FB8}
 .who{min-width:0}
 .nm{margin:0;font-weight:700;font-size:17px;line-height:1.1}
 .ttl{display:block;font-weight:400;font-size:12.5px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -177,7 +195,13 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .ro b{color:var(--gold)}
 
 /* ---------- TABS ---------- */
-.tabs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--lacquer-deep);border-radius:12px;padding:4px;margin-top:8px}
+.tabs{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:4px;background:var(--lacquer-deep);border-radius:12px;padding:4px;margin-top:8px}
+.tab-mm{width:46px;height:46px;margin:-8px 0;padding:0;border:none;background:none;cursor:pointer;border-radius:50%;touch-action:manipulation}
+.tab-mm img{width:46px;height:46px;border-width:2.5px;box-shadow:0 0 0 3px var(--lacquer-deep),0 0 14px rgba(255,201,60,.55);transition:transform .2s}
+.tab-mm:active img{transform:scale(.9) rotate(-8deg)}
+.tab-mm:focus-visible{outline:3px solid var(--jade);outline-offset:2px}
+.tab,.tab b{white-space:nowrap}
+@media (max-width:430px){.tab{flex-direction:column;gap:1px;height:auto;min-height:44px;padding:4px 2px;font-size:14px;line-height:1.1}.tab b{font-size:11.5px;line-height:1.1;opacity:.85}}
 .tab{height:38px;border:none;border-radius:9px;background:transparent;color:var(--ink-dim);font:700 15px var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .tab b{font-family:var(--f-cn);font-weight:400;font-size:16px}
 .tab[aria-selected="true"]{background:var(--gold);color:var(--lacquer-deep)}
@@ -297,11 +321,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       <button class="gong" id="soundBtn" type="button" aria-pressed="true" aria-label="Son du gong">锣</button>
     </div>
 
-    <div class="board-wrap"><ol class="board" id="board"></ol><img class="mm mm-peek" data-mm="head1" alt="Meimei"></div>
+    <div class="board-wrap"><ol class="board" id="board"></ol></div>
     <button type="button" class="undo" id="undoBtn" hidden>↩ Retirer ma dernière bière <span id="undoTxt"></span></button>
 
     <div class="tabs" role="tablist" aria-label="Statistiques">
       <button class="tab" role="tab" id="tab-stats" data-tab="stats" aria-controls="p-stats"><b>统计</b>Stats</button>
+      <button type="button" class="tab-mm" id="tabMM" aria-label="Voir Meimei"><img class="mm" data-mm="head1" alt=""></button>
       <button class="tab" role="tab" id="tab-recs" data-tab="recs" aria-controls="p-recs"><b>纪录</b>Records</button>
       <button class="tab" role="tab" id="tab-log" data-tab="log" aria-controls="p-log"><b>日志</b>Journal</button>
     </div>
@@ -356,6 +381,20 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 <div id="mmBig" hidden><div><img id="mmBigImg" alt="Meimei"><p><b>美美</b><span id="mmBigTxt">MEIMEI A VU.</span></p></div></div>
 <div id="stamp"><div id="stampIn"><div id="stampAv"></div><div class="zh">干杯!</div><div class="fr" id="stampFr">GANBEI !</div></div></div>
 <div class="toasts" id="toasts"></div>
+<div id="avModal" hidden><div class="avc" role="dialog" aria-labelledby="avTitle">
+  <p class="avc-t" id="avTitle"><b>头像</b>Photo de …</p>
+  <p class="avc-s" id="avHint">Elle remplace l'emoji pour toute la bande.</p>
+  <canvas id="avCanvas" width="440" height="440" hidden></canvas>
+  <input id="avZoom" type="range" min="1" max="3" step="0.01" value="1" aria-label="Zoom" hidden>
+  <p class="avc-err" id="avErr" hidden></p>
+  <div class="avc-b" id="avBtns">
+    <label class="pri wide" for="avFile" id="avPick">📷 Choisir une photo</label>
+    <button type="button" class="pri wide" id="avSave" hidden>Valider</button>
+    <button type="button" class="sec" id="avReset">Revenir à l'emoji</button>
+    <button type="button" class="sec" id="avClose">Fermer</button>
+  </div>
+  <input id="avFile" type="file" accept="image/*" hidden>
+</div></div>
 <div id="crewModal" hidden><form id="crewForm" class="cm" autocomplete="off">
   <p class="cm-t"><b>暗号</b>Code de la bande</p>
   <p class="cm-s">Une seule fois par téléphone. C'est la fin du lien de la bande, ce qui vient après <b>million-beers/</b>.</p>
@@ -447,6 +486,10 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   ];
   const AVSVG = Object.fromEntries(PEOPLE.map(p => [p.id, svg(p.av)]));
   const PBY = Object.fromEntries(PEOPLE.map(p => [p.id, p]));
+  // Photos uploaded by the band (shared through Supabase); the emoji stays as fallback.
+  let PHOTOS = {}, PHOTO_VER = {};
+  try { const c = JSON.parse(localStorage.getItem('mcb.avatars') || '{}'); if (c && c.photos) { PHOTOS = c.photos; PHOTO_VER = c.ver || {}; } } catch {}
+  const avatarHTML = who => PHOTOS[who] ? `<img class="pic" src="${PHOTOS[who]}" alt="${PBY[who].name}">` : AVSVG[who];
   const BRANDS = [
     {id:'biere',     label:'Bière',     cn:'啤酒'},
     {id:'tsingtao',  label:'Tsingtao',  cn:'青岛'},
@@ -581,6 +624,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('mmBig').hidden = false; meow();
   }
   $('mmBig').addEventListener('click', () => { $('mmBig').hidden = true; });
+  $('tabMM').addEventListener('click', e => {
+    if (e.target.closest('img[data-mm]')) { /* handled by the generic Meimei click */ } else meimeiBig(MM_FULL[$('tabMM').firstElementChild.dataset.mm] || 'head1');
+    setTimeout(() => { const im = $('tabMM').firstElementChild, cur = im.dataset.mm;
+      const nxt = pick(MM_KEYS.filter(k => k !== cur)); im.dataset.mm = nxt; im.src = MM[nxt]; }, 400);
+  });
   document.addEventListener('click', e => { const im = e.target.closest('img[data-mm]'); if (im) meimeiBig(MM_FULL[im.dataset.mm] || im.dataset.mm); });
   let peekT = 0;
   function peek(){
@@ -805,7 +853,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (!txt && Math.random() < .18){ const k = pick(['head4','head5','head1','head2']);
       $('stampAv').innerHTML = `<img src="${MM[k]}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;border:5px solid #FFC93C">`;
       $('stampFr').textContent = k === 'head1' ? pick(['MEIMEI APPROUVE','MEIMEI A VU','BING CHILLING 冰淇淋']) : captionFor(k); }
-    else $('stampAv').innerHTML = AVSVG[who];
+    else $('stampAv').innerHTML = avatarHTML(who);
     el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
   }
   function floatAt(x, y, html){
@@ -924,6 +972,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       try { localStorage.setItem('mcb.cache', JSON.stringify(server)); } catch {}
       applyData(prevTotal);
       setStatus('live');
+      if (Date.now() - lastAvCheck > 30000) loadAvatars();
     } catch (e) {
       setStatus(outbox.length ? 'pending' : 'off', `${outbox.length} en attente d'envoi`);
     } finally { syncing = false; }
@@ -1088,7 +1137,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       const medal = n && r <= 3 ? `<span class="medal m${r}">${['金','银','铜'][r-1]}</span>` : `<span class="medal mn">${r}</span>`;
       const td = todayC[p.id] ? `<small>+${todayC[p.id]} auj.</small>` : '';
       return `<li class="row${n && r===1 ? ' first' : ''}${bumped===p.id ? ' bump' : ''}" style="--c:${p.color}">
-        ${medal}<span class="av">${AVSVG[p.id]}</span>
+        ${medal}<button type="button" class="av" data-av="${p.id}" aria-label="Changer la photo de ${p.name}">${avatarHTML(p.id)}</button>
         <div class="who"><p class="nm">${p.name}<span class="ttl"><b>${ti[0]}</b>${ti[1]}</span><span class="cred"><b>社会信用</b>${n ? '+' + nf0(credit(p.id)) : '0'}${airC[p.id] ? `<span class="air">✈ ${airC[p.id]}</span>` : ''}</span></p></div>
         <span class="cnt">${n}${td}</span>
         <button type="button" class="plus" data-who="${p.id}" aria-label="Une bière de plus pour ${p.name}" ${can ? '' : 'disabled'}>+1<small>干</small></button>
@@ -1136,7 +1185,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('log').innerHTML = recent.length ? recent.map(b => { const p = PBY[b.who], t = sh(b.at), sure = pendingDel === b.id;
       const afl = airportOf(b.at, b.who);
       const extra = [BBY[b.brand] ? BBY[b.brand].label : 'Bière', afl ? `✈ airport (${afl.code})` : CBY[cityAt(b.at, b.who)].name].join(' · ');
-      return `<li><span class="mini">${AVSVG[b.who]}</span><span class="t"><b>${p.name}</b> <span>· ${extra} · ${dayLabel(t.date)} ${hm(t.h,t.m)}</span></span>
+      return `<li><span class="mini">${avatarHTML(b.who)}</span><span class="t"><b>${p.name}</b> <span>· ${extra} · ${dayLabel(t.date)} ${hm(t.h,t.m)}</span></span>
         ${can ? `<button type="button" class="del${sure ? ' sure' : ''}" data-id="${b.id}">${sure ? 'Sûr ?' : 'Retirer'}</button>` : '<span></span>'}</li>`; }).join('')
       : '<li style="border:none;display:block;text-align:center"><img class="mm mm-empty" data-mm="head3" alt="Meimei"><p class="empty-msg">Meimei attend la première bière.</p></li>';
     fillMM($('log'));
@@ -1145,6 +1194,99 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 
   showTab(tab); render();
   setInterval(render, 60000);
+
+  // ---------- photos ----------
+  let lastAvCheck = 0;
+  const saveAvCache = () => { try { localStorage.setItem('mcb.avatars', JSON.stringify({photos: PHOTOS, ver: PHOTO_VER})); } catch {} };
+  async function loadAvatars(){
+    lastAvCheck = Date.now();
+    try {
+      const res = await api('avatars?select=who,updated_at'); if (!res.ok) return;
+      const list = await res.json(), now = {}; for (const r of list) if (PBY[r.who]) now[r.who] = r.updated_at;
+      const changed = Object.keys(now).filter(w => now[w] !== PHOTO_VER[w] || !PHOTOS[w]);
+      const gone = Object.keys(PHOTOS).filter(w => !now[w]);
+      if (changed.length){
+        const r2 = await api(`avatars?select=who,img,updated_at&who=in.(${changed.join(',')})`); if (!r2.ok) return;
+        for (const r of await r2.json()) if (PBY[r.who] && typeof r.img === 'string' && r.img.startsWith('data:image/jpeg;base64,')){ PHOTOS[r.who] = r.img; PHOTO_VER[r.who] = r.updated_at; }
+      }
+      for (const w of gone){ delete PHOTOS[w]; delete PHOTO_VER[w]; }
+      if (changed.length || gone.length){ saveAvCache(); render(); }
+    } catch {}
+  }
+
+  // editor: pick a photo, drag to frame it, zoom, save a 256 px circle-ready JPEG
+  let avWho = null, avImg = null, avZoom = 1, avX = 0, avY = 0;
+  const cv2 = $('avCanvas'), c2 = cv2.getContext('2d');
+  function avOpen(who){
+    avWho = who; avImg = null;
+    $('avTitle').innerHTML = `<b>头像</b>Photo de ${PBY[who].name}`;
+    $('avHint').textContent = PHOTOS[who] ? 'Choisis une nouvelle photo, ou reviens à l\'emoji.' : 'Elle remplace l\'emoji pour toute la bande.';
+    $('avErr').hidden = true; cv2.hidden = true; $('avZoom').hidden = true; $('avSave').hidden = true;
+    $('avPick').textContent = '📷 Choisir une photo'; $('avReset').hidden = !PHOTOS[who];
+    $('avFile').value = ''; $('avModal').hidden = false;
+  }
+  function avDraw(){
+    if (!avImg) return;
+    const S = cv2.width, base = Math.max(S / avImg.width, S / avImg.height), sc = base * avZoom;
+    const w = avImg.width * sc, h = avImg.height * sc;
+    avX = Math.min(0, Math.max(S - w, avX)); avY = Math.min(0, Math.max(S - h, avY));
+    c2.fillStyle = '#430307'; c2.fillRect(0, 0, S, S); c2.drawImage(avImg, avX, avY, w, h);
+  }
+  $('avFile').addEventListener('change', () => {
+    const f = $('avFile').files && $('avFile').files[0]; if (!f) return;
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => {
+      avImg = im; avZoom = 1; $('avZoom').value = 1;
+      const S = cv2.width, sc = Math.max(S / im.width, S / im.height);
+      avX = (S - im.width * sc) / 2; avY = (S - im.height * sc) / 2.6;   // a bit high: faces are usually in the upper half
+      cv2.hidden = false; $('avZoom').hidden = false; $('avSave').hidden = false; $('avPick').textContent = '📷 Autre photo';
+      $('avHint').textContent = 'Glisse pour cadrer, zoome avec le curseur.'; avDraw();
+    };
+    im.onerror = () => { $('avErr').textContent = 'Impossible de lire cette image. Essaie une photo JPEG ou PNG.'; $('avErr').hidden = false; };
+    im.src = url;
+  });
+  $('avZoom').addEventListener('input', e => {
+    if (!avImg) return; const S = cv2.width, old = avZoom; avZoom = +e.target.value;
+    const k = avZoom / old; avX = S/2 - (S/2 - avX) * k; avY = S/2 - (S/2 - avY) * k; avDraw();
+  });
+  let drag = null;
+  cv2.addEventListener('pointerdown', e => { if (!avImg) return; drag = {x: e.clientX, y: e.clientY}; cv2.setPointerCapture(e.pointerId); });
+  cv2.addEventListener('pointermove', e => { if (!drag) return; const r = cv2.width / cv2.clientWidth;
+    avX += (e.clientX - drag.x) * r; avY += (e.clientY - drag.y) * r; drag = {x: e.clientX, y: e.clientY}; avDraw(); });
+  cv2.addEventListener('pointerup', () => { drag = null; });
+  cv2.addEventListener('pointercancel', () => { drag = null; });
+  async function avSend(img){
+    const res = await api('rpc/set_avatar', {method: 'POST', body: JSON.stringify({p_who: avWho, p_img: img, p_crew: CREW})});
+    if (res.status === 401 || res.status === 403){ dropCrew(); $('avModal').hidden = true; askCrew(); return false; }
+    if (!res.ok) throw new Error('http ' + res.status);
+    return true;
+  }
+  $('avSave').addEventListener('click', async () => {
+    if (!avImg) return;
+    const out = document.createElement('canvas'); out.width = out.height = 256;
+    out.getContext('2d').drawImage(cv2, 0, 0, 256, 256);
+    let q = .82, img = out.toDataURL('image/jpeg', q);
+    while (img.length > 60000 && q > .4){ q -= .1; img = out.toDataURL('image/jpeg', q); }
+    const btn = $('avSave'); btn.disabled = true; btn.textContent = 'Envoi…';
+    try {
+      if (await avSend(img)){
+        PHOTOS[avWho] = img; PHOTO_VER[avWho] = 'local-' + Date.now(); saveAvCache(); render();
+        $('avModal').hidden = true; toast(`Nouvelle photo pour ${PBY[avWho].name} ! 干杯`); setTimeout(loadAvatars, 1500);
+      }
+    } catch { $('avErr').textContent = 'Pas de réseau, la photo n\'est pas partie. Réessaie dans un instant.'; $('avErr').hidden = false; }
+    btn.disabled = false; btn.textContent = 'Valider';
+  });
+  $('avReset').addEventListener('click', async () => {
+    try {
+      if (await avSend(null)){ delete PHOTOS[avWho]; delete PHOTO_VER[avWho]; saveAvCache(); render(); $('avModal').hidden = true; toast(`${PBY[avWho].name} retrouve son emoji.`); }
+    } catch { $('avErr').textContent = 'Pas de réseau. Réessaie dans un instant.'; $('avErr').hidden = false; }
+  });
+  $('avClose').addEventListener('click', () => { $('avModal').hidden = true; });
+  $('board').addEventListener('click', e => {
+    const b = e.target.closest('.av'); if (!b) return;
+    if (!CREW){ askCrew(); return; }
+    avOpen(b.dataset.av);
+  });
 
   // ---------- app install & offline ----------
   try { if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/million-beers/sw.js', {scope: '/million-beers/'}).catch(() => {}); } catch {}
@@ -1155,6 +1297,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (CREW && !verified) checkCrew(CREW).then(r => { if (r === true) markVerified(); else if (r === false) dropCrew(); });
     applyData(0);
     sync();
+    loadAvatars();
     setInterval(() => { if (document.visibilityState === 'visible') sync(); }, 4000);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') sync(); });
     addEventListener('online', sync);
