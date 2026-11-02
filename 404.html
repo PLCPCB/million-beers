@@ -195,13 +195,9 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .ro b{color:var(--gold)}
 
 /* ---------- TABS ---------- */
-.tabs{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:4px;background:var(--lacquer-deep);border-radius:12px;padding:4px;margin-top:8px}
-.tab-mm{width:46px;height:46px;margin:-8px 0;padding:0;border:none;background:none;cursor:pointer;border-radius:50%;touch-action:manipulation}
-.tab-mm img{width:46px;height:46px;border-width:2.5px;box-shadow:0 0 0 3px var(--lacquer-deep),0 0 14px rgba(255,201,60,.55);transition:transform .2s}
-.tab-mm:active img{transform:scale(.9) rotate(-8deg)}
-.tab-mm:focus-visible{outline:3px solid var(--jade);outline-offset:2px}
+.tabs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--lacquer-deep);border-radius:12px;padding:4px;margin-top:8px}
 .tab,.tab b{white-space:nowrap}
-@media (max-width:430px){.tab{flex-direction:column;gap:1px;height:auto;min-height:44px;padding:4px 2px;font-size:14px;line-height:1.1}.tab b{font-size:11.5px;line-height:1.1;opacity:.85}}
+@media (max-width:380px){.tab{font-size:14px;gap:3px}.tab b{font-size:14px}}
 .tab{height:38px;border:none;border-radius:9px;background:transparent;color:var(--ink-dim);font:700 15px var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .tab b{font-family:var(--f-cn);font-weight:400;font-size:16px}
 .tab[aria-selected="true"]{background:var(--gold);color:var(--lacquer-deep)}
@@ -214,7 +210,13 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 
 .totals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 @media (min-width:560px){.totals{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.tot{background:var(--lacquer-deep);border-radius:10px;padding:10px 8px;text-align:center;min-width:0}
+.tot{position:relative;background:var(--lacquer-deep);border-radius:10px;padding:10px 8px;text-align:center;min-width:0}
+.panel{position:relative}
+.mm-hide{position:absolute;z-index:3;width:42px;height:42px;border-width:2.5px;box-shadow:0 0 0 3px var(--lacquer-deep),0 3px 8px rgba(0,0,0,.4);touch-action:manipulation;transition:transform .2s}
+.mm-hide:active{transform:scale(.88)}
+.mm-hide-stats{bottom:-14px;right:-8px;transform:rotate(14deg)}
+.mm-hide-recs{top:-16px;right:14px;transform:rotate(-10deg)}
+.mm-hide-cup{bottom:-14px;left:-8px;transform:rotate(-14deg)}
 .tot .k{margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim)}
 .tot .v{margin:3px 0 0;font-family:var(--f-display);font-size:24px;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .tot .s{margin:3px 0 0;font-size:11.5px;color:var(--ink-dim)}
@@ -326,7 +328,6 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 
     <div class="tabs" role="tablist" aria-label="Statistiques">
       <button class="tab" role="tab" id="tab-stats" data-tab="stats" aria-controls="p-stats"><b>统计</b>Stats</button>
-      <button type="button" class="tab-mm" id="tabMM" aria-label="Voir Meimei"><img class="mm" data-mm="head1" alt=""></button>
       <button class="tab" role="tab" id="tab-recs" data-tab="recs" aria-controls="p-recs"><b>纪录</b>Records</button>
       <button class="tab" role="tab" id="tab-log" data-tab="log" aria-controls="p-log"><b>日志</b>Journal</button>
     </div>
@@ -336,7 +337,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         <div class="tot"><p class="k">Litres</p><p class="v" id="tLiters">0</p><p class="s">base 50 cl</p></div>
         <div class="tot"><p class="k">Yuans cramés</p><p class="v" id="tYuan">0 ¥</p><p class="s">≈ 15 ¥ la bière</p></div>
         <div class="tot"><p class="k">Par tête / jour</p><p class="v" id="tAvg">—</p><p class="s" id="tAvgS">dès le 4 nov.</p></div>
-        <div class="tot"><p class="k">Airport beers ✈</p><p class="v" id="tAir">0</p><p class="s">3 h avant un vol</p></div>
+        <div class="tot"><img class="mm mm-hide mm-hide-stats" data-mm="head2" alt="Meimei"><p class="k">Airport beers ✈</p><p class="v" id="tAir">0</p><p class="s">3 h avant un vol</p></div>
       </div>
       <section class="panel" aria-labelledby="h-days">
         <div class="ph"><h2 id="h-days"><span class="zh">每日</span>Par jour</h2><p id="lastBeer">Pas encore de bière</p></div>
@@ -351,10 +352,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 
     <div class="pane" id="p-recs" role="tabpanel" aria-labelledby="tab-recs" hidden>
       <section class="panel" aria-labelledby="h-recs">
+        <img class="mm mm-hide mm-hide-recs" data-mm="head5" alt="Meimei">
         <div class="ph"><h2 id="h-recs"><span class="zh">纪录</span>Records</h2></div>
         <div class="recs" id="recs"></div>
       </section>
       <section class="panel" aria-labelledby="h-cities">
+        <img class="mm mm-hide mm-hide-cup" data-mm="head4" alt="Meimei">
         <div class="ph"><h2 id="h-cities"><span class="zh">城市杯</span>Coupe des villes</h2></div>
         <div class="cities" id="cities"></div>
       </section>
@@ -624,11 +627,6 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('mmBig').hidden = false; meow();
   }
   $('mmBig').addEventListener('click', () => { $('mmBig').hidden = true; });
-  $('tabMM').addEventListener('click', e => {
-    if (e.target.closest('img[data-mm]')) { /* handled by the generic Meimei click */ } else meimeiBig(MM_FULL[$('tabMM').firstElementChild.dataset.mm] || 'head1');
-    setTimeout(() => { const im = $('tabMM').firstElementChild, cur = im.dataset.mm;
-      const nxt = pick(MM_KEYS.filter(k => k !== cur)); im.dataset.mm = nxt; im.src = MM[nxt]; }, 400);
-  });
   document.addEventListener('click', e => { const im = e.target.closest('img[data-mm]'); if (im) meimeiBig(MM_FULL[im.dataset.mm] || im.dataset.mm); });
   let peekT = 0;
   function peek(){
