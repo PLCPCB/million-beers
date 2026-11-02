@@ -163,6 +163,29 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 0 2px var(--lacquer-deep),0 0 12px rgba(255,201,60,.35);background:var(--lacquer-deep)}
 .log .mini .pic{border-width:1.5px;box-shadow:none}
 #stampAv .pic{border-width:6px;box-shadow:0 0 0 5px var(--lacquer-deep),0 0 40px rgba(255,201,60,.7)}
+/* profile view: the small avatar grows into a big one, Instagram style */
+#pv{position:fixed;inset:0;z-index:45}
+#pv[hidden]{display:none}
+#pvBg{position:absolute;inset:0;background:rgba(20,1,3,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .32s ease}
+#pv.open #pvBg{opacity:1}
+#pvAv{position:fixed;transform-origin:0 0;border-radius:50%;will-change:transform;z-index:1}
+#pvAv .disc{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 60%, var(--c) 0%, var(--lacquer-deep) 78%);box-shadow:0 0 0 6px var(--gold),0 0 0 11px var(--lacquer-deep),0 0 60px rgba(255,201,60,.55)}
+#pvAv .disc svg{width:100%;height:100%;display:block;overflow:visible}
+#pvAv .pic{border-width:6px;box-shadow:0 0 0 5px var(--lacquer-deep),0 0 60px rgba(255,201,60,.55)}
+#pvCard{position:fixed;left:50%;width:min(calc(100% - 32px),360px);transform:translate(-50%,24px);opacity:0;transition:opacity .3s ease .12s,transform .38s cubic-bezier(.2,.9,.25,1.1) .12s;text-align:center;z-index:1}
+#pv.open #pvCard{opacity:1;transform:translate(-50%,0)}
+.pv-name{margin:0;font-family:var(--f-display);font-size:30px;line-height:1;color:#fff;text-shadow:0 0 10px var(--neon),0 0 24px var(--neon)}
+.pv-title{margin:8px 0 0;font-size:16px;color:var(--ink-dim)}
+.pv-title b{font-family:var(--f-cn);font-weight:400;color:var(--gold);font-size:19px;margin-right:6px}
+.pv-stats{display:flex;justify-content:center;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.pv-stats span{background:var(--lacquer-deep);border:1.5px solid rgba(255,201,60,.35);border-radius:999px;padding:5px 12px;font-weight:700;font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pv-stats b{font-family:var(--f-cn);font-weight:400;color:var(--jade);margin-right:4px}
+.pv-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pv-btns button,.pv-btns label{flex:1 1 45%;min-height:44px;border-radius:10px;border:none;font:700 15px var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px 10px}
+.pv-btns .pri{flex-basis:100%;background:var(--gold);color:var(--lacquer-deep)}
+.pv-btns .sec{background:transparent;border:1.5px solid rgba(255,243,217,.3);color:var(--ink-dim)}
+#pvX{position:fixed;top:calc(12px + env(safe-area-inset-top, 0px));right:max(12px, env(safe-area-inset-right, 0px));z-index:2;width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(255,243,217,.35);background:rgba(67,3,7,.7);color:var(--ink);font-size:20px;cursor:pointer;opacity:0;transition:opacity .25s}
+#pv.open #pvX{opacity:1}
 #avModal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(30,2,4,.8);padding:0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px))}
 #avModal[hidden]{display:none}
 .avc{width:min(100%,360px);background:var(--panel);border:2px solid var(--gold);border-radius:16px;padding:16px;box-shadow:0 0 0 4px var(--lacquer-deep),0 0 40px rgba(255,201,60,.35);display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -384,6 +407,21 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 <div id="mmBig" hidden><div><img id="mmBigImg" alt="Meimei"><p><b>美美</b><span id="mmBigTxt">MEIMEI A VU.</span></p></div></div>
 <div id="stamp"><div id="stampIn"><div id="stampAv"></div><div class="zh">干杯!</div><div class="fr" id="stampFr">GANBEI !</div></div></div>
 <div class="toasts" id="toasts"></div>
+<div id="pv" hidden role="dialog" aria-modal="true" aria-labelledby="pvName">
+  <div id="pvBg"></div>
+  <div id="pvAv"></div>
+  <button type="button" id="pvX" aria-label="Fermer">✕</button>
+  <div id="pvCard">
+    <p class="pv-name" id="pvName"></p>
+    <p class="pv-title" id="pvTitle"></p>
+    <div class="pv-stats" id="pvStats"></div>
+    <div class="pv-btns">
+      <label class="pri" for="avFile" id="pvChange">📷 Changer la photo</label>
+      <button type="button" class="sec" id="pvReset">Revenir à l'emoji</button>
+      <button type="button" class="sec" id="pvClose">Fermer</button>
+    </div>
+  </div>
+</div>
 <div id="avModal" hidden><div class="avc" role="dialog" aria-labelledby="avTitle">
   <p class="avc-t" id="avTitle"><b>头像</b>Photo de …</p>
   <p class="avc-s" id="avHint">Elle remplace l'emoji pour toute la bande.</p>
@@ -492,6 +530,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // Photos uploaded by the band (shared through Supabase); the emoji stays as fallback.
   let PHOTOS = {}, PHOTO_VER = {};
   try { const c = JSON.parse(localStorage.getItem('mcb.avatars') || '{}'); if (c && c.photos) { PHOTOS = c.photos; PHOTO_VER = c.ver || {}; } } catch {}
+  const ROWINFO = {}; let pvWho = null;
   const avatarHTML = who => PHOTOS[who] ? `<img class="pic" src="${PHOTOS[who]}" alt="${PBY[who].name}">` : AVSVG[who];
   const BRANDS = [
     {id:'biere',     label:'Bière',     cn:'啤酒'},
@@ -1134,10 +1173,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('board').innerHTML = ranked.map(p => {
       const r = rankOf(p.id), n = counts[p.id];
       const ti = n ? TITLES[Math.min(r-1, TITLES.length-1)] : ['清醒','Encore sobre'];
+      ROWINFO[p.id] = {n, r, ti, cred: n ? credit(p.id) : 0, air: airC[p.id], today: todayC[p.id]};
       const medal = n && r <= 3 ? `<span class="medal m${r}">${['金','银','铜'][r-1]}</span>` : `<span class="medal mn">${r}</span>`;
       const td = todayC[p.id] ? `<small>+${todayC[p.id]} auj.</small>` : '';
       return `<li class="row${n && r===1 ? ' first' : ''}${bumped===p.id ? ' bump' : ''}" style="--c:${p.color}">
-        ${medal}<button type="button" class="av" data-av="${p.id}" aria-label="Changer la photo de ${p.name}">${avatarHTML(p.id)}</button>
+        ${medal}<button type="button" class="av" data-av="${p.id}" aria-label="Voir le profil de ${p.name}"${pvWho === p.id ? ' style="visibility:hidden"' : ''}>${avatarHTML(p.id)}</button>
         <div class="who"><p class="nm">${p.name}<span class="ttl"><b>${ti[0]}</b>${ti[1]}</span><span class="cred"><b>社会信用</b>${n ? '+' + nf0(credit(p.id)) : '0'}${airC[p.id] ? `<span class="air">✈ ${airC[p.id]}</span>` : ''}</span></p></div>
         <span class="cnt">${n}${td}</span>
         <button type="button" class="plus" data-who="${p.id}" aria-label="Une bière de plus pour ${p.name}" ${can ? '' : 'disabled'}>+1<small>干</small></button>
@@ -1282,11 +1322,69 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     } catch { $('avErr').textContent = 'Pas de réseau. Réessaie dans un instant.'; $('avErr').hidden = false; }
   });
   $('avClose').addEventListener('click', () => { $('avModal').hidden = true; });
+  // profile view
+  const pvReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EASE = 'cubic-bezier(.2,.9,.25,1.12)';
+  let pvBusy = false;
+  function pvTarget(){
+    const S = Math.min(innerWidth * .62, innerHeight * .36, 280);
+    return {S, left: (innerWidth - S) / 2, top: Math.max(70, innerHeight * .34 - S / 2)};
+  }
+  function pvFill(who){
+    const p = PBY[who], i = ROWINFO[who] || {n:0, ti:['清醒','Encore sobre'], cred:0, air:0, r:6, today:0};
+    $('pvAv').style.setProperty('--c', p.color);
+    $('pvAv').innerHTML = PHOTOS[who] ? avatarHTML(who) : `<div class="disc">${AVSVG[who]}</div>`;
+    $('pvName').textContent = p.name;
+    $('pvTitle').innerHTML = `<b>${i.ti[0]}</b>${i.ti[1]}`;
+    $('pvStats').innerHTML = `<span>🍺 ${i.n} bière${i.n > 1 ? 's' : ''}</span><span><b>社会信用</b>${i.n ? '+' + nf0(i.cred) : '0'}</span>`
+      + (i.air ? `<span>✈ ${i.air}</span>` : '') + (i.today ? `<span>+${i.today} aujourd'hui</span>` : '');
+    $('pvReset').hidden = !PHOTOS[who];
+  }
+  function pvOpen(who, src){
+    if (pvBusy) return; pvBusy = true; pvWho = who; pvFill(who);
+    const t = pvTarget(), av = $('pvAv');
+    Object.assign(av.style, {left: t.left + 'px', top: t.top + 'px', width: t.S + 'px', height: t.S + 'px', transition: 'none'});
+    const card = $('pvCard'); card.style.top = (t.top + t.S + 30) + 'px';
+    const r = src.getBoundingClientRect();
+    av.style.transform = `translate(${r.left - t.left}px, ${r.top - t.top}px) scale(${r.width / t.S})`;
+    $('pv').hidden = false; src.style.visibility = 'hidden';
+    void av.offsetWidth;
+    requestAnimationFrame(() => {
+      $('pv').classList.add('open');
+      av.style.transition = pvReduce ? 'none' : `transform .46s ${EASE}`;
+      av.style.transform = 'none';
+      setTimeout(() => { pvBusy = false; }, pvReduce ? 0 : 460);
+    });
+  }
+  function pvClose(instant){
+    if ($('pv').hidden || pvBusy) return;
+    const who = pvWho, av = $('pvAv'), t = pvTarget();
+    const src = document.querySelector(`.av[data-av="${who}"]`);
+    const r = src && src.getBoundingClientRect();
+    const onScreen = r && r.bottom > 0 && r.top < innerHeight;
+    const done = () => { $('pv').hidden = true; $('pv').classList.remove('open'); pvWho = null; const s2 = document.querySelector(`.av[data-av="${who}"]`); if (s2) s2.style.visibility = ''; pvBusy = false; };
+    if (instant || pvReduce){ done(); return; }
+    pvBusy = true; $('pv').classList.remove('open');
+    av.style.transition = `transform .36s cubic-bezier(.4,0,.2,1), opacity .36s`;
+    if (onScreen) av.style.transform = `translate(${r.left - t.left}px, ${r.top - t.top}px) scale(${r.width / t.S})`;
+    else { av.style.transform = 'scale(.6)'; av.style.opacity = '0'; }
+    setTimeout(() => { av.style.opacity = ''; done(); }, 360);
+  }
   $('board').addEventListener('click', e => {
     const b = e.target.closest('.av'); if (!b) return;
-    if (!CREW){ askCrew(); return; }
-    avOpen(b.dataset.av);
+    pvOpen(b.dataset.av, b);
   });
+  $('pvBg').addEventListener('click', () => pvClose());
+  $('pvX').addEventListener('click', () => pvClose());
+  $('pvClose').addEventListener('click', () => pvClose());
+  $('pvAv').addEventListener('click', () => pvClose());
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') pvClose(); });
+  $('pvChange').addEventListener('click', e => {
+    const who = pvWho;
+    if (!CREW){ e.preventDefault(); pvClose(true); askCrew(); return; }
+    avOpen(who); pvClose(true);          // the label itself opens the photo picker
+  });
+  $('pvReset').addEventListener('click', () => { if (!CREW){ pvClose(true); askCrew(); return; } avWho = pvWho; pvClose(true); $('avReset').click(); });
 
   // ---------- app install & offline ----------
   try { if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/million-beers/sw.js', {scope: '/million-beers/'}).catch(() => {}); } catch {}
