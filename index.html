@@ -355,6 +355,28 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .tot .k{margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim)}
 .tot .v{margin:3px 0 0;font-family:var(--f-display);font-size:24px;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .tot .s{margin:3px 0 0;font-size:11.5px;color:var(--ink-dim)}
+.tot.wide{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:4px 12px;flex-wrap:wrap;padding:9px 10px}
+.tot.wide .k,.tot.wide .v,.tot.wide .s{margin:0}
+.tot.wide .s{flex-basis:100%}
+/* photos de bières */
+.lthumb,.addph{width:38px;height:38px;padding:0;border-radius:8px;cursor:pointer;flex:none;touch-action:manipulation}
+.lthumb{border:1.5px solid var(--gold);background:var(--lacquer-deep);overflow:hidden;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.lthumb img{display:block;width:100%;height:100%;object-fit:cover}
+.addph{border:1.5px dashed rgba(255,243,217,.35);background:transparent;font-size:17px;line-height:1;opacity:.8}
+.phwall{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;margin:0 -12px 8px;padding:4px 12px 8px;scroll-snap-type:x proximity}
+.phwall::-webkit-scrollbar{display:none}
+.phwall button{flex:none;width:76px;height:76px;padding:3px 3px 12px;border:none;border-radius:4px;background:#fff8e6;cursor:pointer;scroll-snap-align:start;box-shadow:0 3px 8px rgba(0,0,0,.4);transform:rotate(var(--r,0deg))}
+.phwall img{display:block;width:100%;height:100%;object-fit:cover;border-radius:2px}
+#phBig{position:fixed;inset:0;z-index:58;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(20,1,3,.94);
+  padding:calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+#phBig[hidden]{display:none}
+#phBigImg{display:block;max-width:100%;max-height:calc(100dvh - 190px);border-radius:10px;border:3px solid #fff8e6;box-shadow:0 10px 40px rgba(0,0,0,.6);background:var(--lacquer-deep);min-width:120px;min-height:120px;object-fit:contain}
+#phBigImg.loading{filter:blur(6px) saturate(.8)}
+#phBigCap{margin:0;text-align:center;font-size:15px;color:var(--ink)}
+#phBigCap b{font-family:var(--f-display);font-weight:400;color:var(--gold)}
+#phBig .avc-b{width:min(100%,360px)}
+.wr-wall{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:min(100%,330px)}
+.wr-wall img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:#fff8e6;padding:4px 4px 14px;border-radius:3px;box-shadow:0 6px 16px rgba(0,0,0,.45)}
 
 .chart{overflow-x:auto}
 .chart svg{display:block;width:100%;min-width:460px;height:auto}
@@ -389,7 +411,7 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .city-card .lord b{color:var(--ink)}
 
 .log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.log li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed rgba(255,201,60,.22)}
+.log li{display:grid;grid-template-columns:28px minmax(0,1fr) auto auto;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed rgba(255,201,60,.22)}
 .log li:last-child{border-bottom:none}
 .log .mini{width:28px;height:28px}
 .log .mini svg{width:100%;height:100%;display:block;overflow:visible}
@@ -482,6 +504,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         <div class="tot"><p class="k">Yuans cramés</p><p class="v" id="tYuan">0 ¥</p><p class="s">≈ 15 ¥ la bière</p></div>
         <div class="tot"><p class="k">Par tête / jour</p><p class="v" id="tAvg">…</p><p class="s" id="tAvgS">dès le 4 nov.</p></div>
         <div class="tot"><p class="k">Airport beers ✈</p><p class="v" id="tAir">0</p><p class="s">3 h avant un vol</p></div>
+        <div class="tot wide"><p class="k">Calories 🔥</p><p class="v" id="tKcal">0 kcal</p><p class="s" id="tKcalS">≈ 215 kcal la bière</p></div>
       </div>
       <section class="panel peeky" aria-labelledby="h-days">
         <img class="peek pk-r" data-mm="head2" alt="" aria-hidden="true"><button type="button" class="peek-hit pk-r" data-mm="head2" aria-label="Meimei"></button>
@@ -513,6 +536,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       <section class="panel peeky" aria-labelledby="h-log">
         <img class="peek egg pk-c" data-egg-img alt="" aria-hidden="true"><button type="button" class="peek-hit pk-c" data-egg aria-label="Brother Egg"></button>
         <div class="ph"><h2 id="h-log"><span class="zh">日志</span>Journal</h2><p>30 dernières</p></div>
+        <div class="phwall" id="phWall" hidden></div>
         <ul class="log" id="log"></ul>
       </section>
     </div>
@@ -529,6 +553,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 <img id="peek" alt="" aria-hidden="true">
 <div id="flash" aria-hidden="true"></div>
 <div id="mega" hidden><div class="mg"><img id="megaImg" alt="Meimei"><p class="mn"><span id="megaN">10</span><b>杯</b></p><p class="mt" id="megaTxt">MÉGA GANBEI !</p></div></div>
+<input type="file" id="phFile" accept="image/*" hidden>
+<div id="phBig" hidden role="dialog" aria-label="Photo de la bière">
+  <img id="phBigImg" alt="">
+  <p id="phBigCap"></p>
+  <div class="avc-b"><button type="button" class="sec" id="phChange" hidden>📷 Changer</button><button type="button" class="sec" id="phDel" hidden>Retirer la photo</button><button type="button" class="pri wide" id="phClose">Fermer</button></div>
+</div>
 <div id="mmBig" hidden><div><img id="mmBigImg" alt="Meimei"><p><b>美美</b><span id="mmBigTxt">MEIMEI A VU.</span></p></div></div>
 <div id="stamp"><div id="stampIn"><div id="stampAv"></div><div class="zh">干杯!</div><div class="fr" id="stampFr">GANBEI !</div></div></div>
 <div class="toasts" id="toasts"></div>
@@ -573,6 +603,10 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     <label class="nt-op"><span>🎆 Toutes les 10 bières<small>Les paliers du compteur</small></span><input type="checkbox" id="ntMilestone" checked></label>
     <label class="nt-op"><span>✈ Airport beer<small>3 h et 1 h avant tes vols</small></span><input type="checkbox" id="ntAirport" checked></label>
     <label class="nt-op"><span>🧳 Rappels check-in<small>La veille de tes vols</small></span><input type="checkbox" id="ntCheckin" checked></label>
+  </div>
+  <p class="nt-l">Dans l'app</p>
+  <div class="nt-ops">
+    <label class="nt-op"><span>📸 Proposer une photo<small>Juste après chaque bière</small></span><input type="checkbox" id="phAsk" checked></label>
   </div>
   <p class="avc-err" id="ntErr" hidden></p>
   <div class="avc-b">
@@ -690,6 +724,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   let PHOTOS = {}, PHOTO_VER = {};
   try { const c = JSON.parse(localStorage.getItem('mcb.avatars') || '{}'); if (c && c.photos) { PHOTOS = c.photos; PHOTO_VER = c.ver || {}; } } catch {}
   const ROWINFO = {}; let pvWho = null;
+  // photos de bières : miniatures en cache sur le téléphone, images complètes chargées à l'ouverture
+  let PH_THUMBS = {}, PH_VER = {}; const PH_FULL = {};
+  try { const c = JSON.parse(localStorage.getItem('mcb.phThumbs') || 'null'); if (c && c.t && c.v){ PH_THUMBS = c.t; PH_VER = c.v; } } catch {}
+  let phOut = []; try { phOut = JSON.parse(localStorage.getItem('mcb.phOut') || '[]'); if (!Array.isArray(phOut)) phOut = []; } catch { phOut = []; }
+  for (const o of phOut) if (!o.del && o.thumb) PH_THUMBS[o.id] = o.thumb;
   // Who is holding this phone: each phone only logs its owner's beers
   let ME = (() => { try { const m = localStorage.getItem('mcb.me'); return PBY[m] ? m : ''; } catch { return ''; } })();
   const avatarHTML = who => PHOTOS[who] ? `<img class="pic" src="${PHOTOS[who]}" alt="${PBY[who].name}">` : AVSVG[who];
@@ -786,6 +825,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   const hm = (h,m) => `${String(h).padStart(2,'0')}h${String(m).padStart(2,'0')}`;
   const nf1 = n => n.toLocaleString('fr-FR',{maximumFractionDigits:1});
   const nf0 = n => n.toLocaleString('fr-FR',{maximumFractionDigits:0});
+  const KCAL_BEER = 215, KCAL_BAOZI = 220;   // 50 cl de lager ; un baozi au porc
   function ago(ms){ const s = Math.max(0, Math.round((Date.now()-ms)/1000));
     if (s < 60) return "à l'instant"; const m = Math.round(s/60); if (m < 60) return `il y a ${m} min`;
     const h = Math.floor(m/60); if (h < 24) return `il y a ${h} h ${String(m%60).padStart(2,'0')}`; return `il y a ${Math.floor(h/24)} j`; }
@@ -1221,6 +1261,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       applyData(prevTotal);
       setStatus('live');
       if (Date.now() - lastAvCheck > 30000) loadAvatars();
+      if (Date.now() - lastPhCheck > 20000) loadPhotos();
+      if (phOut.length) phFlush();
     } catch (e) {
       setStatus(outbox.length ? 'pending' : 'off', `${outbox.length} en attente d'envoi`);
     } finally { syncing = false; }
@@ -1292,12 +1334,15 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     myIds.add(id); seen.add(id); mine.push({id, who, at}); saveMine();
     brand = 'biere'; $('brandSel').value = 'biere';
     queue({op: 'add', row: {id, who, brand: b, at}});
+    if (phAskOn()) setTimeout(() => phPrompt(id), nextTotal % 10 === 0 ? 4300 : 2000);
     toast(`${p.name} +1 · ${BBY[b].label}${fl ? ' · ✈ airport beer' : ''} · ${CBY[city].name}`, {label: 'Annuler', run: () => {
       removeBeer(id); toast(`${p.name} annule. −15 crédit social.`);
       if (Math.random() < .5) meimeiBig('paw', 'MEIMEI DIT STOP.'); }});
   }
   $('board').addEventListener('click', e => { const b = e.target.closest('.plus'); if (b) addBeer(b.dataset.who, b); });
   $('log').addEventListener('click', e => {
+    const ph = e.target.closest('[data-ph]'); if (ph){ phOpen(ph.dataset.ph); return; }
+    const ad = e.target.closest('[data-addph]'); if (ad){ phPickFor(ad.dataset.addph); return; }
     const b = e.target.closest('.del'); if (!b || !canWrite) return;
     const id = b.dataset.id;
     if (pendingDel !== id){ pendingDel = id; clearTimeout(pendingTimer); pendingTimer = setTimeout(() => { pendingDel = null; render(); }, 3000); render(); return; }
@@ -1372,6 +1417,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('tLiters').textContent = nf1(total*0.5);
     $('tYuan').textContent = nf0(total*YUAN_PER_BEER) + ' ¥';
     $('tAir').textContent = airTotal;
+    $('tKcal').textContent = nf0(total*KCAL_BEER) + ' kcal';
+    $('tKcalS').textContent = total ? `≈ ${nf0(Math.round(total*KCAL_BEER/KCAL_BAOZI))} baozi${ME ? ` · toi : ${nf0(counts[ME]*KCAL_BEER)} kcal` : ''}` : '≈ 215 kcal la bière';
     const elapsed = todayIdx < 0 ? 0 : Math.min(todayIdx+1, TRIP_DAYS);
     $('tAvg').textContent = elapsed ? nf1(total/PEOPLE.length/elapsed) : '…';
     $('tAvgS').textContent = elapsed ? `sur ${elapsed} jour${elapsed>1?'s':''}` : 'dès le 4 nov.';
@@ -1438,9 +1485,14 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       const afl = airportOf(b.at, b.who);
       const extra = [BBY[b.brand] ? BBY[b.brand].label : 'Bière', afl ? `✈ airport (${afl.code})` : CBY[cityAt(b.at, b.who)].name].join(' · ');
       return `<li><span class="mini">${avatarHTML(b.who)}</span><span class="t"><b>${p.name}</b> <span>· ${extra} · ${dayLabel(t.date)} ${hm(t.h,t.m)}</span></span>
+        ${PH_THUMBS[b.id] ? `<button type="button" class="lthumb" data-ph="${b.id}" aria-label="Voir la photo"><img src="${PH_THUMBS[b.id]}" alt=""></button>`
+          : can && b.who === ME && CREW ? `<button type="button" class="addph" data-addph="${b.id}" aria-label="Ajouter une photo">📷</button>` : '<span></span>'}
         ${can && b.who === ME ? `<button type="button" class="del${sure ? ' sure' : ''}" data-id="${b.id}">${sure ? 'Sûr ?' : 'Retirer'}</button>` : '<span></span>'}</li>`; }).join('')
       : '<li style="border:none;display:block;text-align:center"><img class="mm mm-empty" data-mm="head3" alt="Meimei"><p class="empty-msg">Meimei attend la première bière.</p></li>';
     fillMM($('log'));
+    const wall = beers.filter(b => PH_THUMBS[b.id]).slice(-40).reverse();
+    $('phWall').hidden = !wall.length;
+    $('phWall').innerHTML = wall.map((b, k) => `<button type="button" data-ph="${b.id}" style="--r:${[-3, 2, -1.5, 3, -2.5, 1][k % 6]}deg" aria-label="Photo de ${PBY[b.who].name}"><img src="${PH_THUMBS[b.id]}" alt=""></button>`).join('');
     renderUndo();
     try { wrButtons(); } catch {}
   }
@@ -1466,6 +1518,121 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       if (changed.length || gone.length){ saveAvCache(); render(); }
     } catch {}
   }
+
+  // ---------- photos de bières ----------
+  let lastPhCheck = 0, phTarget = null, phBusy = false, phCur = null, phDelSure = false, phDelT = 0;
+  const savePhCache = () => { try { localStorage.setItem('mcb.phThumbs', JSON.stringify({t: PH_THUMBS, v: PH_VER})); } catch {} };
+  const savePhOut = () => { try { localStorage.setItem('mcb.phOut', JSON.stringify(phOut)); } catch {} };
+  const phAskOn = () => { try { return localStorage.getItem('mcb.phAsk') !== '0'; } catch { return true; } };
+  $('phAsk').checked = phAskOn();
+  $('phAsk').addEventListener('change', e => { try { localStorage.setItem('mcb.phAsk', e.target.checked ? '1' : '0'); } catch {} });
+  function phPrompt(id){
+    if (!beers.some(b => b.id === id) || PH_THUMBS[id] || !canWrite) return;
+    const t = document.createElement('div'); t.className = 'toast';
+    t.innerHTML = '<span>📸 Une photo de cette bière ?</span><button type="button">Photo</button><button type="button" aria-label="Non merci" style="background:transparent;color:var(--ink-dim);padding:6px 4px">✕</button>';
+    const [ok, no] = t.querySelectorAll('button');
+    ok.addEventListener('click', () => { t.remove(); phPickFor(id); });
+    no.addEventListener('click', () => t.remove());
+    const box = $('toasts'); box.appendChild(t); while (box.children.length > 3) box.firstChild.remove();
+    setTimeout(() => t.remove(), 9000);
+  }
+  function phPickFor(id){
+    if (!CREW){ askCrew(); return; }
+    phTarget = id; const f = $('phFile'); f.value = ''; f.click();
+  }
+  function phLoad(file){
+    return new Promise((ok, ko) => { const u = URL.createObjectURL(file), im = new Image();
+      im.onload = () => ok(im); im.onerror = () => { URL.revokeObjectURL(u); ko(new Error('image')); }; im.src = u; });
+  }
+  function phJpeg(cv, max){
+    let q = .78, d = cv.toDataURL('image/jpeg', q);
+    while (d.length > max && q > .35){ q -= .08; d = cv.toDataURL('image/jpeg', q); }
+    return d.length <= max ? d : null;
+  }
+  async function phProcess(file){
+    const im = await phLoad(file), w0 = im.naturalWidth, h0 = im.naturalHeight; if (!w0 || !h0) throw new Error('image');
+    let side = 1280, img = null;
+    while (!img && side >= 480){
+      const k = Math.min(1, side / Math.max(w0, h0)), cv = document.createElement('canvas');
+      cv.width = Math.round(w0 * k); cv.height = Math.round(h0 * k);
+      cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); img = phJpeg(cv, 420000); side -= 320;
+    }
+    const T = 200, tc = document.createElement('canvas'); tc.width = tc.height = T;
+    const m = Math.min(w0, h0); tc.getContext('2d').drawImage(im, (w0 - m) / 2, (h0 - m) / 2, m, m, 0, 0, T, T);
+    const thumb = phJpeg(tc, 30000);
+    try { URL.revokeObjectURL(im.src); } catch {}
+    if (!img || !thumb) throw new Error('trop lourde');
+    return {img, thumb};
+  }
+  $('phFile').addEventListener('change', async () => {
+    const f = $('phFile').files && $('phFile').files[0], id = phTarget; phTarget = null;
+    if (!f || !id) return;
+    let r; try { r = await phProcess(f); } catch { toast('Impossible de lire cette photo. Essaie une photo JPEG ou PNG.'); return; }
+    PH_THUMBS[id] = r.thumb; PH_FULL[id] = r.img; PH_VER[id] = 'local';
+    phOut = phOut.filter(o => o.id !== id); phOut.push({id, thumb: r.thumb, img: r.img}); savePhOut(); savePhCache();
+    render(); toast('📸 Photo ajoutée au journal !');
+    if (!$('phBig').hidden && phCur === id) phOpen(id);
+    phFlush();
+  });
+  async function phFlush(){
+    if (phBusy || !phOut.length || !CREW || !crewOk) return; phBusy = true;
+    try {
+      for (const o of [...phOut]){
+        if (!o.del && outbox.some(x => x.op === 'add' && x.row.id === o.id)) continue;   // la bière n'est pas encore partie
+        const res = await api('rpc/set_beer_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_beer: o.id, p_thumb: o.del ? null : o.thumb, p_img: o.del ? null : o.img})});
+        if (res.status === 401 || res.status === 403) break;
+        if (!res.ok){ if (res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429 && res.status !== 413){ phOut = phOut.filter(x => x !== o); savePhOut(); continue; } break; }
+        const done = await res.json();
+        if (done === false && beers.some(b => b.id === o.id)) continue;   // la bière arrive, on réessaiera
+        phOut = phOut.filter(x => x !== o); savePhOut();
+        if (done === false){ delete PH_THUMBS[o.id]; delete PH_VER[o.id]; savePhCache(); render(); }
+      }
+    } catch {} finally { phBusy = false; }
+  }
+  async function loadPhotos(){
+    lastPhCheck = Date.now(); if (!CREW || !crewOk) return;
+    try {
+      const res = await api('rpc/list_beer_photos', {method: 'POST', body: JSON.stringify({p_crew: CREW})}); if (!res.ok) return;
+      const list = await res.json(); if (!list || typeof list !== 'object') return;
+      const pend = new Set(phOut.map(o => o.id)); let changed = false;
+      for (const id of Object.keys(PH_THUMBS)) if (!(id in list) && !pend.has(id)){ delete PH_THUMBS[id]; delete PH_VER[id]; delete PH_FULL[id]; changed = true; }
+      const need = Object.keys(list).filter(id => !pend.has(id) && (!PH_THUMBS[id] || PH_VER[id] !== list[id]));
+      for (let k = 0; k < need.length; k += 60){
+        const ids = need.slice(k, k + 60);
+        const r2 = await api('rpc/get_beer_thumbs', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_ids: ids})}); if (!r2.ok) break;
+        const got = await r2.json();
+        for (const id of ids) if (typeof got[id] === 'string' && got[id].startsWith('data:image/jpeg;base64,')){
+          if (PH_VER[id] !== 'local') delete PH_FULL[id];
+          PH_THUMBS[id] = got[id]; PH_VER[id] = list[id]; changed = true; }
+      }
+      if (changed){ savePhCache(); render(); }
+    } catch {}
+  }
+  function phOpen(id){
+    const b = beers.find(x => x.id === id); if (!b || !PH_THUMBS[id]) return;
+    phCur = id; phDelSure = false; $('phDel').textContent = 'Retirer la photo';
+    const img = $('phBigImg'); img.src = PH_FULL[id] || PH_THUMBS[id]; img.classList.toggle('loading', !PH_FULL[id]);
+    const t = sh(b.at), afl = airportOf(b.at, b.who);
+    $('phBigCap').innerHTML = `<b>${PBY[b.who].name}</b> · ${BBY[b.brand] ? BBY[b.brand].label : 'Bière'} · ${afl ? '✈ ' + afl.code : CBY[cityAt(b.at, b.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`;
+    const mineB = canWrite && b.who === ME; $('phChange').hidden = !mineB; $('phDel').hidden = !mineB;
+    $('phBig').hidden = false;
+    if (!PH_FULL[id] && CREW) api('rpc/get_beer_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_beer: id})})
+      .then(r => r.ok ? r.json() : null).then(d => { if (typeof d === 'string' && d.startsWith('data:image/jpeg;base64,')){ PH_FULL[id] = d; if (phCur === id){ img.src = d; img.classList.remove('loading'); } } })
+      .catch(() => {});
+  }
+  const phClose = () => { $('phBig').hidden = true; phCur = null; };
+  $('phClose').addEventListener('click', phClose);
+  $('phBig').addEventListener('click', e => { if (e.target.id === 'phBig') phClose(); });
+  $('phChange').addEventListener('click', () => { if (phCur) phPickFor(phCur); });
+  $('phDel').addEventListener('click', () => {
+    if (!phCur) return;
+    if (!phDelSure){ phDelSure = true; $('phDel').textContent = 'Sûr ?'; clearTimeout(phDelT); phDelT = setTimeout(() => { phDelSure = false; $('phDel').textContent = 'Retirer la photo'; }, 3000); return; }
+    const id = phCur; delete PH_THUMBS[id]; delete PH_VER[id]; delete PH_FULL[id];
+    phOut = phOut.filter(o => o.id !== id); phOut.push({id, del: true}); savePhOut(); savePhCache();
+    phClose(); render(); toast('Photo retirée.'); phFlush();
+  });
+  $('phWall').addEventListener('click', e => { const b = e.target.closest('[data-ph]'); if (b) phOpen(b.dataset.ph); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('phBig').hidden) phClose(); });
 
   // editor: pick a photo, drag to frame it, zoom, save a 256 px circle-ready JPEG
   let avWho = null, avImg = null, avZoom = 1, avX = 0, avY = 0;
@@ -1750,6 +1917,13 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (d.fast) rec.push(`<li><span>⚡ Doublé éclair</span><b>${PBY[d.fast.who].name} · ${d.fast.g < 60000 ? Math.round(d.fast.g / 1000) + ' s' : Math.round(d.fast.g / 60000) + ' min'}</b></li>`);
     if (d.airAll) rec.push(`<li><span>✈ Roi de l'airport beer</span><b>${PBY[d.airAll[0]].name} · ${d.airAll[1]}</b></li>`);
     if (rec.length) S.push({bg: 'bg-sky', h: `<p class="wr-k">Les records</p><p class="wr-h">Pour la postérité</p><ul class="wr-list">${rec.join('')}</ul>`});
+    const phB = beers.filter(b => PH_THUMBS[b.id]);
+    if (phB.length){
+      const pickN = Math.min(9, phB.length), step = phB.length / pickN, sel = [...Array(pickN)].map((_, k) => phB[Math.floor(k * step)]);
+      const mineN = phB.filter(b => b.who === d.me).length;
+      S.push({bg: 'bg-night', h: `<p class="wr-k">Le mur des bières</p><div class="wr-wall">${sel.map((b, k) => `<img src="${PH_THUMBS[b.id]}" alt="" style="transform:rotate(${[-4, 3, -2, 2, -3, 4, -1, 3, -4][k]}deg)">`).join('')}</div>
+        <p class="wr-p"><b>${phB.length}</b> photo${phB.length > 1 ? 's' : ''} pour la postérité${mineN ? `, dont <b>${mineN}</b> par toi` : ''}.</p>`});
+    }
     S.push({bg: 'bg-snow', snow: true, h: `<p class="wr-k">Interlude</p><img class="wr-egg" src="${EGG.sticker}" alt=""><p class="wr-h">XUE HUA PIAO PIAO</p><p class="wr-cn" style="font-size:clamp(46px,14vw,72px);color:#fff;text-shadow:0 0 18px #5CC8FF,0 4px 0 #0b2547">雪花飘飘</p><p class="wr-p">Brother Egg 蛋哥 salue ton voyage. La neige tombe, la bière reste.</p>`});
     S.push({bg: 'bg-red', end: true, h: `<img class="wr-mm" src="${MM.head5}" alt=""><p class="wr-cn" style="font-size:clamp(50px,16vw,84px)">一路平安</p><p class="wr-h">Bon retour, ${P.name}</p><p class="wr-p">Meimei a tout vu. Rendez-vous pour le prochain million.</p>
       <div class="wr-btns"><button type="button" class="pri" data-wr="share">📸 Partager mon Wrapped</button><button type="button" class="sec" data-wr="again">Revoir</button></div>`});

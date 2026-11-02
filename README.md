@@ -40,6 +40,8 @@ On ouvre le lien de la bande sur son téléphone, on tape **+1** à chaque bièr
 - **Annuler** juste après un mauvais tap, ou **↩ Retirer ma dernière bière** pendant 15 minutes.
 - Fonctionne avec un réseau capricieux : chaque bière est gardée sur le téléphone et part dès que le VPN revient.
 - **Ta photo à la place de l'emoji** : tape sur ton avatar, choisis une photo, cadre-la dans le rond doré. Toute la bande la voit, et « Revenir à l'emoji » remet l'avatar d'origine.
+- **📸 La photo de la bière** : juste après le +1, l'app propose d'en prendre une (ou plus tard avec le 📷 du Journal). Elle s'affiche dans le Journal, sur le mur de photos et dans le Wrapped, visible seulement avec le lien du groupe.
+- **Calories 🔥** dans les stats, avec l'équivalent en baozi.
 
 **🎆 Le spectacle**
 - À chaque bière, une animation tirée au sort : feux d'artifice, pluie de pièces et d'enveloppes rouges 红包, lanternes, pétards, ou un dragon 龙 qui traverse l'écran.
