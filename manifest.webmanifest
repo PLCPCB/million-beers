@@ -1,0 +1,33 @@
+{
+  "name": "1 Million Chinese Beers",
+  "short_name": "1M Beers",
+  "id": "/million-beers/",
+  "start_url": "/million-beers/",
+  "scope": "/million-beers/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#7A0A10",
+  "theme_color": "#430307",
+  "lang": "fr",
+  "description": "Le compteur de bières de la bande. 干杯 !",
+  "icons": [
+    {
+      "src": "/million-beers/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/million-beers/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/million-beers/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -91,7 +91,7 @@ flowchart LR
 ## Utiliser l'app
 
 1. Ouvrir le **lien de la bande** (celui envoyé dans le groupe, pas l'adresse de ce dépôt).
-2. Sur iPhone : Partager → **Sur l'écran d'accueil**. Sur Android : menu ⋮ → **Ajouter à l'écran d'accueil**.
+2. L'installer : sur Android, menu ⋮ → **Installer l'appli** ; sur iPhone (Safari), Partager → **Sur l'écran d'accueil**. Si l'app demande le code une fois, c'est la fin du lien de la bande.
 3. Taper **+1**. 干杯 !
 
 Sans le lien de la bande, le site s'ouvre quand même, mais en lecture seule.
@@ -102,6 +102,8 @@ Sans le lien de la bande, le site s'ouvre quand même, mais en lecture seule.
 |---|---|
 | `index.html` | l'app complète |
 | `404.html` | copie identique de `index.html`, **à garder synchronisée** |
+| `manifest.webmanifest`, `icons/` | la fiche d'app (nom, icônes Meimei) pour l'installer sur l'écran d'accueil |
+| `sw.js` | garde la dernière version de l'app pour l'ouvrir même sans réseau |
 | `supabase/` | le code SQL de la base, pour la recréer (voir [`supabase/README.md`](supabase/README.md)) |
 | `docs/screenshots/` | les images de ce README |
 
