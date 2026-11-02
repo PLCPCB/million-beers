@@ -1,7 +1,7 @@
 # Base de données (Supabase)
 
 Ce dossier contient tout le code de la base, dans l'ordre où il a été appliqué.
-Il ne contient **pas** le code de la bande, le lien du carnet de voyage, ni les bières elles-mêmes.
+Il ne contient **pas** le code de la bande, le lien du carnet de voyage, les clés des notifications, ni les bières elles-mêmes.
 
 ## Recréer la base de zéro
 
@@ -16,8 +16,13 @@ Il ne contient **pas** le code de la bande, le lien du carnet de voyage, ni les 
    insert into band_links(key, url) values ('carnet', 'https://docs.google.com/...')
    on conflict (key) do update set url = excluded.url;
    ```
-5. Si l'adresse du projet ou la clé publique changent, les remplacer dans `index.html` **et** `404.html` (`SB_URL` et `SB_KEY`, en haut du script).
-6. Pour remettre des bières sauvegardées : Table Editor → `beers` → Insert → Import data from CSV.
+5. Notifications : déployer `functions/notify/index.ts` (Edge Functions → Deploy a new function → Via Editor, nom `notify`, « Verify JWT » laissé activé), puis dans Edge Functions → Secrets ajouter `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` et `HOOK_SECRET` (valeurs gardées hors du dépôt), et :
+   ```sql
+   insert into hook_secret(secret) values ('même valeur que HOOK_SECRET');
+   ```
+   La clé publique VAPID est aussi dans `index.html` (`VAPID_PUB`).
+6. Si l'adresse du projet ou la clé publique changent, les remplacer dans `index.html` **et** `404.html` (`SB_URL` et `SB_KEY`, en haut du script).
+7. Pour remettre des bières sauvegardées : Table Editor → `beers` → Insert → Import data from CSV.
 
 ## Commandes utiles
 
