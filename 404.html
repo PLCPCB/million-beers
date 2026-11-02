@@ -897,9 +897,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (!c) try { c = normCode(decodeURIComponent(location.hash.slice(1))); } catch {}
     return c; })();
   // The link decides: a code in the address wins; with no code in the address, only a code typed by hand on this phone counts.
-  let CREW = urlCode || (() => { try { return localStorage.getItem('mcb.crewTyped') || ''; } catch { return ''; } })();
+  // Saved code: the one remembered for the installed app, or (phones from before the app update) the last code the server accepted.
+  let CREW = urlCode || (() => { try { return localStorage.getItem('mcb.crewTyped') || localStorage.getItem('mcb.crewVerified') || ''; } catch { return ''; } })();
   try { localStorage.removeItem('mcb.crew'); } catch {}
   let verified = (() => { try { return !!CREW && localStorage.getItem('mcb.crewVerified') === CREW; } catch { return false; } })();
+  if (verified) try { localStorage.setItem('mcb.crewTyped', CREW); } catch {}   // so the home-screen app (opened without the code in its address) has it
   let crewOk = !!CREW;
   function markVerified(){ verified = true; crewOk = true; try { localStorage.setItem('mcb.crewVerified', CREW); localStorage.setItem('mcb.crewTyped', CREW); } catch {} }
   // A wrong code is dropped for this visit; the phone only forgets its saved code if the server refuses that one.
