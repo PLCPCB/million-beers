@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#7A0A10",
-  "theme_color": "#430307",
+  "theme_color": "#7A0A10",
   "lang": "fr",
   "description": "Le compteur de bières de la bande. 干杯 !",
   "icons": [
