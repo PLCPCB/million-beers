@@ -1,7 +1,7 @@
 # Base de données (Supabase)
 
 Ce dossier contient tout le code de la base, dans l'ordre où il a été appliqué.
-Il ne contient **pas** le code de la bande ni les bières elles-mêmes.
+Il ne contient **pas** le code de la bande, le lien du carnet de voyage, ni les bières elles-mêmes.
 
 ## Recréer la base de zéro
 
@@ -11,8 +11,13 @@ Il ne contient **pas** le code de la bande ni les bières elles-mêmes.
    ```sql
    insert into crew_secret(code) values ('le-code-en-minuscules');
    ```
-4. Si l'adresse du projet ou la clé publique changent, les remplacer dans `index.html` **et** `404.html` (`SB_URL` et `SB_KEY`, en haut du script).
-5. Pour remettre des bières sauvegardées : Table Editor → `beers` → Insert → Import data from CSV.
+4. Remettre le lien du carnet de voyage (à garder hors du dépôt) :
+   ```sql
+   insert into band_links(key, url) values ('carnet', 'https://docs.google.com/...')
+   on conflict (key) do update set url = excluded.url;
+   ```
+5. Si l'adresse du projet ou la clé publique changent, les remplacer dans `index.html` **et** `404.html` (`SB_URL` et `SB_KEY`, en haut du script).
+6. Pour remettre des bières sauvegardées : Table Editor → `beers` → Insert → Import data from CSV.
 
 ## Commandes utiles
 
