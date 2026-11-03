@@ -544,7 +544,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         <div class="tot"><p class="k">Litres</p><p class="v" id="tLiters">0</p><p class="s" id="tLitersS">base 50 cl</p></div>
         <div class="tot"><p class="k">Yuans cramés</p><p class="v" id="tYuan">0 ¥</p><p class="s">≈ 15 ¥ la bière</p></div>
         <div class="tot"><p class="k">Par tête / jour</p><p class="v" id="tAvg">…</p><p class="s" id="tAvgS">dès le 4 nov.</p></div>
-        <div class="tot"><p class="k">Airport beers ✈</p><p class="v" id="tAir">0</p><p class="s">3 h avant un vol</p></div>
+        <div class="tot"><p class="k">Airport beers ✈</p><p class="v" id="tAir">0</p><p class="s" id="tAirS">3 h avant ou pendant un vol</p></div>
         <div class="tot wide"><p class="k">Calories 🔥</p><p class="v" id="tKcal">0 kcal</p><p class="s" id="tKcalS">≈ 215 kcal la bière</p></div>
       </div>
       <section class="panel peeky" aria-labelledby="h-days">
@@ -858,18 +858,28 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     {from:BJ('2026-11-18T16:30:00'), to:Infinity,                  txt:'Retour vers Paris'},
   ];
   const PARIS = s => Date.parse(s + '+01:00');
+  const BAH = s => Date.parse(s + '+03:00');
   const ALL = ['alex','louis','felix','pilou','noah','paulin'];
   const FLIGHTS = [
-    {code:'GF018',  dep:PARIS('2026-11-03T10:50:00'), who:['felix','paulin','pilou']},
-    {code:'AF116',  dep:PARIS('2026-11-03T23:20:00'), who:['alex','noah','louis']},
-    {code:'FM9341', dep:BJ('2026-11-07T17:05:00'),    who:ALL},
-    {code:'CA457',  dep:BJ('2026-11-16T01:40:00'),    who:['pilou']},
-    {code:'CA4535', dep:BJ('2026-11-16T18:00:00'),    who:['alex','louis','felix','noah','paulin']},
-    {code:'GF125',  dep:BJ('2026-11-18T16:30:00'),    who:['felix','paulin']},
-    {code:'AF111',  dep:BJ('2026-11-18T22:15:00'),    who:['alex','noah','louis']},
+    // dep / arr : décollage et atterrissage. Les correspondances à Bahreïn (GF124, GF019) ont leur propre fenêtre airport beer.
+    {code:'GF018',  dep:PARIS('2026-11-03T10:50:00'), arr:BAH('2026-11-03T19:25:00'),   who:['felix','paulin','pilou']},
+    {code:'GF124',  dep:BAH('2026-11-03T22:30:00'),   arr:BJ('2026-11-04T11:55:00'),    who:['felix','paulin','pilou']},
+    {code:'AF116',  dep:PARIS('2026-11-03T23:20:00'), arr:BJ('2026-11-04T19:00:00'),    who:['alex','noah','louis']},
+    {code:'FM9341', dep:BJ('2026-11-07T17:05:00'),    arr:BJ('2026-11-07T19:40:00'),    who:ALL},
+    {code:'CA457',  dep:BJ('2026-11-16T01:40:00'),    arr:PARIS('2026-11-16T06:15:00'), who:['pilou']},
+    {code:'CA4535', dep:BJ('2026-11-16T18:00:00'),    arr:BJ('2026-11-16T20:45:00'),    who:['alex','louis','felix','noah','paulin']},
+    {code:'GF125',  dep:BJ('2026-11-18T16:30:00'),    arr:BAH('2026-11-18T21:15:00'),   who:['felix','paulin']},
+    {code:'GF019',  dep:BAH('2026-11-19T01:20:00'),   arr:PARIS('2026-11-19T06:45:00'), who:['felix','paulin']},
+    {code:'AF111',  dep:BJ('2026-11-18T22:15:00'),    arr:PARIS('2026-11-19T05:50:00'), who:['alex','noah','louis']},
   ];
   const AIRPORT_WIN = 3*3600000;
-  const airportOf = (ms, who) => FLIGHTS.find(f => f.who.includes(who) && ms >= f.dep - AIRPORT_WIN && ms < f.dep) || null;
+  // Un verre « spécial vol » : en plein vol (sky beer 🛫) ou dans les 3 h avant le décollage (airport beer ✈). Les deux valent +50.
+  const airportOf = (ms, who) => {
+    const sky = FLIGHTS.find(f => f.who.includes(who) && ms >= f.dep && ms < f.arr);
+    if (sky) return {...sky, sky: true};
+    return FLIGHTS.find(f => f.who.includes(who) && ms >= f.dep - AIRPORT_WIN && ms < f.dep) || null;
+  };
+  const flTxt = fl => fl.sky ? `🛫 en vol (${fl.code})` : `✈ airport (${fl.code})`;
   function hereText(ms){
     const mv = MOVES.find(m => ms >= m.from && ms < m.to); if (mv) return mv.txt;
     if (ms < BJ('2026-11-03T17:50:00')) return 'Prochain arrêt : Shanghai';
@@ -1175,7 +1185,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     cx.translate(pl.x, y); cx.scale(dir, 1); cx.font = '64px sans-serif'; cx.fillStyle = '#fff'; cx.shadowColor = 'rgba(92,200,255,.9)'; cx.shadowBlur = 20;
     cx.fillText('✈', 0, 0); cx.restore();
   }
-  function airportFx(code){ chime(); plane(`AIRPORT BEER ✈ ${code}`); setTimeout(() => plane('机场啤酒 · 机场啤酒'), 500); fireworks(3, 350); }
+  const flBanner = fl => fl.sky ? `SKY BEER 🛫 ${fl.code}` : `AIRPORT BEER ✈ ${fl.code}`;
+  function airportFx(fl){ chime(); plane(flBanner(fl)); setTimeout(() => plane(fl.sky ? '万米高空 · 干杯' : '机场啤酒 · 机场啤酒'), 500); fireworks(3, 350); }
   function step(){
     cx.clearRect(0,0,W(),H());
     parts = parts.filter(p => p.life > 0 && p.y < H() + 300 && p.y > -1200);
@@ -1366,17 +1377,17 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const sig = beers.map(b => b.id).join(',');
     if (ready && sig === lastSig) return;   // nothing new: keep the DOM as is so taps never land on a redraw
     lastSig = sig;
-    let remote = false, remoteAir = '';
+    let remote = false, remoteAir = null;
     for (const b of beers){
       if (seen.has(b.id)) continue; seen.add(b.id);
       if (!ready || myIds.has(b.id) || b.at < loadedAt - 120000) continue;
       const fl = airportOf(b.at, b.who);
-      toast(fl ? `✈ ${PBY[b.who].name} : airport beer avant le ${fl.code} ! +50 crédit social` : `${PBY[b.who].name} vient de s'en jeter une ! +15 crédit social`);
-      bumped = b.who; remote = true; if (fl) remoteAir = fl.code;
+      toast(fl ? (fl.sky ? `🛫 ${PBY[b.who].name} : sky beer en plein vol ${fl.code} ! +50 crédit social` : `✈ ${PBY[b.who].name} : airport beer avant le ${fl.code} ! +50 crédit social`) : `${PBY[b.who].name} vient de s'en jeter une ! +15 crédit social`);
+      bumped = b.who; remote = true; if (fl) remoteAir = fl;
     }
     if (ready && remote){
       const m = Math.floor(beers.length/10)*10;
-      if (beers.length > prevTotal && m > prevTotal && m > 0 && !megaFor.has(m)){ megaFor.add(m); mega(m); if (remoteAir) plane(`AIRPORT BEER ✈ ${remoteAir}`); }
+      if (beers.length > prevTotal && m > prevTotal && m > 0 && !megaFor.has(m)){ megaFor.add(m); mega(m); if (remoteAir) plane(flBanner(remoteAir)); }
       else if (remoteAir) airportFx(remoteAir); else bigFx();
     }
     ready = true;
@@ -1416,19 +1427,19 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const p = PBY[who]; const r = btn.getBoundingClientRect();
     const at = Date.now(), fl = airportOf(at, who);
     burst(r.left + r.width/2, r.top + r.height/2, p.color); if (!fl) gong(); shake();
-    floatAt(r.left + r.width/2, r.top, fl ? '<b>社会信用</b> +50 ✈' : '<b>社会信用</b> +15');
+    floatAt(r.left + r.width/2, r.top, fl ? `<b>社会信用</b> +50 ${fl.sky ? '🛫' : '✈'}` : '<b>社会信用</b> +15');
     if (navigator.vibrate) try { navigator.vibrate(30); } catch {}
     bumped = who;
     const nextTotal = beers.length + 1;
-    if (nextTotal % 10 === 0){ megaFor.add(nextTotal); mega(nextTotal); if (fl) plane(`AIRPORT BEER ✈ ${fl.code}`); }
-    else if (fl){ stamp(who, `AIRPORT BEER ✈ ${fl.code}`); airportFx(fl.code); }
+    if (nextTotal % 10 === 0){ megaFor.add(nextTotal); mega(nextTotal); if (fl) plane(flBanner(fl)); }
+    else if (fl){ stamp(who, flBanner(fl)); airportFx(fl); }
     else { stamp(who); bigFx(); if (Math.random() < .3) setTimeout(peek, 800); }
     const city = cityAt(at, who), id = uuid(), b = brand;
     myIds.add(id); seen.add(id); mine.push({id, who, at}); saveMine();
     brand = 'biere'; $('brandSel').value = 'biere';
     queue({op: 'add', row: {id, who, brand: b, at}});
     if (phAskOn()) setTimeout(() => phPrompt(id), nextTotal % 10 === 0 ? 4300 : 2000);
-    toast(`${p.name} +1 · <button type="button" class="kchip" data-kind="${id}">${kindTxt(b)} ✎</button>${fl ? ' · ✈ airport' : ''} · ${CBY[city].name}`, {label: 'Annuler', run: () => {
+    toast(`${p.name} +1 · <button type="button" class="kchip" data-kind="${id}">${kindTxt(b)} ✎</button>${fl ? ' · ' + (fl.sky ? '🛫 en vol' : '✈ airport') : ''} · ${CBY[city].name}`, {label: 'Annuler', run: () => {
       removeBeer(id); toast(`${p.name} annule. −15 crédit social.`);
       if (Math.random() < .5) meimeiBig('paw', 'MEIMEI DIT STOP.'); }}, {html: true, ms: 10000});
   }
@@ -1498,7 +1509,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     }
     const total = beers.length, can = canWrite;
     const airC = {}; PEOPLE.forEach(p => airC[p.id] = 0); let airTotal = 0;
-    for (const b of beers) if (airportOf(b.at, b.who)){ airC[b.who]++; airTotal++; }
+    const skyC = {}; PEOPLE.forEach(p => skyC[p.id] = 0); let skyTotal = 0;
+    for (const b of beers){ const f = airportOf(b.at, b.who); if (f){ airC[b.who]++; airTotal++; if (f.sky){ skyC[b.who]++; skyTotal++; } } }
     const credit = id => counts[id]*CR_BEER + airC[id]*(CR_AIR - CR_BEER);
 
     // header + totals
@@ -1512,6 +1524,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('tLitersS').textContent = beers.some(b => BK(b.brand).other) ? 'tous verres confondus' : 'base 50 cl';
     $('tYuan').textContent = nf0(sumK(beers, 'yuan')) + ' ¥';
     $('tAir').textContent = airTotal;
+    $('tAirS').textContent = skyTotal ? `dont ${skyTotal} en plein vol 🛫` : '3 h avant ou pendant un vol';
     const kAll = sumK(beers, 'kcal'), kMe = ME ? sumK(beers.filter(b => b.who === ME), 'kcal') : 0;
     $('tKcal').textContent = nf0(kAll) + ' kcal';
     $('tKcalS').textContent = total ? `≈ ${nf0(Math.round(kAll/KCAL_BAOZI))} baozi${ME ? ` · toi : ${nf0(kMe)} kcal` : ''}` : '≈ 215 kcal la bière';
@@ -1533,7 +1546,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       const mine = p.id === ME;
       return `<li class="row${n && r===1 ? ' first' : ''}${mine ? ' me' : ''}${bumped===p.id ? ' bump' : ''}" style="--c:${p.color}">
         ${medal}<button type="button" class="av" data-av="${p.id}" aria-label="Voir le profil de ${p.name}"${pvWho === p.id ? ' style="visibility:hidden"' : ''}>${avatarHTML(p.id)}</button>
-        <div class="who"><p class="nm">${p.name}${mine ? '<span class="you">toi</span>' : ''}<span class="ttl"><b>${ti[0]}</b>${ti[1]}</span><span class="cred"><b>社会信用</b>${n ? '+' + nf0(credit(p.id)) : '0'}${airC[p.id] ? `<span class="air">✈ ${airC[p.id]}</span>` : ''}</span></p></div>
+        <div class="who"><p class="nm">${p.name}${mine ? '<span class="you">toi</span>' : ''}<span class="ttl"><b>${ti[0]}</b>${ti[1]}</span><span class="cred"><b>社会信用</b>${n ? '+' + nf0(credit(p.id)) : '0'}${skyC[p.id] ? `<span class="air">🛫 ${skyC[p.id]}</span>` : ''}${airC[p.id] - skyC[p.id] ? `<span class="air">✈ ${airC[p.id] - skyC[p.id]}</span>` : ''}</span></p></div>
         <span class="cnt">${n}${td}</span>
         ${mine ? `<button type="button" class="plus" data-who="${p.id}" aria-label="Une bière de plus pour moi" ${can ? '' : 'disabled'}>+1<small>干</small></button>` : '<span class="plus-x" aria-hidden="true"></span>'}
       </li>`; }).join('');
@@ -1565,7 +1578,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       rec('夜猫','Dernier debout', late && PBY[late.who].name, late && `à ${hm(late.t.h, late.t.m)}, ${dayLabel(late.t.date)}`),
       rec('闪电','Doublé éclair', fast && PBY[fast.who].name, fast && `deux bières en ${fastTxt}`),
       rec('品牌','Marque reine', topB && `${BBY[topB[0]].label} ${BBY[topB[0]].cn}`, topB && `${topB[1]} sur ${total} (${Math.round(topB[1]/total*100)} %)`),
-      rec('机场','Roi de l\'airport beer', airTotal ? (() => { const k = ranked.slice().sort((a,b) => airC[b.id]-airC[a.id])[0]; return `${k.name} · ${airC[k.id]} ✈`; })() : '', airTotal ? `${airTotal} airport beer${airTotal>1?'s':''} au total` : ''),
+      rec('机场','Roi de l\'airport beer', airTotal ? (() => { const k = ranked.slice().sort((a,b) => airC[b.id]-airC[a.id])[0]; return `${k.name} · ${airC[k.id]} ✈`; })() : '', airTotal ? `${airTotal} airport beer${airTotal>1?'s':''} au total${skyTotal ? `, dont ${skyTotal} en plein vol 🛫` : ''}` : ''),
       rec('冰淇淋','Bing chilling', total ? `${nf0(PEOPLE.reduce((s,p) => s + credit(p.id), 0))}` : '', total ? 'points de crédit social cumulés' : ''),
     ].join('');
     $('cities').innerHTML = CITIES.map(c => {
@@ -1580,7 +1593,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('log').innerHTML = recent.length ? recent.map(b => { const p = PBY[b.who], t = sh(b.at), sure = pendingDel === b.id;
       const afl = airportOf(b.at, b.who);
       const kEdit = can && (b.who === ME || adminOn());
-      const extra = [kEdit ? `<button type="button" class="kchip" data-kind="${b.id}">${kindTxt(b.brand)} ✎</button>` : kindTxt(b.brand), afl ? `✈ airport (${afl.code})` : CBY[cityAt(b.at, b.who)].name].join(' · ');
+      const extra = [kEdit ? `<button type="button" class="kchip" data-kind="${b.id}">${kindTxt(b.brand)} ✎</button>` : kindTxt(b.brand), afl ? flTxt(afl) : CBY[cityAt(b.at, b.who)].name].join(' · ');
       return `<li><span class="mini">${avatarHTML(b.who)}</span><span class="t"><b>${p.name}</b> <span>· ${extra} · ${dayLabel(t.date)} ${hm(t.h,t.m)}</span></span>
         ${PH_THUMBS[b.id] ? `<button type="button" class="lthumb" data-ph="${b.id}" aria-label="Voir la photo"><img src="${PH_THUMBS[b.id]}" alt=""></button>`
           : can && CREW && (b.who === ME || adminOn()) ? `<button type="button" class="addph" data-addph="${b.id}" aria-label="Ajouter une photo">📷</button>` : '<span></span>'}
@@ -1751,7 +1764,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     phCur = id; phDelSure = false; $('phDel').textContent = 'Retirer la photo';
     const img = $('phBigImg'); img.src = PH_FULL[id] || PH_THUMBS[id]; img.classList.toggle('loading', !PH_FULL[id]);
     const t = sh(b.at), afl = airportOf(b.at, b.who);
-    $('phBigCap').innerHTML = `<b>${PBY[b.who].name}</b> · ${kindTxt(b.brand)} · ${afl ? '✈ ' + afl.code : CBY[cityAt(b.at, b.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`;
+    $('phBigCap').innerHTML = `<b>${PBY[b.who].name}</b> · ${kindTxt(b.brand)} · ${afl ? flTxt(afl) : CBY[cityAt(b.at, b.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`;
     const mineB = canWrite && (b.who === ME || adminOn()); $('phChange').hidden = !mineB; $('phDel').hidden = !mineB;
     $('phBig').hidden = false;
     if (!PH_FULL[id] && CREW) api('rpc/get_beer_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_beer: id})})
@@ -2023,7 +2036,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const brands = by(mine, b => b.brand !== 'biere' && BBY[b.brand] && !BBY[b.brand].other ? b.brand : null);
     const others = by(mine, b => BBY[b.brand] && BBY[b.brand].other ? b.brand : null), othersAll = beers.filter(b => BK(b.brand).other).length;
     const liters = sumK(beers, 'l'), yuan = sumK(beers, 'yuan');
-    const air = mine.filter(b => airportOf(b.at, b.who)).length;
+    const air = mine.filter(b => airportOf(b.at, b.who)).length, sky = mine.filter(b => (airportOf(b.at, b.who) || {}).sky).length;
     const groupDay = by(beers, b => sh(b.at).date)[0];
     const cityCup = by(beers, b => { const c = cityAt(b.at, b.who); return c === 'retour' ? null : c; })[0];
     const airAll = by(beers.filter(b => airportOf(b.at, b.who)), b => b.who)[0];
@@ -2032,7 +2045,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       if (t.h >= 5 && t.h < 12 && (!early || mins < early.mins)) early = {mins, b, t};
       if (t.h < 5 && (!late || mins > late.mins)) late = {mins, b, t}; }
     for (const p of PEOPLE){ const a = beers.filter(b => b.who === p.id); for (let i = 1; i < a.length; i++){ const g = a[i].at - a[i-1].at; if (g > 0 && (!fast || g < fast.g)) fast = {g, who: p.id}; } }
-    return {me, total, counts, ranked, rank, n, pct: total ? Math.round(n / total * 100) : 0, bestDay, bestDayCity, peak, cities, brands, air, groupDay, cityCup, airAll, early, late, fast, others, othersAll, liters, yuan};
+    return {me, total, counts, ranked, rank, n, pct: total ? Math.round(n / total * 100) : 0, bestDay, bestDayCity, peak, cities, brands, air, groupDay, cityCup, airAll, early, late, fast, sky, others, othersAll, liters, yuan};
   }
   const wrAv = who => `<div class="wr-av" style="--c:${PBY[who].color}">${avatarHTML(who)}</div>`;
   const wrMini = who => `<span class="mini">${avatarHTML(who)}</span>`;
@@ -2043,7 +2056,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     S.push({bg: 'bg-pink', h: `<p class="wr-k">Et toi, ${P.name}</p>${wrAv(d.me)}<p class="wr-big">${d.n}</p><p class="wr-p">bières, soit <b>${d.pct} %</b> du total.<br>${d.n ? `${d.rank === 1 ? '🥇 Numéro 1' : d.rank + 'e'} du classement final.` : 'Sobre comme un moine shaolin.'}</p>`});
     if (d.bestDay) S.push({bg: 'bg-night', h: `<p class="wr-k">Ta plus grosse soirée</p><p class="wr-big">${d.bestDay[1]}</p><p class="wr-h">${dayLabel(d.bestDay[0])}</p><p class="wr-p">${d.bestDayCity && CBY[d.bestDayCity] ? `à ${CBY[d.bestDayCity].name} ${CBY[d.bestDayCity].cn}` : ''}. Le lendemain a dû piquer.</p>`});
     if (d.peak != null){ const t = HOUR_TYPES(d.peak); S.push({bg: 'bg-night', h: `<p class="wr-k">Ton heure de pointe</p><p class="wr-big">${d.peak}h</p><p class="wr-cn" style="font-size:clamp(46px,14vw,70px)">${t[0]}</p><p class="wr-h">${t[1]}</p><p class="wr-p">${t[2]}.</p>`}); }
-    if (d.cities[0]){ const c = CBY[d.cities[0][0]]; S.push({bg: 'bg-jade', h: `<p class="wr-k">Ta ville</p><p class="wr-cn">${c.cn}</p><p class="wr-h">${c.name}</p><p class="wr-p"><b>${d.cities[0][1]}</b> bières là-bas. ${d.air ? `Et <b>${d.air}</b> airport beer${d.air > 1 ? 's' : ''} ✈ entre deux vols.` : 'Zéro airport beer : un peu sérieux, non ?'}</p>`}); }
+    if (d.cities[0]){ const c = CBY[d.cities[0][0]]; S.push({bg: 'bg-jade', h: `<p class="wr-k">Ta ville</p><p class="wr-cn">${c.cn}</p><p class="wr-h">${c.name}</p><p class="wr-p"><b>${d.cities[0][1]}</b> bières là-bas. ${d.air ? `Et <b>${d.air}</b> airport beer${d.air > 1 ? 's' : ''} ✈${d.sky ? `, dont <b>${d.sky}</b> en plein vol 🛫` : ''}.` : 'Zéro airport beer : un peu sérieux, non ?'}</p>`}); }
     S.push({bg: 'bg-gold', h: d.brands[0]
       ? `<p class="wr-k">Ta marque</p><p class="wr-cn" style="color:#7A0A10;text-shadow:none">${BBY[d.brands[0][0]].cn}</p><p class="wr-h" style="color:#3a1500">${BBY[d.brands[0][0]].label}</p><p class="wr-p">${d.brands[0][1]} fois choisie exprès. Fidèle.</p>`
       : `<p class="wr-k">Ta marque</p><p class="wr-cn" style="color:#7A0A10;text-shadow:none">啤酒</p><p class="wr-h" style="color:#3a1500">« Bière »</p><p class="wr-p">Pas difficile : tant que c'est froid.</p>`});
@@ -2250,7 +2263,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261103-121524';
+  const BUILD = '20261103-181444';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr'].some(id => $(id) && !$(id).hidden)
