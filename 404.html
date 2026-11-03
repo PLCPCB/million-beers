@@ -326,6 +326,8 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .kind-grid button small{display:block;font:400 12px var(--f-cn);color:var(--ink-dim);margin-top:2px}
 .kind-grid button .e{display:block;font-size:22px;line-height:1.1}
 .kind-grid button[aria-pressed="true"]{border-color:var(--gold);background:#6d1408;box-shadow:0 0 0 2px rgba(255,201,60,.35)}
+.kt-q{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.kt-q button{min-height:36px;border-radius:9px;border:1.5px solid rgba(255,243,217,.3);background:var(--lacquer-deep);color:var(--ink);font:700 13px var(--f-body);cursor:pointer;padding:0 2px;touch-action:manipulation}
 .kchip{display:inline;font:inherit;font-weight:700;color:var(--gold);background:rgba(255,201,60,.12);border:1px dashed rgba(255,201,60,.6);border-radius:7px;padding:1px 6px;cursor:pointer;white-space:nowrap}
 .log .t .kchip{font-size:13.5px}
 .score{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -664,6 +666,13 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   <div class="kind-grid" id="kindBeers"></div>
   <p class="nt-l">Autres verres <small style="text-transform:none;letter-spacing:0;font-weight:600">(comptent comme une bière)</small></p>
   <div class="kind-grid" id="kindOthers"></div>
+  <div id="kindTime" hidden style="align-self:stretch;display:flex;flex-direction:column;gap:6px">
+    <p class="nt-l">Heure du verre <small style="text-transform:none;letter-spacing:0;font-weight:600">(admin · heure de Pékin)</small></p>
+    <input class="ad-in" type="datetime-local" id="kindAt" aria-label="Heure du verre, heure de Pékin">
+    <div class="kt-q"><button type="button" data-dt="-120">−2 h</button><button type="button" data-dt="-60">−1 h</button><button type="button" data-dt="-30">−30 min</button><button type="button" data-dt="-10">−10 min</button><button type="button" data-dt="10">+10 min</button></div>
+    <div class="avc-b"><button type="button" class="pri wide" id="kindAtSave">🕒 Changer l'heure</button></div>
+    <p class="avc-err" id="kindErr" hidden></p>
+  </div>
   <div class="avc-b"><button type="button" class="sec wide" id="kindClose">Fermer</button></div>
 </div></div>
 <div id="adModal" hidden><div class="avc" role="dialog" aria-labelledby="adTitle">
@@ -682,6 +691,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     <select class="ad-in" id="adPhSel" aria-label="Bière"></select>
     <div class="avc-b"><button type="button" class="pri" id="adPhCam" style="flex:1 1 70%">📷 Prendre la photo</button><button type="button" class="sec" id="adPhLib" style="flex:0 0 52px" aria-label="Choisir dans la galerie">🖼️</button></div>
     <p class="ad-small" id="adPhOk">En mode admin, le 📷 du Journal apparaît aussi sur les bières des autres.</p>
+    <p class="ad-small">🕒 Heure ou type faux : dans le Journal, touche le type du verre (« Bière ✎ »), tu peux changer les deux.</p>
     <p class="nt-l">Notif perso</p>
     <input class="ad-in" id="adNtTitle" maxlength="80" placeholder="Titre" aria-label="Titre de la notif">
     <textarea class="ad-in" id="adNtBody" maxlength="300" placeholder="Message" aria-label="Message de la notif"></textarea>
@@ -1659,8 +1669,33 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const btn = k => `<button type="button" data-k="${k.id}" aria-pressed="${k.id === cur}">${k.other ? `<span class="e">${k.em}</span>` : ''}${k.label}<small>${k.cn}</small></button>`;
     $('kindBeers').innerHTML = BRANDS.filter(k => !k.other).map(btn).join('');
     $('kindOthers').innerHTML = BRANDS.filter(k => k.other).map(btn).join('');
+    const adm = adminOn() && !!localStorage.getItem('mcb.admin');
+    $('kindTime').hidden = !adm; $('kindErr').hidden = true;
+    if (adm) $('kindAt').value = bjInput(b.at);
     $('kindModal').hidden = false;
   }
+  // heure de Pékin <-> champ datetime-local (l'app affiche tout en heure de Pékin)
+  const bjInput = ms => new Date(ms + 8 * 3600000).toISOString().slice(0, 16);
+  const bjParse = v => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v) ? Date.parse(v.slice(0, 16) + ':00+08:00') : NaN;
+  $('kindTime').addEventListener('click', e => { const q = e.target.closest('[data-dt]'); if (!q) return;
+    const cur = bjParse($('kindAt').value); if (isFinite(cur)) $('kindAt').value = bjInput(cur + (+q.dataset.dt) * 60000); });
+  $('kindAtSave').addEventListener('click', async () => {
+    const id = kindFor, at = bjParse($('kindAt').value), b = beers.find(x => x.id === id);
+    const err = m => { $('kindErr').textContent = m; $('kindErr').hidden = false; };
+    if (!b || !isFinite(at)) return err('Heure invalide.');
+    if (at > Date.now() + 5 * 60000) return err('Pas de verre dans le futur.');
+    if (outbox.some(o => o.op === 'add' && o.row.id === id)) return err('Ce verre n\'est pas encore arrivé sur le serveur. Réessaie dans un instant.');
+    const btn = $('kindAtSave'); btn.disabled = true;
+    try {
+      const r = await api('rpc/admin_set_time', {method: 'POST', body: JSON.stringify({p_admin: localStorage.getItem('mcb.admin'), p_id: id, p_at: at})});
+      if (r.status === 401 || r.status === 403){ err('Code admin refusé.'); btn.disabled = false; return; }
+      if (!r.ok) throw new Error('http');
+      const sv = server.find(x => x.id === id); if (sv) sv.at = at;
+      beers = merged(); render(); $('kindModal').hidden = true; kindFor = null;
+      const t = sh(at); toast(`🕒 ${PBY[b.who].name} : verre déplacé à ${dayLabel(t.date)} ${hm(t.h, t.m)}.`); sync();
+    } catch { err('Pas de réseau, rien n\'a changé.'); }
+    btn.disabled = false;
+  });
   function kindSet(id, br){
     const b = beers.find(x => x.id === id); if (!b || !BBY[br]) return;
     if (b.brand !== br){
@@ -2263,7 +2298,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261103-181444';
+  const BUILD = '20261103-195117';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr'].some(id => $(id) && !$(id).hidden)
