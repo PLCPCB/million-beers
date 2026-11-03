@@ -317,6 +317,17 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .avc-b .sec{background:transparent;border:1.5px solid rgba(255,243,217,.3);color:var(--ink-dim)}
 .avc-b .wide{flex-basis:100%}
 .avc-err{margin:0;align-self:stretch;font-size:13.5px;color:#FF9FB8}
+#kindModal{position:fixed;inset:0;z-index:57;display:grid;place-items:end center;background:rgba(30,2,4,.75);
+  padding:0 max(12px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px))}
+#kindModal[hidden]{display:none}
+#kindModal .avc{width:min(100%,420px);animation:tin .22s ease}
+.kind-grid{align-self:stretch;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.kind-grid button{min-height:52px;border-radius:12px;border:2px solid rgba(255,201,60,.3);background:var(--lacquer-deep);color:var(--ink);font:700 14.5px var(--f-body);cursor:pointer;padding:4px;line-height:1.1;touch-action:manipulation}
+.kind-grid button small{display:block;font:400 12px var(--f-cn);color:var(--ink-dim);margin-top:2px}
+.kind-grid button .e{display:block;font-size:22px;line-height:1.1}
+.kind-grid button[aria-pressed="true"]{border-color:var(--gold);background:#6d1408;box-shadow:0 0 0 2px rgba(255,201,60,.35)}
+.kchip{display:inline;font:inherit;font-weight:700;color:var(--gold);background:rgba(255,201,60,.12);border:1px dashed rgba(255,201,60,.6);border-radius:7px;padding:1px 6px;cursor:pointer;white-space:nowrap}
+.log .t .kchip{font-size:13.5px}
 .score{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .score.ad-hold{transform:scale(.96);transition:transform .6s}
 #adModal{position:fixed;inset:0;z-index:56;display:flex;flex-direction:column;align-items:center;background:rgba(30,2,4,.86);overflow-y:auto;
@@ -530,7 +541,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 
     <div class="pane" id="p-stats" role="tabpanel" aria-labelledby="tab-stats">
       <div class="totals">
-        <div class="tot"><p class="k">Litres</p><p class="v" id="tLiters">0</p><p class="s">base 50 cl</p></div>
+        <div class="tot"><p class="k">Litres</p><p class="v" id="tLiters">0</p><p class="s" id="tLitersS">base 50 cl</p></div>
         <div class="tot"><p class="k">Yuans cramés</p><p class="v" id="tYuan">0 ¥</p><p class="s">≈ 15 ¥ la bière</p></div>
         <div class="tot"><p class="k">Par tête / jour</p><p class="v" id="tAvg">…</p><p class="s" id="tAvgS">dès le 4 nov.</p></div>
         <div class="tot"><p class="k">Airport beers ✈</p><p class="v" id="tAir">0</p><p class="s">3 h avant un vol</p></div>
@@ -645,6 +656,15 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     <button type="button" class="sec" id="ntOff" hidden>Couper les notifs</button>
     <button type="button" class="sec" id="ntClose">Fermer</button>
   </div>
+</div></div>
+<div id="kindModal" hidden><div class="avc" role="dialog" aria-labelledby="kindTitle">
+  <p class="avc-t" id="kindTitle"><b>喝什么</b>C'était quoi ?</p>
+  <p class="avc-s" id="kindSub"></p>
+  <p class="nt-l">Bières</p>
+  <div class="kind-grid" id="kindBeers"></div>
+  <p class="nt-l">Autres verres <small style="text-transform:none;letter-spacing:0;font-weight:600">(comptent comme une bière)</small></p>
+  <div class="kind-grid" id="kindOthers"></div>
+  <div class="avc-b"><button type="button" class="sec wide" id="kindClose">Fermer</button></div>
 </div></div>
 <div id="adModal" hidden><div class="avc" role="dialog" aria-labelledby="adTitle">
   <p class="avc-t" id="adTitle"><b>管理</b>Menu admin</p>
@@ -799,7 +819,16 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     {id:'snow',      label:'Snow',      cn:'雪花'},
     {id:'chongqing', label:'Chongqing', cn:'重庆'},
     {id:'yanjing',   label:'Yanjing',   cn:'燕京'},
+    // autres verres : comptent comme une bière au classement, mais pas pour les calories, les litres ni les yuans
+    {id:'vin',      label:'Vin',      cn:'葡萄酒', em:'🍷', other:true, kcal:125, l:.15, yuan:45, pl:'vins'},
+    {id:'cocktail', label:'Cocktail', cn:'鸡尾酒', em:'🍹', other:true, kcal:240, l:.3,  yuan:70, pl:'cocktails'},
+    {id:'shot',     label:'Shot',     cn:'一口闷', em:'🥃', other:true, kcal:95,  l:.04, yuan:30, pl:'shots'},
+    {id:'baijiu',   label:'Baijiu',   cn:'白酒',   em:'🍶', other:true, kcal:70,  l:.025, yuan:10, pl:'baijius'},
   ];
+  for (const b of BRANDS) if (!b.other) Object.assign(b, {em:'🍺', kcal:215, l:.5, yuan:15});
+  const BK = id => BBY[id] || BBY.biere;
+  const kindTxt = id => { const k = BK(id); return k.other ? `${k.em} ${k.label}` : k.label; };
+  const sumK = (arr, f) => arr.reduce((t, b) => t + BK(b.brand)[f], 0);
   const BBY = Object.fromEntries(BRANDS.map(b => [b.id, b]));
   const CITIES = [
     {id:'shanghai',    name:'Shanghai',    cn:'上海',   lord:'Parrain de Shanghai'},
@@ -949,7 +978,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   }
 
   // ---------- pickers ----------
-  $('brandSel').innerHTML = BRANDS.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
+  $('brandSel').innerHTML = `<optgroup label="Bières">${BRANDS.filter(b => !b.other).map(b => `<option value="${b.id}">${b.label}</option>`).join('')}</optgroup>`
+    + `<optgroup label="Autres verres">${BRANDS.filter(b => b.other).map(b => `<option value="${b.id}">${b.em} ${b.label}</option>`).join('')}</optgroup>`;
   $('brandSel').value = brand;
   $('brandSel').addEventListener('change', e => { brand = e.target.value; });
 
@@ -1193,14 +1223,15 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   }
 
   // ---------- toasts ----------
-  function toast(msg, action){
+  function toast(msg, action, opt){
     const t = document.createElement('div'); t.className = 'toast';
-    const s = document.createElement('span'); s.textContent = msg; t.appendChild(s);
+    const s = document.createElement('span'); if (opt && opt.html) s.innerHTML = msg; else s.textContent = msg; t.appendChild(s);
     if (action){ const b = document.createElement('button'); b.type = 'button'; b.textContent = action.label;
       b.addEventListener('click', () => { action.run(); t.remove(); }); t.appendChild(b); }
     const box = $('toasts'); box.appendChild(t); while (box.children.length > 3) box.firstChild.remove();
-    setTimeout(() => t.remove(), action ? 6000 : 3800);
+    setTimeout(() => t.remove(), (opt && opt.ms) || (action ? 6000 : 3800));
   }
+  $('toasts').addEventListener('click', e => { const k = e.target.closest('[data-kind]'); if (k){ const tt = k.closest('.toast'); kindOpen(k.dataset.kind); if (tt && !tt.querySelector('[data-src]')) tt.remove(); } });
 
   // ---------- status ----------
   function setStatus(kind, extra){
@@ -1285,7 +1316,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     sync();
   });
   let server = [], outbox = [];
-  try { outbox = JSON.parse(localStorage.getItem('mcb.outbox') || '[]').filter(o => o && ((o.op === 'add' && o.row && PBY[o.row.who]) || (o.op === 'del' && o.id))); } catch { outbox = []; }
+  try { outbox = JSON.parse(localStorage.getItem('mcb.outbox') || '[]').filter(o => o && ((o.op === 'add' && o.row && PBY[o.row.who]) || (o.op === 'del' && o.id) || (o.op === 'edit' && o.id && o.brand))); } catch { outbox = []; }
   try { server = JSON.parse(localStorage.getItem('mcb.cache') || '[]'); if (!Array.isArray(server)) server = []; } catch { server = []; }
   const saveOutbox = () => { try { localStorage.setItem('mcb.outbox', JSON.stringify(outbox)); } catch {} };
   const uuid = () => (crypto && crypto.randomUUID) ? crypto.randomUUID()
@@ -1294,6 +1325,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const dels = new Set(outbox.filter(o => o.op === 'del').map(o => o.id));
     const map = new Map(server.map(b => [b.id, b]));
     for (const o of outbox) if (o.op === 'add') map.set(o.row.id, o.row);
+    for (const o of outbox) if (o.op === 'edit' && map.has(o.id)) map.set(o.id, {...map.get(o.id), brand: o.brand});
     return [...map.values()].filter(b => !dels.has(b.id) && PBY[b.who] && typeof b.at === 'number').sort((a,b) => a.at - b.at);
   }
   let syncing = false, ready = false; const seen = new Set();
@@ -1303,6 +1335,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       while (crewOk && outbox.length){
         const o = outbox[0]; let res;
         if (o.op === 'add') res = await api('rpc/add_beer', {method: 'POST', body: JSON.stringify({p_id: o.row.id, p_who: o.row.who, p_brand: o.row.brand, p_at: o.row.at, p_crew: CREW})});
+        else if (o.op === 'edit') res = await api('rpc/set_beer_brand', {method: 'POST', body: JSON.stringify({p_id: o.id, p_brand: o.brand, p_crew: CREW})});
         else res = await api('rpc/remove_beer', {method: 'POST', body: JSON.stringify({p_id: o.id, p_crew: CREW})});
         if (!res.ok){
           if (res.status === 401 || res.status === 403){ dropCrew();
@@ -1395,12 +1428,13 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     brand = 'biere'; $('brandSel').value = 'biere';
     queue({op: 'add', row: {id, who, brand: b, at}});
     if (phAskOn()) setTimeout(() => phPrompt(id), nextTotal % 10 === 0 ? 4300 : 2000);
-    toast(`${p.name} +1 · ${BBY[b].label}${fl ? ' · ✈ airport beer' : ''} · ${CBY[city].name}`, {label: 'Annuler', run: () => {
+    toast(`${p.name} +1 · <button type="button" class="kchip" data-kind="${id}">${kindTxt(b)} ✎</button>${fl ? ' · ✈ airport' : ''} · ${CBY[city].name}`, {label: 'Annuler', run: () => {
       removeBeer(id); toast(`${p.name} annule. −15 crédit social.`);
-      if (Math.random() < .5) meimeiBig('paw', 'MEIMEI DIT STOP.'); }});
+      if (Math.random() < .5) meimeiBig('paw', 'MEIMEI DIT STOP.'); }}, {html: true, ms: 10000});
   }
   $('board').addEventListener('click', e => { const b = e.target.closest('.plus'); if (b) addBeer(b.dataset.who, b); });
   $('log').addEventListener('click', e => {
+    const kc = e.target.closest('[data-kind]'); if (kc){ kindOpen(kc.dataset.kind); return; }
     const ph = e.target.closest('[data-ph]'); if (ph){ phOpen(ph.dataset.ph); return; }
     const ad = e.target.closest('[data-addph]'); if (ad){ phPickFor(ad.dataset.addph); return; }
     const b = e.target.closest('.del'); if (!b || !canWrite) return;
@@ -1474,11 +1508,13 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('tTotal').textContent = total;
     const pct = total/GOAL*100;
     $('tGoal').textContent = `${pct.toLocaleString('fr-FR',{maximumFractionDigits: pct < 1 ? 4 : 2})} % du million`;
-    $('tLiters').textContent = nf1(total*0.5);
-    $('tYuan').textContent = nf0(total*YUAN_PER_BEER) + ' ¥';
+    $('tLiters').textContent = nf1(sumK(beers, 'l'));
+    $('tLitersS').textContent = beers.some(b => BK(b.brand).other) ? 'tous verres confondus' : 'base 50 cl';
+    $('tYuan').textContent = nf0(sumK(beers, 'yuan')) + ' ¥';
     $('tAir').textContent = airTotal;
-    $('tKcal').textContent = nf0(total*KCAL_BEER) + ' kcal';
-    $('tKcalS').textContent = total ? `≈ ${nf0(Math.round(total*KCAL_BEER/KCAL_BAOZI))} baozi${ME ? ` · toi : ${nf0(counts[ME]*KCAL_BEER)} kcal` : ''}` : '≈ 215 kcal la bière';
+    const kAll = sumK(beers, 'kcal'), kMe = ME ? sumK(beers.filter(b => b.who === ME), 'kcal') : 0;
+    $('tKcal').textContent = nf0(kAll) + ' kcal';
+    $('tKcalS').textContent = total ? `≈ ${nf0(Math.round(kAll/KCAL_BAOZI))} baozi${ME ? ` · toi : ${nf0(kMe)} kcal` : ''}` : '≈ 215 kcal la bière';
     const elapsed = todayIdx < 0 ? 0 : Math.min(todayIdx+1, TRIP_DAYS);
     $('tAvg').textContent = elapsed ? nf1(total/PEOPLE.length/elapsed) : '…';
     $('tAvgS').textContent = elapsed ? `sur ${elapsed} jour${elapsed>1?'s':''}` : 'dès le 4 nov.';
@@ -1518,7 +1554,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     for (const p of PEOPLE){ const arr = byWho[p.id];
       for (let i = 1; i < arr.length; i++){ const g = arr[i].at - arr[i-1].at; if (g > 0 && (!fast || g < fast.g)) fast = {g, who:p.id}; } }
     const fastTxt = fast ? (fast.g < 60000 ? `${Math.round(fast.g/1000)} s` : `${Math.round(fast.g/60000)} min`) : '';
-    const topB = Object.entries(brandC).filter(([b]) => BBY[b] && b !== 'biere').sort((a,b) => b[1]-a[1])[0];
+    const topB = Object.entries(brandC).filter(([b]) => BBY[b] && b !== 'biere' && !BBY[b].other).sort((a,b) => b[1]-a[1])[0];
     const topCity = Object.entries(cityC).sort((a,b) => b[1]-a[1])[0];
     const todayLeader = ranked.slice().sort((a,b) => todayC[b.id]-todayC[a.id])[0];
     $('recs').innerHTML = [
@@ -1543,7 +1579,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const recent = beers.slice(-30).reverse();
     $('log').innerHTML = recent.length ? recent.map(b => { const p = PBY[b.who], t = sh(b.at), sure = pendingDel === b.id;
       const afl = airportOf(b.at, b.who);
-      const extra = [BBY[b.brand] ? BBY[b.brand].label : 'Bière', afl ? `✈ airport (${afl.code})` : CBY[cityAt(b.at, b.who)].name].join(' · ');
+      const kEdit = can && (b.who === ME || adminOn());
+      const extra = [kEdit ? `<button type="button" class="kchip" data-kind="${b.id}">${kindTxt(b.brand)} ✎</button>` : kindTxt(b.brand), afl ? `✈ airport (${afl.code})` : CBY[cityAt(b.at, b.who)].name].join(' · ');
       return `<li><span class="mini">${avatarHTML(b.who)}</span><span class="t"><b>${p.name}</b> <span>· ${extra} · ${dayLabel(t.date)} ${hm(t.h,t.m)}</span></span>
         ${PH_THUMBS[b.id] ? `<button type="button" class="lthumb" data-ph="${b.id}" aria-label="Voir la photo"><img src="${PH_THUMBS[b.id]}" alt=""></button>`
           : can && CREW && (b.who === ME || adminOn()) ? `<button type="button" class="addph" data-addph="${b.id}" aria-label="Ajouter une photo">📷</button>` : '<span></span>'}
@@ -1599,6 +1636,34 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const box = $('toasts'); box.appendChild(t); while (box.children.length > 3) box.firstChild.remove();
     setTimeout(() => t.remove(), ms);
   }
+  // ---------- type du verre : correction après coup ----------
+  let kindFor = null;
+  function kindOpen(id){
+    const b = beers.find(x => x.id === id); if (!b || !canWrite) return;
+    if (b.who !== ME && !adminOn()) return;
+    kindFor = id; const cur = BK(b.brand).id, t = sh(b.at);
+    $('kindSub').textContent = `${PBY[b.who].name} · ${dayLabel(t.date)} ${hm(t.h, t.m)}`;
+    const btn = k => `<button type="button" data-k="${k.id}" aria-pressed="${k.id === cur}">${k.other ? `<span class="e">${k.em}</span>` : ''}${k.label}<small>${k.cn}</small></button>`;
+    $('kindBeers').innerHTML = BRANDS.filter(k => !k.other).map(btn).join('');
+    $('kindOthers').innerHTML = BRANDS.filter(k => k.other).map(btn).join('');
+    $('kindModal').hidden = false;
+  }
+  function kindSet(id, br){
+    const b = beers.find(x => x.id === id); if (!b || !BBY[br]) return;
+    if (b.brand !== br){
+      const i = outbox.findIndex(o => o.op === 'add' && o.row.id === id);
+      if (i > 0 || (i === 0 && !syncing)) outbox[i].row.brand = br;
+      else { outbox = outbox.filter(o => !(o.op === 'edit' && o.id === id)); outbox.push({op: 'edit', id, brand: br}); }
+      saveOutbox(); const sv = server.find(x => x.id === id); if (sv) sv.brand = br;
+      beers = merged(); render(); sync();
+    }
+    toast(`C'est noté : ${kindTxt(br)}${BK(br).other ? ' (compte comme une bière)' : ''}.`);
+  }
+  $('kindModal').addEventListener('click', e => {
+    const k = e.target.closest('[data-k]');
+    if (k){ $('kindModal').hidden = true; kindSet(kindFor, k.dataset.k); kindFor = null; return; }
+    if (e.target.id === 'kindModal' || e.target.id === 'kindClose'){ $('kindModal').hidden = true; kindFor = null; }
+  });
   function adminOn(){ try { return !!localStorage.getItem('mcb.admin'); } catch { return false; } }
   function adPhFill(){
     const sel = $('adPhSel'); if (!sel) return; const keep = sel.value;
@@ -1641,7 +1706,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     let r; try { r = await phProcess(f); } catch { toast('Impossible de lire cette photo. Essaie une photo JPEG ou PNG.'); return; }
     PH_THUMBS[id] = r.thumb; PH_FULL[id] = r.img; PH_VER[id] = 'local';
     phOut = phOut.filter(o => o.id !== id); phOut.push({id, thumb: r.thumb, img: r.img}); savePhOut(); savePhCache();
-    render(); toast('📸 Photo ajoutée au journal !');
+    render(); { const bb = beers.find(x => x.id === id); toast(`📸 Photo ajoutée · <button type="button" class="kchip" data-kind="${id}">${kindTxt(bb ? bb.brand : 'biere')} ✎</button>`, null, {html: true, ms: 7000}); }
     if (!$('adModal').hidden){ adPhFill(); $('adPhOk').textContent = '📸 Photo ajoutée.'; }
     if (!$('phBig').hidden && phCur === id) phOpen(id);
     phFlush();
@@ -1686,7 +1751,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     phCur = id; phDelSure = false; $('phDel').textContent = 'Retirer la photo';
     const img = $('phBigImg'); img.src = PH_FULL[id] || PH_THUMBS[id]; img.classList.toggle('loading', !PH_FULL[id]);
     const t = sh(b.at), afl = airportOf(b.at, b.who);
-    $('phBigCap').innerHTML = `<b>${PBY[b.who].name}</b> · ${BBY[b.brand] ? BBY[b.brand].label : 'Bière'} · ${afl ? '✈ ' + afl.code : CBY[cityAt(b.at, b.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`;
+    $('phBigCap').innerHTML = `<b>${PBY[b.who].name}</b> · ${kindTxt(b.brand)} · ${afl ? '✈ ' + afl.code : CBY[cityAt(b.at, b.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`;
     const mineB = canWrite && (b.who === ME || adminOn()); $('phChange').hidden = !mineB; $('phDel').hidden = !mineB;
     $('phBig').hidden = false;
     if (!PH_FULL[id] && CREW) api('rpc/get_beer_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_beer: id})})
@@ -1955,7 +2020,9 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const bestDayCity = bestDay ? (by(mine.filter(b => sh(b.at).date === bestDay[0]), b => cityAt(b.at, me))[0] || [])[0] : null;
     const hours = by(mine, b => sh(b.at).h), peak = hours[0] ? +hours[0][0] : null;
     const cities = by(mine, b => { const c = cityAt(b.at, me); return c === 'retour' ? null : c; });
-    const brands = by(mine, b => b.brand !== 'biere' && BBY[b.brand] ? b.brand : null);
+    const brands = by(mine, b => b.brand !== 'biere' && BBY[b.brand] && !BBY[b.brand].other ? b.brand : null);
+    const others = by(mine, b => BBY[b.brand] && BBY[b.brand].other ? b.brand : null), othersAll = beers.filter(b => BK(b.brand).other).length;
+    const liters = sumK(beers, 'l'), yuan = sumK(beers, 'yuan');
     const air = mine.filter(b => airportOf(b.at, b.who)).length;
     const groupDay = by(beers, b => sh(b.at).date)[0];
     const cityCup = by(beers, b => { const c = cityAt(b.at, b.who); return c === 'retour' ? null : c; })[0];
@@ -1965,14 +2032,14 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       if (t.h >= 5 && t.h < 12 && (!early || mins < early.mins)) early = {mins, b, t};
       if (t.h < 5 && (!late || mins > late.mins)) late = {mins, b, t}; }
     for (const p of PEOPLE){ const a = beers.filter(b => b.who === p.id); for (let i = 1; i < a.length; i++){ const g = a[i].at - a[i-1].at; if (g > 0 && (!fast || g < fast.g)) fast = {g, who: p.id}; } }
-    return {me, total, counts, ranked, rank, n, pct: total ? Math.round(n / total * 100) : 0, bestDay, bestDayCity, peak, cities, brands, air, groupDay, cityCup, airAll, early, late, fast};
+    return {me, total, counts, ranked, rank, n, pct: total ? Math.round(n / total * 100) : 0, bestDay, bestDayCity, peak, cities, brands, air, groupDay, cityCup, airAll, early, late, fast, others, othersAll, liters, yuan};
   }
   const wrAv = who => `<div class="wr-av" style="--c:${PBY[who].color}">${avatarHTML(who)}</div>`;
   const wrMini = who => `<span class="mini">${avatarHTML(who)}</span>`;
   function wrSlides(d){
     const P = PBY[d.me], S = [];
     S.push({bg: 'bg-red', h: `<p class="wr-k">Chine · novembre 2026</p><p class="wr-cn">干杯</p><p class="wr-h">Ganbei Wrapped</p><img class="wr-mm" src="${MM.head1}" alt=""><p class="wr-p">15 jours, 4 villes, 6 gosiers. Voilà ce qu'il s'est passé.</p>`});
-    S.push({bg: 'bg-gold', h: `<p class="wr-k">À vous six</p><p class="wr-big">${nf0(d.total)}</p><p class="wr-h" style="color:#3a1500">bières</p><p class="wr-p">${nf1(d.total * .5)} litres · ≈ ${nf0(d.total * YUAN_PER_BEER)} ¥<br>Il en reste <b>${nf0(GOAL - d.total)}</b> avant le million.</p>`});
+    S.push({bg: 'bg-gold', h: `<p class="wr-k">À vous six</p><p class="wr-big">${nf0(d.total)}</p><p class="wr-h" style="color:#3a1500">bières</p><p class="wr-p">${nf1(d.liters)} litres · ≈ ${nf0(d.yuan)} ¥<br>Il en reste <b>${nf0(GOAL - d.total)}</b> avant le million.</p>`});
     S.push({bg: 'bg-pink', h: `<p class="wr-k">Et toi, ${P.name}</p>${wrAv(d.me)}<p class="wr-big">${d.n}</p><p class="wr-p">bières, soit <b>${d.pct} %</b> du total.<br>${d.n ? `${d.rank === 1 ? '🥇 Numéro 1' : d.rank + 'e'} du classement final.` : 'Sobre comme un moine shaolin.'}</p>`});
     if (d.bestDay) S.push({bg: 'bg-night', h: `<p class="wr-k">Ta plus grosse soirée</p><p class="wr-big">${d.bestDay[1]}</p><p class="wr-h">${dayLabel(d.bestDay[0])}</p><p class="wr-p">${d.bestDayCity && CBY[d.bestDayCity] ? `à ${CBY[d.bestDayCity].name} ${CBY[d.bestDayCity].cn}` : ''}. Le lendemain a dû piquer.</p>`});
     if (d.peak != null){ const t = HOUR_TYPES(d.peak); S.push({bg: 'bg-night', h: `<p class="wr-k">Ton heure de pointe</p><p class="wr-big">${d.peak}h</p><p class="wr-cn" style="font-size:clamp(46px,14vw,70px)">${t[0]}</p><p class="wr-h">${t[1]}</p><p class="wr-p">${t[2]}.</p>`}); }
@@ -1980,6 +2047,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     S.push({bg: 'bg-gold', h: d.brands[0]
       ? `<p class="wr-k">Ta marque</p><p class="wr-cn" style="color:#7A0A10;text-shadow:none">${BBY[d.brands[0][0]].cn}</p><p class="wr-h" style="color:#3a1500">${BBY[d.brands[0][0]].label}</p><p class="wr-p">${d.brands[0][1]} fois choisie exprès. Fidèle.</p>`
       : `<p class="wr-k">Ta marque</p><p class="wr-cn" style="color:#7A0A10;text-shadow:none">啤酒</p><p class="wr-h" style="color:#3a1500">« Bière »</p><p class="wr-p">Pas difficile : tant que c'est froid.</p>`});
+    if (d.othersAll){
+      const n = d.others.reduce((t, x) => t + x[1], 0);
+      S.push({bg: 'bg-jade', h: n
+        ? `<p class="wr-k">Tes infidélités</p><p class="wr-big">${n}</p><p class="wr-h">fois sans bière</p><p class="wr-p">${d.others.map(([k, c]) => `${BBY[k].em} <b>${c}</b> ${c > 1 ? BBY[k].pl : BBY[k].label.toLowerCase()}`).join(' · ')}<br>${n > 1 ? 'Comptés comme des bières' : 'Compté comme une bière'}, mais Meimei a tout noté.</p>`
+        : `<p class="wr-k">Tes infidélités</p><p class="wr-big">0</p><p class="wr-h">100 % bière</p><p class="wr-p">Pendant que les autres sirotaient du vin et des cocktails, toi tu restais fidèle. Respect.</p>`});
+    }
     S.push({bg: 'bg-red', h: `<p class="wr-k">Tous ensemble</p>${d.cityCup ? `<p class="wr-h">Coupe des villes</p><p class="wr-cn">${CBY[d.cityCup[0]].cn}</p><p class="wr-p"><b>${CBY[d.cityCup[0]].name}</b> gagne avec ${d.cityCup[1]} bières.</p>` : ''}${d.groupDay ? `<p class="wr-p">Plus grosse soirée collective : <b>${d.groupDay[1]} bières</b> le ${dayLabel(d.groupDay[0])}</p>` : ''}`});
     const top = d.ranked.slice(0, 3), order = [top[1], top[0], top[2]].filter(Boolean), hgt = {0: 150, 1: 110, 2: 80};
     S.push({bg: 'bg-pink', h: `<p class="wr-k">Classement final</p><div class="wr-pod">${order.map(p => { const i = top.indexOf(p); return `<div>${wrMini(p.id)}<b>${p.name}</b><span class="st" style="height:${hgt[i]}px">${['金','银','铜'][i]}<small>${d.counts[p.id]}</small></span></div>`; }).join('')}</div>
@@ -2177,7 +2250,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261103-104217';
+  const BUILD = '20261103-121524';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr'].some(id => $(id) && !$(id).hidden)

@@ -37,6 +37,8 @@ On ouvre le lien de la bande sur son téléphone, on tape **+1** à chaque bièr
 **🍺 Le compteur**
 - Un bouton **+1** par personne, utilisable d'une main au bar.
 - La marque est en option : par défaut c'est « Bière », on choisit Tsingtao, Harbin, Snow, Chongqing ou Yanjing seulement si on veut.
+- **Autres verres** : 🍷 vin, 🍹 cocktail, 🥃 shot ou 🍶 baijiu 白酒. Ils comptent comme une bière au classement, mais les calories, les litres et les yuans suivent le vrai verre, et le Wrapped les ressort en « infidélités ».
+- **Mauvais type ?** Juste après le +1, on touche le type affiché (« Tsingtao ✎ ») pour le corriger. Ça marche aussi depuis le Journal.
 - **Annuler** juste après un mauvais tap, ou **↩ Retirer ma dernière bière** pendant 15 minutes.
 - Fonctionne avec un réseau capricieux : chaque bière est gardée sur le téléphone et part dès que le VPN revient.
 - **Ta photo à la place de l'emoji** : tape sur ton avatar, choisis une photo, cadre-la dans le rond doré. Toute la bande la voit, et « Revenir à l'emoji » remet l'avatar d'origine.
