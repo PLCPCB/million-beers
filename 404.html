@@ -475,6 +475,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 .toast{pointer-events:auto;display:flex;align-items:center;gap:12px;max-width:100%;background:var(--lacquer-deep);color:var(--ink);border:2px solid var(--gold);border-radius:12px;
   padding:9px 10px 9px 14px;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:tin .25s ease}
 .toast button{font:700 14px var(--f-body);padding:6px 10px;border-radius:8px;border:none;background:var(--gold);color:var(--lacquer-deep);cursor:pointer;white-space:nowrap}
+.ph-choice{gap:7px;padding-left:12px}
+.ph-choice{width:min(100%,420px)}
+.ph-choice span{white-space:nowrap}
+.ph-choice .cam{flex:1;min-height:46px;font-size:16px;padding:8px 12px}
+.ph-choice .lib{flex:none;width:38px;height:38px;padding:0;font-size:17px;background:transparent;border:1.5px solid rgba(255,201,60,.55)}
+.ph-choice .no{background:transparent;color:var(--ink-dim);padding:6px 2px}
 @keyframes tin{from{transform:translateY(20px);opacity:0}}
 
 @media (prefers-reduced-motion:reduce){
@@ -578,6 +584,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 <div id="flash" aria-hidden="true"></div>
 <div id="mega" hidden><div class="mg"><img id="megaImg" alt="Meimei"><p class="mn"><span id="megaN">10</span><b>杯</b></p><p class="mt" id="megaTxt">MÉGA GANBEI !</p></div></div>
 <input type="file" id="phFile" accept="image/*" hidden>
+<input type="file" id="phCam" accept="image/*" capture="environment" hidden>
 <div id="phBig" hidden role="dialog" aria-label="Photo de la bière">
   <img id="phBigImg" alt="">
   <p id="phBigCap"></p>
@@ -651,6 +658,10 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     <div class="ad-rows" id="adRows"></div>
     <label class="ad-time">Heure des ajouts <input class="ad-in" type="datetime-local" id="adAt"></label>
     <p class="ad-small">Vide = maintenant. Les ajouts et retraits faits ici n'envoient pas de notif.</p>
+    <p class="nt-l">Photo sur une bière</p>
+    <select class="ad-in" id="adPhSel" aria-label="Bière"></select>
+    <div class="avc-b"><button type="button" class="pri" id="adPhCam" style="flex:1 1 70%">📷 Prendre la photo</button><button type="button" class="sec" id="adPhLib" style="flex:0 0 52px" aria-label="Choisir dans la galerie">🖼️</button></div>
+    <p class="ad-small" id="adPhOk">En mode admin, le 📷 du Journal apparaît aussi sur les bières des autres.</p>
     <p class="nt-l">Notif perso</p>
     <input class="ad-in" id="adNtTitle" maxlength="80" placeholder="Titre" aria-label="Titre de la notif">
     <textarea class="ad-in" id="adNtBody" maxlength="300" placeholder="Message" aria-label="Message de la notif"></textarea>
@@ -1535,7 +1546,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       const extra = [BBY[b.brand] ? BBY[b.brand].label : 'Bière', afl ? `✈ airport (${afl.code})` : CBY[cityAt(b.at, b.who)].name].join(' · ');
       return `<li><span class="mini">${avatarHTML(b.who)}</span><span class="t"><b>${p.name}</b> <span>· ${extra} · ${dayLabel(t.date)} ${hm(t.h,t.m)}</span></span>
         ${PH_THUMBS[b.id] ? `<button type="button" class="lthumb" data-ph="${b.id}" aria-label="Voir la photo"><img src="${PH_THUMBS[b.id]}" alt=""></button>`
-          : can && b.who === ME && CREW ? `<button type="button" class="addph" data-addph="${b.id}" aria-label="Ajouter une photo">📷</button>` : '<span></span>'}
+          : can && CREW && (b.who === ME || adminOn()) ? `<button type="button" class="addph" data-addph="${b.id}" aria-label="Ajouter une photo">📷</button>` : '<span></span>'}
         ${can && b.who === ME ? `<button type="button" class="del${sure ? ' sure' : ''}" data-id="${b.id}">${sure ? 'Sûr ?' : 'Retirer'}</button>` : '<span></span>'}</li>`; }).join('')
       : '<li style="border:none;display:block;text-align:center"><img class="mm mm-empty" data-mm="head3" alt="Meimei"><p class="empty-msg">Meimei attend la première bière.</p></li>';
     fillMM($('log'));
@@ -1578,16 +1589,27 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   function phPrompt(id){
     if (!beers.some(b => b.id === id) || PH_THUMBS[id] || !canWrite) return;
     const t = document.createElement('div'); t.className = 'toast';
-    t.innerHTML = '<span>📸 Une photo de cette bière ?</span><button type="button">Photo</button><button type="button" aria-label="Non merci" style="background:transparent;color:var(--ink-dim);padding:6px 4px">✕</button>';
-    const [ok, no] = t.querySelectorAll('button');
-    ok.addEventListener('click', () => { t.remove(); phPickFor(id); });
-    no.addEventListener('click', () => t.remove());
-    const box = $('toasts'); box.appendChild(t); while (box.children.length > 3) box.firstChild.remove();
-    setTimeout(() => t.remove(), 9000);
+    phChoice(id, 'Une photo ?', 12000);
   }
-  function phPickFor(id){
+  // Deux boutons : l'appareil photo s'ouvre directement, ou la galerie pour une photo déjà prise.
+  function phChoice(id, txt, ms){
+    const t = document.createElement('div'); t.className = 'toast ph-choice';
+    t.innerHTML = `<span>${txt}</span><button type="button" data-src="cam" class="cam">📷 Prendre la photo</button><button type="button" data-src="lib" class="lib" aria-label="Choisir dans la galerie">🖼️</button><button type="button" aria-label="Non merci" class="no">✕</button>`;
+    t.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; t.remove(); if (b.dataset.src) phPickFor(id, b.dataset.src === 'cam'); });
+    const box = $('toasts'); box.appendChild(t); while (box.children.length > 3) box.firstChild.remove();
+    setTimeout(() => t.remove(), ms);
+  }
+  function adminOn(){ try { return !!localStorage.getItem('mcb.admin'); } catch { return false; } }
+  function adPhFill(){
+    const sel = $('adPhSel'); if (!sel) return; const keep = sel.value;
+    sel.innerHTML = beers.slice(-200).reverse().map(b => { const t = sh(b.at);
+      return `<option value="${b.id}">${PBY[b.who].name} · ${dayLabel(t.date)} ${hm(t.h, t.m)}${PH_THUMBS[b.id] ? ' · 📸' : ''}</option>`; }).join('');
+    if (keep && beers.some(b => b.id === keep)) sel.value = keep;
+  }
+  function phPickFor(id, cam){
     if (!CREW){ askCrew(); return; }
-    phTarget = id; const f = $('phFile'); f.value = ''; f.click();
+    if (cam === undefined){ phChoice(id, 'Photo :', 15000); return; }
+    phTarget = id; const f = $(cam ? 'phCam' : 'phFile'); f.value = ''; f.click();
   }
   function phLoad(file){
     return new Promise((ok, ko) => { const u = URL.createObjectURL(file), im = new Image();
@@ -1613,16 +1635,18 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (!img || !thumb) throw new Error('trop lourde');
     return {img, thumb};
   }
-  $('phFile').addEventListener('change', async () => {
-    const f = $('phFile').files && $('phFile').files[0], id = phTarget; phTarget = null;
+  const phPicked = async e => {
+    const f = e.target.files && e.target.files[0], id = phTarget; phTarget = null;
     if (!f || !id) return;
     let r; try { r = await phProcess(f); } catch { toast('Impossible de lire cette photo. Essaie une photo JPEG ou PNG.'); return; }
     PH_THUMBS[id] = r.thumb; PH_FULL[id] = r.img; PH_VER[id] = 'local';
     phOut = phOut.filter(o => o.id !== id); phOut.push({id, thumb: r.thumb, img: r.img}); savePhOut(); savePhCache();
     render(); toast('📸 Photo ajoutée au journal !');
+    if (!$('adModal').hidden){ adPhFill(); $('adPhOk').textContent = '📸 Photo ajoutée.'; }
     if (!$('phBig').hidden && phCur === id) phOpen(id);
     phFlush();
-  });
+  };
+  $('phFile').addEventListener('change', phPicked); $('phCam').addEventListener('change', phPicked);
   async function phFlush(){
     if (phBusy || !phOut.length || !CREW || !crewOk) return; phBusy = true;
     try {
@@ -1663,7 +1687,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const img = $('phBigImg'); img.src = PH_FULL[id] || PH_THUMBS[id]; img.classList.toggle('loading', !PH_FULL[id]);
     const t = sh(b.at), afl = airportOf(b.at, b.who);
     $('phBigCap').innerHTML = `<b>${PBY[b.who].name}</b> · ${BBY[b.brand] ? BBY[b.brand].label : 'Bière'} · ${afl ? '✈ ' + afl.code : CBY[cityAt(b.at, b.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`;
-    const mineB = canWrite && b.who === ME; $('phChange').hidden = !mineB; $('phDel').hidden = !mineB;
+    const mineB = canWrite && (b.who === ME || adminOn()); $('phChange').hidden = !mineB; $('phDel').hidden = !mineB;
     $('phBig').hidden = false;
     if (!PH_FULL[id] && CREW) api('rpc/get_beer_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_beer: id})})
       .then(r => r.ok ? r.json() : null).then(d => { if (typeof d === 'string' && d.startsWith('data:image/jpeg;base64,')){ PH_FULL[id] = d; if (phCur === id){ img.src = d; img.classList.remove('loading'); } } })
@@ -1672,7 +1696,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   const phClose = () => { $('phBig').hidden = true; phCur = null; };
   $('phClose').addEventListener('click', phClose);
   $('phBig').addEventListener('click', e => { if (e.target.id === 'phBig') phClose(); });
-  $('phChange').addEventListener('click', () => { if (phCur) phPickFor(phCur); });
+  $('phChange').addEventListener('click', () => { if (!phCur) return; const id = phCur; phClose(); phPickFor(id); });
   $('phDel').addEventListener('click', () => {
     if (!phCur) return;
     if (!phDelSure){ phDelSure = true; $('phDel').textContent = 'Sûr ?'; clearTimeout(phDelT); phDelT = setTimeout(() => { phDelSure = false; $('phDel').textContent = 'Retirer la photo'; }, 3000); return; }
@@ -2061,11 +2085,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const t = await r.text(); return t ? JSON.parse(t) : null;
   };
   const adErr = msg => { $('adErr').textContent = msg; $('adErr').hidden = !msg; };
-  function adForget(){ AD = ''; try { localStorage.removeItem('mcb.admin'); } catch {} adShow(); adErr('Code admin refusé.'); }
+  function adForget(){ AD = ''; try { localStorage.removeItem('mcb.admin'); } catch {} render(); adShow(); adErr('Code admin refusé.'); }
   function adShow(){
     $('adLogin').hidden = !!AD; $('adBody').hidden = !AD; $('adOut').hidden = !AD;
     if (!AD){ $('adCode').value = ''; return; }
-    adRows(); adStatus();
+    adRows(); adStatus(); adPhFill();
     $('adNtWho').innerHTML = PEOPLE.map(p => `<button type="button" data-adw="${p.id}" aria-pressed="${adWho.has(p.id)}"><span class="mini">${avatarHTML(p.id)}</span>${p.name}</button>`).join('');
   }
   function adRows(){
@@ -2091,11 +2115,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       const r = await api('rpc/admin_check', {method: 'POST', body: JSON.stringify({p_admin: code})});
       if (!r.ok) throw new Error('net');
       if ((await r.json()) !== true){ adErr('Mauvais code admin.'); return; }
-      AD = code; try { localStorage.setItem('mcb.admin', code); } catch {} adErr(''); adShow(); toast('Mode admin activé. 管理');
+      AD = code; try { localStorage.setItem('mcb.admin', code); } catch {} adErr(''); adShow(); render(); toast('Mode admin activé. 管理');
     } catch { adErr('Pas de réseau. Réessaie dans un instant.'); }
   });
   $('adClose').addEventListener('click', () => { $('adModal').hidden = true; });
-  $('adOut').addEventListener('click', () => { AD = ''; try { localStorage.removeItem('mcb.admin'); } catch {} $('adModal').hidden = true; toast('Code admin oublié sur ce téléphone.'); });
+  $('adOut').addEventListener('click', () => { AD = ''; try { localStorage.removeItem('mcb.admin'); } catch {} $('adModal').hidden = true; render(); toast('Code admin oublié sur ce téléphone.'); });
   $('adNtWho').addEventListener('click', e => { const b = e.target.closest('[data-adw]'); if (!b) return;
     const w = b.dataset.adw; if (adWho.has(w)) adWho.delete(w); else adWho.add(w); b.setAttribute('aria-pressed', adWho.has(w)); });
   $('adRows').addEventListener('click', async e => {
@@ -2115,7 +2139,9 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     } catch (er) { if (er.message !== 'code') adErr(er.message === 'date' ? 'Heure invalide.' : 'Pas de réseau, rien n\'a changé.'); }
     b.disabled = false;
   });
-  async function adAfter(){ await sync(); adRows(); adStatus(); }
+  async function adAfter(){ await sync(); adRows(); adStatus(); adPhFill(); }
+  $('adPhCam').addEventListener('click', () => { const id = $('adPhSel').value; if (id) phPickFor(id, true); });
+  $('adPhLib').addEventListener('click', () => { const id = $('adPhSel').value; if (id) phPickFor(id, false); });
   $('adDel').addEventListener('click', async e => {
     const b = e.target.closest('[data-adrestore]'); if (!b) return; b.disabled = true;
     try { await adRpc('admin_set_deleted', {p_id: b.dataset.adrestore, p_deleted: false}); toast('Bière restaurée.'); await adAfter(); }
@@ -2151,7 +2177,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261102-202508';
+  const BUILD = '20261103-104217';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr'].some(id => $(id) && !$(id).hidden)
@@ -2172,7 +2198,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   });
   addEventListener('pageshow', e => { if (e.persisted) checkVersion(); });
   setTimeout(checkVersion, 4000); setInterval(() => { if (document.visibilityState === 'visible') checkVersion(); }, 10 * 60000);
-  $('phFile').addEventListener('cancel', () => { phTarget = null; });
+  for (const k of ['phFile', 'phCam']) $(k).addEventListener('cancel', () => { phTarget = null; });
 
   if (!CONFIGURED){ setStatus('setup'); readOnly("<b>Base non configurée.</b> Il manque l'URL et la clé Supabase en haut du script."); }
   else {
