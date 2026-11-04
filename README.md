@@ -63,7 +63,7 @@ On ouvre le lien de la bande sur son téléphone, on tape **+1** à chaque bièr
 **🚬 Le Clopédex 烟谱**
 - Un 4ᵉ onglet « 烟 Clopes » : la collection des paquets (et des clopes) croisés pendant le voyage, façon Pokédex (#001, #002…).
 - Photo prise directement dans l'app (ou depuis la galerie), nom, verdict en une ligne, ville remplie toute seule. Filtre par ville, fiche détaillée, et une slide dans le Wrapped.
-- Pas de compétition, juste la collection. Visible seulement avec le lien du groupe.
+- « Trouvé par » se règle à l'ajout et se corrige sur la fiche (pratique quand on ajoute le paquet d'un autre). Tout finit dans le Wrapped. Visible seulement avec le lien du groupe.
 
 **🐱 Meimei**
 - Elle est cachée un peu partout : dans le bandeau, au coin d'un écran, sous le classement…

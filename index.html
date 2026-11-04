@@ -635,7 +635,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         <div class="ph"><h2 id="h-cig"><span class="zh">烟谱</span>Clopédex</h2><p id="cigCount">…</p></div>
         <div class="cig-chips" id="cigChips"></div>
         <div class="cig-grid" id="cigGrid"></div>
-        <p class="cig-foot">Pas de compétition : juste la collection des paquets (et des clopes) croisés en route.</p>
+        <p class="cig-foot">Chaque trouvaille finira dans votre Ganbei Wrapped : photographiez tout ce qui passe.</p>
       </section>
     </div>
   </div>
@@ -723,6 +723,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   <input class="ad-in" id="cigName" maxlength="40" placeholder="Nom (ex. 冰淇淋, « le bleu au cheval »)" aria-label="Nom">
   <input class="ad-in" id="cigNote" maxlength="140" placeholder="Le verdict en une ligne (optionnel)" aria-label="Verdict">
   <label class="ad-time">Ville <select class="ad-in" id="cigCity"></select></label>
+  <label class="ad-time">Trouvé par <select class="ad-in" id="cigWho"></select></label>
   <p class="avc-err" id="cigErr" hidden></p>
   <div class="avc-b"><button type="button" class="sec" id="cigCancel">Annuler</button><button type="button" class="pri" id="cigSave">Ajouter</button></div>
 </div></div>
@@ -1748,12 +1749,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   const CIGC = Object.fromEntries(CIG_CITIES.map(c => [c.id, c]));
   const saveCigs = () => { try { localStorage.setItem('mcb.cigs', JSON.stringify({list: CIGS, t: CIG_THUMBS, v: CIG_VER})); } catch {} };
   const saveCigOut = () => { try { localStorage.setItem('mcb.cigOut', JSON.stringify(cigOut)); } catch {} };
-  const cigCan = c => canWrite && !!CREW && (c.who === ME || adminOn());
+  const cigCan = c => canWrite && !!CREW && !!ME;   // collection commune : tout le monde peut corriger une fiche (ex. la réattribuer)
   function cigList(){
     const map = new Map(CIGS.map(c => [c.id, {...c}]));
     for (const o of cigOut){
       if (o.op === 'add') map.set(o.row.id, {...o.row, pend: true});
-      else if (o.op === 'edit' && map.has(o.id)) Object.assign(map.get(o.id), {name: o.name, note: o.note, city: o.city});
+      else if (o.op === 'edit' && map.has(o.id)) Object.assign(map.get(o.id), {name: o.name, note: o.note, city: o.city}, o.who ? {who: o.who} : {});
       else if (o.op === 'del') map.delete(o.id);
     }
     return [...map.values()].sort((a, b) => a.at - b.at);
@@ -1783,7 +1784,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     try {
       const r = await api('rpc/list_cigs', {method: 'POST', body: JSON.stringify({p_crew: CREW})}); if (!r.ok) return;
       const list = await r.json(); if (!Array.isArray(list)) return;
-      let changed = JSON.stringify(list.map(c => [c.id, c.v, c.name, c.note, c.city])) !== JSON.stringify(CIGS.map(c => [c.id, c.v, c.name, c.note, c.city]));
+      let changed = JSON.stringify(list.map(c => [c.id, c.v, c.name, c.note, c.city, c.who])) !== JSON.stringify(CIGS.map(c => [c.id, c.v, c.name, c.note, c.city, c.who]));
       CIGS = list.map(c => ({id: c.id, who: c.who, name: c.name, note: c.note, city: c.city, at: Number(c.at), v: c.v}));
       const ids = new Set(CIGS.map(c => c.id)), pend = new Set(cigOut.map(o => o.op === 'add' ? o.row.id : o.id));
       for (const id of Object.keys(CIG_THUMBS)) if (!ids.has(id) && !pend.has(id)){ delete CIG_THUMBS[id]; delete CIG_VER[id]; changed = true; }
@@ -1804,7 +1805,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       while (cigOut.length){
         const o = cigOut[0]; let r;
         if (o.op === 'add') r = await api('rpc/add_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.row.id, p_who: o.row.who, p_name: o.row.name, p_note: o.row.note, p_city: o.row.city, p_at: o.row.at, p_thumb: o.thumb, p_img: o.img})});
-        else if (o.op === 'edit') r = await api('rpc/edit_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id, p_name: o.name, p_note: o.note, p_city: o.city, p_thumb: o.thumb || null, p_img: o.img || null})});
+        else if (o.op === 'edit') r = await api('rpc/edit_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id, p_name: o.name, p_note: o.note, p_city: o.city, p_who: o.who || null, p_thumb: o.thumb || null, p_img: o.img || null})});
         else r = await api('rpc/remove_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id})});
         if (r.status === 401 || r.status === 403) break;
         if (!r.ok && !(r.status >= 400 && r.status < 500 && r.status !== 408 && r.status !== 429)) break;
@@ -1826,6 +1827,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('cigName').value = c ? c.name : ''; $('cigNote').value = c ? c.note : '';
     const city = c ? c.city : (() => { const k = cityAt(Date.now(), ME); return CIGC[k] ? k : 'autre'; })();
     $('cigCity').innerHTML = CIG_CITIES.map(x => `<option value="${x.id}">${x.name} ${x.cn}</option>`).join(''); $('cigCity').value = city || 'autre';
+    $('cigWho').innerHTML = PEOPLE.map(x => `<option value="${x.id}">${x.name}</option>`).join(''); $('cigWho').value = c ? c.who : ME;
     const pv = $('cigPrev'), t = c && CIG_THUMBS[c.id];
     pv.classList.toggle('has', !!t); pv.innerHTML = t ? `<img src="${t}" alt="">` : '<span>📷</span>';
     $('cigCam').textContent = t ? '📷 Changer la photo' : '📷 Prendre la photo';
@@ -1846,16 +1848,16 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   $('cigCancel').addEventListener('click', () => { $('cigModal').hidden = true; cigDraft = null; });
   $('cigSave').addEventListener('click', () => {
     if (!cigDraft) return;
-    const name = $('cigName').value.trim().slice(0, 40), note = $('cigNote').value.trim().slice(0, 140), city = $('cigCity').value;
+    const name = $('cigName').value.trim().slice(0, 40), note = $('cigNote').value.trim().slice(0, 140), city = $('cigCity').value, who = PBY[$('cigWho').value] ? $('cigWho').value : ME;
     if (!cigDraft.id){
       if (!cigDraft.img){ $('cigErr').textContent = 'Il faut une photo du paquet (ou de la clope).'; $('cigErr').hidden = false; return; }
       const id = uuid(); CIG_THUMBS[id] = cigDraft.thumb; CIG_FULL[id] = cigDraft.img;
-      cigOut.push({op: 'add', row: {id, who: ME, name, note, city, at: Date.now()}, thumb: cigDraft.thumb, img: cigDraft.img});
+      cigOut.push({op: 'add', row: {id, who, name, note, city, at: Date.now()}, thumb: cigDraft.thumb, img: cigDraft.img});
       toast(`烟谱 +1 · ${name || 'Nouveau paquet'} entre au Clopédex !`); try { chime(); } catch {}
     } else {
       const id = cigDraft.id, a = cigOut.find(o => o.op === 'add' && o.row.id === id);
-      if (a){ Object.assign(a.row, {name, note, city}); if (cigDraft.img){ a.thumb = cigDraft.thumb; a.img = cigDraft.img; } }
-      else cigOut.push({op: 'edit', id, name, note, city, thumb: cigDraft.thumb, img: cigDraft.img});
+      if (a){ Object.assign(a.row, {name, note, city, who}); if (cigDraft.img){ a.thumb = cigDraft.thumb; a.img = cigDraft.img; } }
+      else cigOut.push({op: 'edit', id, name, note, city, who, thumb: cigDraft.thumb, img: cigDraft.img});
       if (cigDraft.img){ CIG_THUMBS[id] = cigDraft.thumb; CIG_FULL[id] = cigDraft.img; }
       toast('Fiche mise à jour.');
     }
@@ -2540,7 +2542,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261104-080945';
+  const BUILD = '20261104-091622';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
