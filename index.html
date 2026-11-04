@@ -326,6 +326,47 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .kind-grid button small{display:block;font:400 12px var(--f-cn);color:var(--ink-dim);margin-top:2px}
 .kind-grid button .e{display:block;font-size:22px;line-height:1.1}
 .kind-grid button[aria-pressed="true"]{border-color:var(--gold);background:#6d1408;box-shadow:0 0 0 2px rgba(255,201,60,.35)}
+.cig-chips{display:flex;gap:6px;margin:10px 0;overflow-x:auto;scrollbar-width:none}
+.cig-chips::-webkit-scrollbar{display:none}
+.cig-chips button{flex:none;padding:5px 11px;border-radius:999px;background:var(--lacquer-deep);font:700 13px var(--f-body);color:var(--ink-dim);border:1.5px solid rgba(255,201,60,.25);cursor:pointer}
+.cig-chips button small{font-family:var(--f-cn);font-weight:400;margin-left:3px}
+.cig-chips button[aria-pressed="true"]{background:var(--jade);border-color:var(--jade);color:#0c3d28}
+.cig-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cigc{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;background:var(--lacquer-deep);border:1.5px solid rgba(255,201,60,.35);border-radius:12px;padding:8px 6px 7px;color:var(--ink);font-family:var(--f-body);cursor:pointer;touch-action:manipulation}
+.cigc .no{position:absolute;z-index:2;left:5px;top:4px;background:var(--lacquer-deep);padding:0 3px;border-radius:4px;font:400 11px var(--f-display);color:var(--gold)}
+.cigc img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;border:2px solid var(--gold);box-shadow:0 4px 10px rgba(0,0,0,.4);background:#2a0206}
+.cigc .nm{max-width:100%;font-weight:700;font-size:13px;line-height:1.1;text-align:center;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cigc .ct{max-width:100%;font-size:11.5px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cigc.pend img{opacity:.6}
+.cigc.add{border-style:dashed;border-color:var(--jade);background:rgba(94,230,176,.08);color:var(--jade);font-weight:700;font-size:14px;justify-content:center;text-align:center;min-height:150px}
+.cigc.add .plus{font:400 34px/1 var(--f-display)}
+.cigc.unk{border-style:dashed;opacity:.5;cursor:default}
+.cigc.unk .sil{width:100%;aspect-ratio:3/4;border-radius:6px;background:rgba(0,0,0,.45);display:grid;place-items:center;font:400 26px var(--f-display);color:rgba(255,201,60,.5)}
+.cig-empty{grid-column:1/-1;text-align:center;color:var(--ink-dim);font-size:14.5px;margin:4px 0 0}
+.cig-foot{margin:10px 0 0;font-size:12.5px;color:var(--ink-dim);text-align:center}
+#cigModal{position:fixed;inset:0;z-index:59;display:flex;flex-direction:column;align-items:center;background:rgba(30,2,4,.86);overflow-y:auto;
+  padding:calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+#cigModal[hidden]{display:none}
+#cigModal .avc{margin:auto 0;flex:none}
+.cig-prev{width:150px;aspect-ratio:3/4;border-radius:10px;border:2.5px dashed rgba(255,201,60,.5);background:var(--lacquer-deep);display:grid;place-items:center;font-size:40px;overflow:hidden}
+.cig-prev img{width:100%;height:100%;object-fit:cover}
+.cig-prev.has{border-style:solid;border-color:var(--gold)}
+#cigView{position:fixed;inset:0;z-index:58;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(20,1,3,.94);overflow-y:auto;
+  padding:calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+#cigView[hidden]{display:none}
+.cig-card{width:min(100%,380px);background:linear-gradient(160deg,#fff8e6,#f3dfb3);border-radius:16px;padding:12px;color:#3a1500;border:4px solid var(--gold);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.cig-top{display:flex;justify-content:space-between;font:400 13px var(--f-display);color:#7A0A10}
+.cig-pic{margin:8px 0;border-radius:10px;border:2px solid #7A0A10;background:#2a0206;display:grid;place-items:center;overflow:hidden;max-height:calc(100dvh - 330px)}
+.cig-pic img{display:block;width:100%;max-height:calc(100dvh - 330px);object-fit:contain}
+.cig-pic img.loading{filter:blur(5px)}
+.cig-card h3{margin:0 0 6px;font:400 26px/1.05 var(--f-cn);color:#7A0A10;overflow-wrap:anywhere}
+.cig-card dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:14.5px}
+.cig-card dt{font-weight:700;color:#7A0A10} .cig-card dd{margin:0;overflow-wrap:anywhere}
+.cv-b{width:min(100%,380px)}
+.cv-b{flex-wrap:wrap}
+.cv-b button{flex:1 1 0;white-space:nowrap}
+.cv-b #cvPrev,.cv-b #cvNext{flex:0 0 46px;font-size:22px}
+.cv-b .wide{flex:1 1 100%}
 .kt-q{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
 .kt-q button{min-height:36px;border-radius:9px;border:1.5px solid rgba(255,243,217,.3);background:var(--lacquer-deep);color:var(--ink);font:700 13px var(--f-body);cursor:pointer;padding:0 2px;touch-action:manipulation}
 .kchip{display:inline;font:inherit;font-weight:700;color:var(--gold);background:rgba(255,201,60,.12);border:1px dashed rgba(255,201,60,.6);border-radius:7px;padding:1px 6px;cursor:pointer;white-space:nowrap}
@@ -372,12 +413,16 @@ textarea.ad-in{resize:vertical;min-height:70px}
 .ro b{color:var(--gold)}
 
 /* ---------- TABS ---------- */
-.tabs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--lacquer-deep);border-radius:12px;padding:4px;margin-top:8px}
+.tabs{position:relative;z-index:2;display:flex;gap:4px;background:var(--lacquer-deep);border-radius:12px;padding:4px;margin-top:8px}
 .tab,.tab b{white-space:nowrap}
-@media (max-width:380px){.tab{font-size:14px;gap:3px}.tab b{font-size:14px}}
-.tab{height:38px;border:none;border-radius:9px;background:transparent;color:var(--ink-dim);font:700 15px var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+@media (max-width:420px){.tab{font-size:13.5px;gap:3px}.tab b{font-size:14px}}
+@media (max-width:335px){.tab b{display:none}}
+@media (max-width:370px){.tab{font-size:12px;gap:2px;padding:0 1px;letter-spacing:-.01em}.tab b{font-size:12.5px}}
+.tab{flex:1 1 auto;min-width:0;padding:0 4px;height:38px;border:none;border-radius:9px;background:transparent;color:var(--ink-dim);font:700 15px var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .tab b{font-family:var(--f-cn);font-weight:400;font-size:16px}
 .tab[aria-selected="true"]{background:var(--gold);color:var(--lacquer-deep)}
+.tab-cig{color:var(--jade)}
+.tab-cig[aria-selected="true"]{background:var(--jade);color:#0c3d28}
 .pane{display:flex;flex-direction:column;gap:12px}
 .panel{background:var(--panel);border:1.5px solid rgba(255,201,60,.35);border-radius:12px;padding:14px 12px}
 .ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 10px}
@@ -539,6 +584,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       <button class="tab" role="tab" id="tab-stats" data-tab="stats" aria-controls="p-stats"><b>统计</b>Stats</button>
       <button class="tab" role="tab" id="tab-recs" data-tab="recs" aria-controls="p-recs"><b>纪录</b>Records</button>
       <button class="tab" role="tab" id="tab-log" data-tab="log" aria-controls="p-log"><b>日志</b>Journal</button>
+      <button class="tab tab-cig" role="tab" id="tab-cig" data-tab="cig" aria-controls="p-cig"><b>烟</b>Clopes</button>
     </div>
 
     <div class="pane" id="p-stats" role="tabpanel" aria-labelledby="tab-stats">
@@ -581,6 +627,15 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         <div class="ph"><h2 id="h-log"><span class="zh">日志</span>Journal</h2><p>30 dernières</p></div>
         <div class="phwall" id="phWall" hidden></div>
         <ul class="log" id="log"></ul>
+      </section>
+    </div>
+
+    <div class="pane" id="p-cig" role="tabpanel" aria-labelledby="tab-cig" hidden>
+      <section class="panel cig-panel" aria-labelledby="h-cig">
+        <div class="ph"><h2 id="h-cig"><span class="zh">烟谱</span>Clopédex</h2><p id="cigCount">…</p></div>
+        <div class="cig-chips" id="cigChips"></div>
+        <div class="cig-grid" id="cigGrid"></div>
+        <p class="cig-foot">Pas de compétition : juste la collection des paquets (et des clopes) croisés en route.</p>
       </section>
     </div>
   </div>
@@ -659,6 +714,27 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     <button type="button" class="sec" id="ntClose">Fermer</button>
   </div>
 </div></div>
+<input type="file" id="cigFileLib" accept="image/*" hidden>
+<input type="file" id="cigFileCam" accept="image/*" capture="environment" hidden>
+<div id="cigModal" hidden><div class="avc" role="dialog" aria-labelledby="cigMTitle">
+  <p class="avc-t"><b>烟谱</b><span id="cigMTitle">Nouveau paquet</span></p>
+  <div class="cig-prev" id="cigPrev"><span>📷</span></div>
+  <div class="avc-b"><button type="button" class="pri" id="cigCam" style="flex:1 1 70%">📷 Prendre la photo</button><button type="button" class="sec" id="cigLib" style="flex:0 0 52px" aria-label="Choisir dans la galerie">🖼️</button></div>
+  <input class="ad-in" id="cigName" maxlength="40" placeholder="Nom (ex. 冰淇淋, « le bleu au cheval »)" aria-label="Nom">
+  <input class="ad-in" id="cigNote" maxlength="140" placeholder="Le verdict en une ligne (optionnel)" aria-label="Verdict">
+  <label class="ad-time">Ville <select class="ad-in" id="cigCity"></select></label>
+  <p class="avc-err" id="cigErr" hidden></p>
+  <div class="avc-b"><button type="button" class="sec" id="cigCancel">Annuler</button><button type="button" class="pri" id="cigSave">Ajouter</button></div>
+</div></div>
+<div id="cigView" hidden role="dialog" aria-label="Fiche du Clopédex">
+  <div class="cig-card">
+    <div class="cig-top"><span id="cvNo">#001</span><span>烟谱 CLOPÉDEX</span><span id="cvPos">1 / 1</span></div>
+    <div class="cig-pic"><img id="cvImg" alt=""></div>
+    <h3 id="cvName"></h3>
+    <dl><dt>Ville</dt><dd id="cvCity"></dd><dt>Trouvé par</dt><dd id="cvWho"></dd><dt id="cvNoteK">Le verdict</dt><dd id="cvNote"></dd></dl>
+  </div>
+  <div class="avc-b cv-b"><button type="button" class="sec" id="cvPrev" aria-label="Précédent">‹</button><button type="button" class="sec" id="cvEdit" hidden>✎ Modifier</button><button type="button" class="sec" id="cvDel" hidden>Retirer</button><button type="button" class="sec" id="cvNext" aria-label="Suivant">›</button><button type="button" class="pri wide" id="cvClose">Fermer</button></div>
+</div>
 <div id="kindModal" hidden><div class="avc" role="dialog" aria-labelledby="kindTitle">
   <p class="avc-t" id="kindTitle"><b>喝什么</b>C'était quoi ?</p>
   <p class="avc-s" id="kindSub"></p>
@@ -819,6 +895,11 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   try { const c = JSON.parse(localStorage.getItem('mcb.phThumbs') || 'null'); if (c && c.t && c.v){ PH_THUMBS = c.t; PH_VER = c.v; } } catch {}
   let phOut = []; try { phOut = JSON.parse(localStorage.getItem('mcb.phOut') || '[]'); if (!Array.isArray(phOut)) phOut = []; } catch { phOut = []; }
   for (const o of phOut) if (!o.del && o.thumb) PH_THUMBS[o.id] = o.thumb;
+  // Clopédex : liste (sans images) + miniatures en cache, file d'attente hors ligne
+  let CIGS = [], CIG_THUMBS = {}, CIG_VER = {}, cigOut = []; const CIG_FULL = {};
+  try { const c = JSON.parse(localStorage.getItem('mcb.cigs') || 'null'); if (c && Array.isArray(c.list)){ CIGS = c.list; CIG_THUMBS = c.t || {}; CIG_VER = c.v || {}; } } catch {}
+  try { cigOut = JSON.parse(localStorage.getItem('mcb.cigOut') || '[]'); if (!Array.isArray(cigOut)) cigOut = []; } catch { cigOut = []; }
+  let cigFilter = 'all', cigCur = null, lastCigCheck = 0, cigBusy = false;
   // Who is holding this phone: each phone only logs its owner's beers
   let ME = (() => { try { const m = localStorage.getItem('mcb.me'); return PBY[m] ? m : ''; } catch { return ''; } })();
   const avatarHTML = who => PHOTOS[who] ? `<img class="pic" src="${PHOTOS[who]}" alt="${PBY[who].name}">` : AVSVG[who];
@@ -945,7 +1026,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
                   set(k,v){ try{ localStorage.setItem(k,v); }catch{} } };
   let brand = 'biere';
   let soundOn = store.get('ganbei.sound','1') === '1';
-  let tab = ['stats','recs','log'].includes(store.get('ganbei.tab','stats')) ? store.get('ganbei.tab','stats') : 'stats';
+  let tab = ['stats','recs','log','cig'].includes(store.get('ganbei.tab','stats')) ? store.get('ganbei.tab','stats') : 'stats';
 
   // ---------- state ----------
   let db = null, canWrite = true, beers = [], bumped = null, pendingDel = null, pendingTimer = null;
@@ -1006,7 +1087,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- tabs ----------
   function showTab(t){ tab = t; store.set('ganbei.tab', t);
     for (const b of document.querySelectorAll('.tab')) b.setAttribute('aria-selected', String(b.dataset.tab === t));
-    for (const k of ['stats','recs','log']) $('p-'+k).hidden = k !== t; }
+    for (const k of ['stats','recs','log','cig']) $('p-'+k).hidden = k !== t;
+    if (t === 'cig') setTimeout(() => { cigRender(); loadCigs(); }); }
   document.querySelector('.tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showTab(b.dataset.tab); });
 
   // ---------- sound ----------
@@ -1377,6 +1459,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       if (Date.now() - lastAvCheck > 30000) loadAvatars();
       if (Date.now() - lastPhCheck > 20000) loadPhotos();
       if (phOut.length) phFlush();
+      if (cigOut.length) cigFlush();
+      if (Date.now() - lastCigCheck > (tab === 'cig' ? 15000 : 60000)) loadCigs();
     } catch (e) {
       setStatus(outbox.length ? 'pending' : 'off', `${outbox.length} en attente d'envoi`);
     } finally { syncing = false; }
@@ -1659,6 +1743,157 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const box = $('toasts'); box.appendChild(t); while (box.children.length > 3) box.firstChild.remove();
     setTimeout(() => t.remove(), ms);
   }
+  // ---------- Clopédex 烟谱 ----------
+  const CIG_CITIES = [...CITIES, {id: 'autre', name: 'Ailleurs', cn: '别处'}];
+  const CIGC = Object.fromEntries(CIG_CITIES.map(c => [c.id, c]));
+  const saveCigs = () => { try { localStorage.setItem('mcb.cigs', JSON.stringify({list: CIGS, t: CIG_THUMBS, v: CIG_VER})); } catch {} };
+  const saveCigOut = () => { try { localStorage.setItem('mcb.cigOut', JSON.stringify(cigOut)); } catch {} };
+  const cigCan = c => canWrite && !!CREW && (c.who === ME || adminOn());
+  function cigList(){
+    const map = new Map(CIGS.map(c => [c.id, {...c}]));
+    for (const o of cigOut){
+      if (o.op === 'add') map.set(o.row.id, {...o.row, pend: true});
+      else if (o.op === 'edit' && map.has(o.id)) Object.assign(map.get(o.id), {name: o.name, note: o.note, city: o.city});
+      else if (o.op === 'del') map.delete(o.id);
+    }
+    return [...map.values()].sort((a, b) => a.at - b.at);
+  }
+  function cigRender(){
+    const all = cigList(), cities = [...new Set(all.map(c => c.city).filter(Boolean))];
+    if (cigFilter !== 'all' && !cities.includes(cigFilter)) cigFilter = 'all';
+    $('cigCount').textContent = all.length ? `${all.length} trouvaille${all.length > 1 ? 's' : ''} · ${cities.filter(c => c !== 'autre').length} ville${cities.length > 1 ? 's' : ''}` : 'collection vide';
+    $('cigChips').innerHTML = all.length ? [`<button type="button" data-cf="all" aria-pressed="${cigFilter === 'all'}">Tous</button>`,
+      ...CIG_CITIES.filter(c => cities.includes(c.id)).map(c => `<button type="button" data-cf="${c.id}" aria-pressed="${cigFilter === c.id}">${c.name}<small>${c.cn}</small></button>`)].join('') : '';
+    const shown = all.map((c, i) => [c, i + 1]).filter(([c]) => cigFilter === 'all' || c.city === cigFilter);
+    let h = shown.map(([c, n]) => `<button type="button" class="cigc${c.pend ? ' pend' : ''}" data-cig="${c.id}"><span class="no">#${String(n).padStart(3, '0')}</span>
+      <img src="${CIG_THUMBS[c.id] || ''}" alt="">${''}<span class="nm">${esc(c.name) || 'Sans nom'}</span><span class="ct">${c.pend ? '⏳ envoi…' : `📍 ${c.city ? CIGC[c.city].name : '?'} · ${PBY[c.who] ? PBY[c.who].name : ''}`}</span></button>`).join('');
+    if (canWrite && CREW) h += `<button type="button" class="cigc add" id="cigAdd"><span class="plus">+</span>Nouveau<br>paquet</button>`;
+    if (cigFilter === 'all') for (let k = 1; k <= (all.length ? 2 : 1); k++) h += `<div class="cigc unk" aria-hidden="true"><span class="no">#${String(all.length + k).padStart(3, '0')}</span><div class="sil">?</div><span class="nm">???</span></div>`;
+    if (!all.length) h += `<p class="cig-empty">Le premier paquet chinois croisé ouvre le Clopédex. Meimei attend.</p>`;
+    $('cigGrid').innerHTML = h;
+  }
+  function esc(t){ return String(t || '').replace(/[&<>"']/g, ch => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[ch])); }
+  $('cigChips').addEventListener('click', e => { const b = e.target.closest('[data-cf]'); if (b){ cigFilter = b.dataset.cf; cigRender(); } });
+  $('cigGrid').addEventListener('click', e => {
+    if (e.target.closest('#cigAdd')){ cigEdit(null); return; }
+    const c = e.target.closest('[data-cig]'); if (c) cigOpen(c.dataset.cig);
+  });
+  async function loadCigs(){
+    lastCigCheck = Date.now(); if (!CREW || !crewOk) return;
+    try {
+      const r = await api('rpc/list_cigs', {method: 'POST', body: JSON.stringify({p_crew: CREW})}); if (!r.ok) return;
+      const list = await r.json(); if (!Array.isArray(list)) return;
+      let changed = JSON.stringify(list.map(c => [c.id, c.v, c.name, c.note, c.city])) !== JSON.stringify(CIGS.map(c => [c.id, c.v, c.name, c.note, c.city]));
+      CIGS = list.map(c => ({id: c.id, who: c.who, name: c.name, note: c.note, city: c.city, at: Number(c.at), v: c.v}));
+      const ids = new Set(CIGS.map(c => c.id)), pend = new Set(cigOut.map(o => o.op === 'add' ? o.row.id : o.id));
+      for (const id of Object.keys(CIG_THUMBS)) if (!ids.has(id) && !pend.has(id)){ delete CIG_THUMBS[id]; delete CIG_VER[id]; changed = true; }
+      const need = CIGS.filter(c => !pend.has(c.id) && (!CIG_THUMBS[c.id] || CIG_VER[c.id] !== c.v)).map(c => c.id);
+      for (let k = 0; k < need.length; k += 60){
+        const part = need.slice(k, k + 60);
+        const r2 = await api('rpc/get_cig_thumbs', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_ids: part})}); if (!r2.ok) break;
+        const got = await r2.json();
+        for (const id of part) if (typeof got[id] === 'string' && got[id].startsWith('data:image/jpeg;base64,')){
+          CIG_THUMBS[id] = got[id]; CIG_VER[id] = CIGS.find(c => c.id === id).v; delete CIG_FULL[id]; changed = true; }
+      }
+      if (changed){ saveCigs(); if (tab === 'cig') cigRender(); if (!$('cigView').hidden && cigCur) cigOpen(cigCur); }
+    } catch {}
+  }
+  async function cigFlush(){
+    if (cigBusy || !cigOut.length || !CREW || !crewOk) return; cigBusy = true;
+    try {
+      while (cigOut.length){
+        const o = cigOut[0]; let r;
+        if (o.op === 'add') r = await api('rpc/add_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.row.id, p_who: o.row.who, p_name: o.row.name, p_note: o.row.note, p_city: o.row.city, p_at: o.row.at, p_thumb: o.thumb, p_img: o.img})});
+        else if (o.op === 'edit') r = await api('rpc/edit_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id, p_name: o.name, p_note: o.note, p_city: o.city, p_thumb: o.thumb || null, p_img: o.img || null})});
+        else r = await api('rpc/remove_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id})});
+        if (r.status === 401 || r.status === 403) break;
+        if (!r.ok && !(r.status >= 400 && r.status < 500 && r.status !== 408 && r.status !== 429)) break;
+        if (!r.ok) toast('Le serveur a refusé une entrée du Clopédex.');
+        cigOut.shift(); saveCigOut();
+      }
+      lastCigCheck = 0; await loadCigs(); if (tab === 'cig') cigRender();
+    } catch {} finally { cigBusy = false; }
+  }
+  // ajout / modification
+  let cigDraft = null;
+  function cigEdit(id){
+    if (!CREW){ askCrew(); return; }
+    if (!ME){ whoOpen(); return; }
+    const c = id ? cigList().find(x => x.id === id) : null; if (id && !c) return;
+    cigDraft = {id, thumb: null, img: null};
+    $('cigMTitle').textContent = c ? 'Modifier la fiche' : 'Nouveau paquet';
+    $('cigSave').textContent = c ? 'Enregistrer' : 'Ajouter au Clopédex';
+    $('cigName').value = c ? c.name : ''; $('cigNote').value = c ? c.note : '';
+    const city = c ? c.city : (() => { const k = cityAt(Date.now(), ME); return CIGC[k] ? k : 'autre'; })();
+    $('cigCity').innerHTML = CIG_CITIES.map(x => `<option value="${x.id}">${x.name} ${x.cn}</option>`).join(''); $('cigCity').value = city || 'autre';
+    const pv = $('cigPrev'), t = c && CIG_THUMBS[c.id];
+    pv.classList.toggle('has', !!t); pv.innerHTML = t ? `<img src="${t}" alt="">` : '<span>📷</span>';
+    $('cigCam').textContent = t ? '📷 Changer la photo' : '📷 Prendre la photo';
+    $('cigErr').hidden = true; $('cigModal').hidden = false;
+  }
+  const cigPick = cam => { const f = $(cam ? 'cigFileCam' : 'cigFileLib'); f.value = ''; phTarget = 'cig'; f.click(); };
+  $('cigCam').addEventListener('click', () => cigPick(true));
+  $('cigLib').addEventListener('click', () => cigPick(false));
+  const cigPicked = async e => {
+    phTarget = null; const f = e.target.files && e.target.files[0]; if (!f || !cigDraft) return;
+    $('cigPrev').innerHTML = '<span>⏳</span>';
+    try { const r = await phProcess(f, 240, 320); cigDraft.thumb = r.thumb; cigDraft.img = r.img;
+      $('cigPrev').classList.add('has'); $('cigPrev').innerHTML = `<img src="${r.thumb}" alt="">`; $('cigCam').textContent = '📷 Changer la photo'; $('cigErr').hidden = true; }
+    catch { $('cigPrev').innerHTML = '<span>📷</span>'; $('cigErr').textContent = 'Impossible de lire cette photo. Essaie une photo JPEG ou PNG.'; $('cigErr').hidden = false; }
+  };
+  $('cigFileCam').addEventListener('change', cigPicked); $('cigFileLib').addEventListener('change', cigPicked);
+  for (const k of ['cigFileCam', 'cigFileLib']) $(k).addEventListener('cancel', () => { phTarget = null; });
+  $('cigCancel').addEventListener('click', () => { $('cigModal').hidden = true; cigDraft = null; });
+  $('cigSave').addEventListener('click', () => {
+    if (!cigDraft) return;
+    const name = $('cigName').value.trim().slice(0, 40), note = $('cigNote').value.trim().slice(0, 140), city = $('cigCity').value;
+    if (!cigDraft.id){
+      if (!cigDraft.img){ $('cigErr').textContent = 'Il faut une photo du paquet (ou de la clope).'; $('cigErr').hidden = false; return; }
+      const id = uuid(); CIG_THUMBS[id] = cigDraft.thumb; CIG_FULL[id] = cigDraft.img;
+      cigOut.push({op: 'add', row: {id, who: ME, name, note, city, at: Date.now()}, thumb: cigDraft.thumb, img: cigDraft.img});
+      toast(`烟谱 +1 · ${name || 'Nouveau paquet'} entre au Clopédex !`); try { chime(); } catch {}
+    } else {
+      const id = cigDraft.id, a = cigOut.find(o => o.op === 'add' && o.row.id === id);
+      if (a){ Object.assign(a.row, {name, note, city}); if (cigDraft.img){ a.thumb = cigDraft.thumb; a.img = cigDraft.img; } }
+      else cigOut.push({op: 'edit', id, name, note, city, thumb: cigDraft.thumb, img: cigDraft.img});
+      if (cigDraft.img){ CIG_THUMBS[id] = cigDraft.thumb; CIG_FULL[id] = cigDraft.img; }
+      toast('Fiche mise à jour.');
+    }
+    saveCigOut(); saveCigs(); $('cigModal').hidden = true; const was = cigDraft.id; cigDraft = null;
+    cigRender(); if (was && !$('cigView').hidden) cigOpen(was); cigFlush();
+  });
+  // fiche
+  let cvDelSure = false;
+  function cigOpen(id){
+    const all = cigList(), i = all.findIndex(c => c.id === id); if (i < 0){ $('cigView').hidden = true; return; }
+    const c = all[i]; cigCur = id; cvDelSure = false; $('cvDel').textContent = 'Retirer';
+    $('cvNo').textContent = '#' + String(i + 1).padStart(3, '0'); $('cvPos').textContent = `${i + 1} / ${all.length}`;
+    const img = $('cvImg'); img.src = CIG_FULL[id] || CIG_THUMBS[id] || ''; img.classList.toggle('loading', !CIG_FULL[id]);
+    $('cvName').textContent = c.name || 'Sans nom';
+    $('cvCity').textContent = c.city ? `📍 ${CIGC[c.city].name} ${CIGC[c.city].cn}` : '?';
+    const t = sh(c.at); $('cvWho').textContent = `${PBY[c.who] ? PBY[c.who].name : c.who} · ${dayLabel(t.date)} ${hm(t.h, t.m)}`;
+    $('cvNote').textContent = c.note ? `« ${c.note} »` : '…';
+    $('cvEdit').hidden = $('cvDel').hidden = !cigCan(c);
+    $('cvPrev').disabled = i === 0; $('cvNext').disabled = i === all.length - 1;
+    $('cigView').hidden = false;
+    if (!CIG_FULL[id] && CREW && !c.pend) api('rpc/get_cig_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: id})})
+      .then(r => r.ok ? r.json() : null).then(d => { if (typeof d === 'string' && d.startsWith('data:image/jpeg;base64,')){ CIG_FULL[id] = d; if (cigCur === id){ img.src = d; img.classList.remove('loading'); } } }).catch(() => {});
+  }
+  const cvClose = () => { $('cigView').hidden = true; cigCur = null; };
+  $('cvClose').addEventListener('click', cvClose);
+  $('cigView').addEventListener('click', e => { if (e.target.id === 'cigView') cvClose(); });
+  $('cvPrev').addEventListener('click', () => { const all = cigList(), i = all.findIndex(c => c.id === cigCur); if (i > 0) cigOpen(all[i - 1].id); });
+  $('cvNext').addEventListener('click', () => { const all = cigList(), i = all.findIndex(c => c.id === cigCur); if (i >= 0 && i < all.length - 1) cigOpen(all[i + 1].id); });
+  $('cvEdit').addEventListener('click', () => { if (cigCur) cigEdit(cigCur); });
+  $('cvDel').addEventListener('click', () => {
+    if (!cigCur) return;
+    if (!cvDelSure){ cvDelSure = true; $('cvDel').textContent = 'Sûr ?'; setTimeout(() => { cvDelSure = false; $('cvDel').textContent = 'Retirer'; }, 3000); return; }
+    const id = cigCur, a = cigOut.findIndex(o => o.op === 'add' && o.row.id === id);
+    if (a >= 0 && !(a === 0 && cigBusy)) cigOut.splice(a, 1); else cigOut.push({op: 'del', id});
+    saveCigOut(); cvClose(); cigRender(); toast('Retiré du Clopédex.'); cigFlush();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('cigView').hidden) cvClose(); });
+
   // ---------- type du verre : correction après coup ----------
   let kindFor = null;
   function kindOpen(id){
@@ -1733,7 +1968,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     while (d.length > max && q > .35){ q -= .08; d = cv.toDataURL('image/jpeg', q); }
     return d.length <= max ? d : null;
   }
-  async function phProcess(file){
+  async function phProcess(file, TW = 200, TH = 200){
     const im = await phLoad(file), w0 = im.naturalWidth, h0 = im.naturalHeight; if (!w0 || !h0) throw new Error('image');
     let side = 1280, img = null;
     while (!img && side >= 480){
@@ -1741,8 +1976,9 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       cv.width = Math.round(w0 * k); cv.height = Math.round(h0 * k);
       cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); img = phJpeg(cv, 420000); side -= 320;
     }
-    const T = 200, tc = document.createElement('canvas'); tc.width = tc.height = T;
-    const m = Math.min(w0, h0); tc.getContext('2d').drawImage(im, (w0 - m) / 2, (h0 - m) / 2, m, m, 0, 0, T, T);
+    const tc = document.createElement('canvas'); tc.width = TW; tc.height = TH;
+    const k2 = Math.max(TW / w0, TH / h0), sw = TW / k2, sh2 = TH / k2;
+    tc.getContext('2d').drawImage(im, (w0 - sw) / 2, (h0 - sh2) / 2, sw, sh2, 0, 0, TW, TH);
     const thumb = phJpeg(tc, 30000);
     try { URL.revokeObjectURL(im.src); } catch {}
     if (!img || !thumb) throw new Error('trop lourde');
@@ -2118,6 +2354,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       S.push({bg: 'bg-night', h: `<p class="wr-k">Le mur des bières</p><div class="wr-wall">${sel.map((b, k) => `<img src="${PH_THUMBS[b.id]}" alt="" style="transform:rotate(${[-4, 3, -2, 2, -3, 4, -1, 3, -4][k]}deg)">`).join('')}</div>
         <p class="wr-p"><b>${phB.length}</b> photo${phB.length > 1 ? 's' : ''} pour la postérité${mineN ? `, dont <b>${mineN}</b> par toi` : ''}.</p>`});
     }
+    const cl = cigList().filter(c => CIG_THUMBS[c.id]);
+    if (cl.length){
+      const mineC = cl.filter(c => c.who === d.me).length, pick = cl.slice(-6);
+      S.push({bg: 'bg-jade', h: `<p class="wr-k">Le Clopédex 烟谱</p><p class="wr-big">${cl.length}</p><p class="wr-h">trouvaille${cl.length > 1 ? 's' : ''}</p><div class="wr-wall">${pick.map((c, k) => `<img src="${CIG_THUMBS[c.id]}" alt="" style="aspect-ratio:3/4;transform:rotate(${[-4, 3, -2, 2, -3, 4][k]}deg)">`).join('')}</div>
+        <p class="wr-p">${mineC ? `Dont <b>${mineC}</b> trouvée${mineC > 1 ? 's' : ''} par toi.` : 'Aucune par toi : les autres ont fait le boulot.'}</p>`});
+    }
     S.push({bg: 'bg-snow', snow: true, h: `<p class="wr-k">Interlude</p><img class="wr-egg" src="${EGG.sticker}" alt=""><p class="wr-h">XUE HUA PIAO PIAO</p><p class="wr-cn" style="font-size:clamp(46px,14vw,72px);color:#fff;text-shadow:0 0 18px #5CC8FF,0 4px 0 #0b2547">雪花飘飘</p><p class="wr-p">Brother Egg 蛋哥 salue ton voyage. La neige tombe, la bière reste.</p>`});
     S.push({bg: 'bg-red', end: true, h: `<img class="wr-mm" src="${MM.head5}" alt=""><p class="wr-cn" style="font-size:clamp(50px,16vw,84px)">一路平安</p><p class="wr-h">Bon retour, ${P.name}</p><p class="wr-p">Meimei a tout vu. Rendez-vous pour le prochain million.</p>
       <div class="wr-btns"><button type="button" class="pri" data-wr="share">📸 Partager mon Wrapped</button><button type="button" class="sec" data-wr="again">Revoir</button></div>`});
@@ -2298,10 +2540,10 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261103-195117';
+  const BUILD = '20261104-080945';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
-    || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr'].some(id => $(id) && !$(id).hidden)
+    || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
     || (document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName));
   async function checkVersion(){
     if (verBusy || BUILD.startsWith('__') || !navigator.onLine) return; verBusy = true;
