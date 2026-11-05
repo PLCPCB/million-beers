@@ -350,6 +350,43 @@ main .inner{display:flex;flex-direction:column;gap:10px}
 .cigc.add .plus{font:400 34px/1 var(--f-display)}
 .cigc.unk{border-style:dashed;opacity:.5;cursor:default}
 .cigc.unk .sil{width:100%;aspect-ratio:3/4;border-radius:6px;background:rgba(0,0,0,.45);display:grid;place-items:center;font:400 26px var(--f-display);color:rgba(255,201,60,.5)}
+/* cadres : couleur du paquet (--c) x 6 styles, attribués à chaque carte */
+.cigc.fr{border:3px solid var(--c);box-shadow:0 0 10px color-mix(in srgb,var(--c) 45%,transparent)}
+.cigc.fr img{border-color:var(--c)}
+.cigc.fr.dark{outline:1.5px solid rgba(255,201,60,.55);outline-offset:-5px}
+.cigc .seal{position:absolute;z-index:3;right:3px;top:3px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:400 13px/1 var(--f-cn);color:var(--sc);background:var(--c);transform:rotate(var(--rot,10deg));box-shadow:0 2px 5px rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.55)}
+.fr-double{box-shadow:inset 0 0 0 2px var(--lacquer-deep),inset 0 0 0 3.5px var(--gold),0 0 10px color-mix(in srgb,var(--c) 45%,transparent)!important}
+.fr-corners{border-width:2px!important;background:linear-gradient(var(--gold),var(--gold)) 2px 2px/14px 3px no-repeat,linear-gradient(var(--gold),var(--gold)) 2px 2px/3px 14px no-repeat,
+  linear-gradient(var(--gold),var(--gold)) calc(100% - 2px) 2px/14px 3px no-repeat,linear-gradient(var(--gold),var(--gold)) calc(100% - 2px) 2px/3px 14px no-repeat,
+  linear-gradient(var(--gold),var(--gold)) 2px calc(100% - 2px)/14px 3px no-repeat,linear-gradient(var(--gold),var(--gold)) 2px calc(100% - 2px)/3px 14px no-repeat,
+  linear-gradient(var(--gold),var(--gold)) calc(100% - 2px) calc(100% - 2px)/14px 3px no-repeat,linear-gradient(var(--gold),var(--gold)) calc(100% - 2px) calc(100% - 2px)/3px 14px no-repeat,var(--lacquer-deep)!important}
+.fr-meander{border:5px solid transparent!important;border-image:repeating-linear-gradient(45deg,var(--c) 0 5px,var(--gold) 5px 7px) 6!important}
+.fr-stamp{border:3px dotted var(--c)!important;box-shadow:inset 0 0 0 3px var(--c),0 0 10px color-mix(in srgb,var(--c) 45%,transparent)!important}
+.fr-lacquer{border-width:4px!important;border-radius:18px!important;box-shadow:inset 0 0 0 2px rgba(255,201,60,.85),0 0 14px color-mix(in srgb,var(--c) 60%,transparent)!important}
+.fr-ticket{clip-path:polygon(9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px),0 9px)}
+.cigc .rib{max-width:100%;padding:1px 6px;border-radius:999px;background:var(--gold);color:var(--lacquer-deep);font:700 10.5px/1.3 var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cigc .rib b{font:400 11px var(--f-cn)}
+.cigc.sp-first{border-color:#FFC93C!important;animation:spglow 2.4s ease-in-out infinite}
+.cigc.sp-first::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,240,180,.45) 42%,transparent 54%) 0 0/250% 100%;animation:spshine 3s linear infinite}
+.cigc.sp-city{animation:spglow2 3s ease-in-out infinite}
+@keyframes spglow{0%,100%{box-shadow:0 0 10px rgba(255,201,60,.5)}50%{box-shadow:0 0 22px rgba(255,201,60,.95)}}
+@keyframes spglow2{0%,100%{filter:none}50%{filter:drop-shadow(0 0 7px color-mix(in srgb,var(--c) 80%,transparent))}}
+@keyframes spshine{from{background-position:120% 0}to{background-position:-120% 0}}
+@media (prefers-reduced-motion:reduce){.cigc.sp-first,.cigc.sp-first::after,.cigc.sp-city{animation:none}}
+.cig-colrow{align-self:stretch;display:flex;flex-direction:column;gap:6px}
+.cig-cols{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.cig-cols button{aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:var(--c);color:var(--sc);font:400 13px/1 var(--f-cn);cursor:pointer;padding:0;touch-action:manipulation}
+.cig-cols button[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 2px var(--gold),0 0 10px var(--c);transform:scale(1.12)}
+.cig-prev{position:relative;cursor:crosshair}
+.cig-prev .pin{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.5);pointer-events:none}
+.cig-card.fr{border-color:var(--c)}
+.cig-card{position:relative}
+.cig-card .seal{position:absolute;right:10px;top:34px;z-index:2;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:400 24px/1 var(--f-cn);color:var(--sc);background:var(--c);transform:rotate(var(--rot,10deg));box-shadow:0 3px 8px rgba(0,0,0,.45);border:2px solid #fff}
+.cig-card button.seal{cursor:pointer;padding:0;touch-action:manipulation}
+.cig-card button.seal::after{content:"✎";position:absolute;right:-6px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:#fff;color:#7A0A10;font:700 11px/18px var(--f-body);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.cv-cols{position:absolute;z-index:3;right:8px;top:86px;width:min(260px,calc(100% - 16px));grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;padding:8px;border-radius:12px;background:#fff8e6;border:2px solid #7A0A10;box-shadow:0 8px 20px rgba(0,0,0,.45)}
+.cv-rib{margin:0 0 6px;display:inline-block;padding:2px 10px;border-radius:999px;background:#7A0A10;color:#FFC93C;font:700 13.5px var(--f-body)}
+.cv-rib b{font:400 15px var(--f-cn)}
 .cig-empty{grid-column:1/-1;text-align:center;color:var(--ink-dim);font-size:14.5px;margin:4px 0 0}
 .cig-foot{margin:10px 0 0;font-size:12.5px;color:var(--ink-dim);text-align:center}
 #cigModal{position:fixed;inset:0;z-index:59;display:flex;flex-direction:column;align-items:center;background:rgba(30,2,4,.86);overflow-y:auto;
@@ -727,6 +764,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
 <div id="cigModal" hidden><div class="avc" role="dialog" aria-labelledby="cigMTitle">
   <p class="avc-t"><b>烟谱</b><span id="cigMTitle">Nouveau paquet</span></p>
   <div class="cig-prev" id="cigPrev"><span>📷</span></div>
+  <div class="cig-colrow" id="cigColRow" hidden><p class="ad-small" id="cigColHint">Couleur du paquet. Touche le paquet sur la photo, ou choisis :</p><div class="cig-cols" id="cigCols"></div></div>
   <div class="avc-b"><button type="button" class="pri" id="cigCam" style="flex:1 1 70%">📷 Prendre la photo</button><button type="button" class="sec" id="cigLib" style="flex:0 0 52px" aria-label="Choisir dans la galerie">🖼️</button></div>
   <input class="ad-in" id="cigName" maxlength="40" placeholder="Nom (ex. 冰淇淋, « le bleu au cheval »)" aria-label="Nom">
   <input class="ad-in" id="cigNote" maxlength="140" placeholder="Le verdict en une ligne (optionnel)" aria-label="Verdict">
@@ -740,6 +778,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     <div class="cig-top"><span id="cvNo">#001</span><span>烟谱 CLOPÉDEX</span><span id="cvPos">1 / 1</span></div>
     <div class="cig-pic"><img id="cvImg" alt=""></div>
     <h3 id="cvName"></h3>
+    <p class="cv-rib" id="cvRib" hidden></p>
     <dl><dt>Ville</dt><dd id="cvCity"></dd><dt>Trouvé par</dt><dd id="cvWho"></dd><dt id="cvNoteK">Le verdict</dt><dd id="cvNote"></dd></dl>
   </div>
   <div class="avc-b cv-b"><button type="button" class="sec" id="cvPrev" aria-label="Précédent">‹</button><button type="button" class="sec" id="cvEdit" hidden>✎ Modifier</button><button type="button" class="sec" id="cvDel" hidden>Retirer</button><button type="button" class="sec" id="cvNext" aria-label="Suivant">›</button><button type="button" class="pri wide" id="cvClose">Fermer</button></div>
@@ -1776,11 +1815,74 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const map = new Map(CIGS.map(c => [c.id, {...c}]));
     for (const o of cigOut){
       if (o.op === 'add') map.set(o.row.id, {...o.row, pend: true});
-      else if (o.op === 'edit' && map.has(o.id)) Object.assign(map.get(o.id), {name: o.name, note: o.note, city: o.city}, o.who ? {who: o.who} : {});
+      else if (o.op === 'edit' && map.has(o.id)) Object.assign(map.get(o.id), {name: o.name, note: o.note, city: o.city}, o.who ? {who: o.who} : {}, o.color ? {color: o.color} : {});
       else if (o.op === 'del') map.delete(o.id);
     }
     return [...map.values()].sort((a, b) => a.at - b.at);
   }
+  // couleur du paquet : choisie par l'utilisateur (stockée) ou calculée sur la moitié centrale de la photo (le paquet y est presque toujours)
+  const CFAM = [
+    {id: 'rouge', cn: '红', fr: 'Rouge', c: '#E0242C', sc: '#fff'}, {id: 'orange', cn: '橙', fr: 'Orange', c: '#FF7A1A', sc: '#fff'},
+    {id: 'or', cn: '金', fr: 'Or', c: '#FFC93C', sc: '#5a3200'}, {id: 'vert', cn: '绿', fr: 'Vert', c: '#2FBF71', sc: '#fff'},
+    {id: 'bleu', cn: '蓝', fr: 'Bleu', c: '#3A8DFF', sc: '#fff'}, {id: 'violet', cn: '紫', fr: 'Violet', c: '#9B5CFF', sc: '#fff'},
+    {id: 'rose', cn: '粉', fr: 'Rose', c: '#FF5FA2', sc: '#fff'}, {id: 'blanc', cn: '白', fr: 'Blanc', c: '#F4F1EA', sc: '#7A0A10'},
+    {id: 'noir', cn: '黑', fr: 'Noir', c: '#1B1B1B', sc: '#FFC93C'}];
+  const CFBY = Object.fromEntries(CFAM.map(f => [f.id, f]));
+  const FRAMES = ['double', 'corners', 'meander', 'stamp', 'lacquer', 'ticket'];
+  const hsh = t => [...String(t)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7);
+  const cigAuto = {};
+  // box : zone analysée en fractions de l'image ; par défaut la moitié centrale, avec le centre qui compte davantage
+  // Le paquet est la couleur qui domine au centre SANS dominer les bords (les bords = le fond : ciel, table, mur).
+  // box : zone analysée (fractions) ; par défaut toute la photo. Un tap sur la photo passe une petite zone autour du doigt.
+  function packColor(img, box){
+    const W = 36, H = 48, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0, W, H); const d = cx.getImageData(0, 0, W, H).data;
+    const cen = {}, bor = {}; for (const f of CFAM){ cen[f.id] = 0; bor[f.id] = 0; } let tc = 0, tb = 0;
+    const B = box || {x0: 0, y0: 0, x1: 1, y1: 1}, mx0 = (B.x0 + B.x1) / 2, my0 = (B.y0 + B.y1) / 2, rx = (B.x1 - B.x0) / 2, ry = (B.y1 - B.y0) / 2;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){
+      const fx = (x + .5) / W, fy = (y + .5) / H;
+      const i = (y * W + x) * 4, r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b), v = mx, sat = mx ? (mx - mn) / mx : 0;
+      let f;
+      if (sat < .2){ if (v < .25) f = 'noir'; else if (v > .78) f = 'blanc'; else continue; }
+      else if (v < .2) f = 'noir';
+      else {
+        const c = mx - mn; let h = mx === r ? 60 * (((g - b) / c) % 6) : mx === g ? 60 * ((b - r) / c + 2) : 60 * ((r - g) / c + 4); if (h < 0) h += 360;
+        f = h < 14 || h >= 340 ? 'rouge' : h < 38 ? 'orange' : h < 68 ? 'or' : h < 165 ? 'vert' : h < 255 ? 'bleu' : h < 295 ? 'violet' : 'rose';
+        if (f === 'orange' && sat < .45) continue;      // bois, peau, nappe : rarement le paquet
+      }
+      const q = f === 'noir' || f === 'blanc' ? .9 : (.4 + sat) * (.4 + v);
+      if (box){ if (fx < B.x0 || fx > B.x1 || fy < B.y0 || fy > B.y1) continue; cen[f] += q; tc += q; continue; }
+      const dist = Math.hypot((fx - .5) / .5, (fy - .5) / .5);
+      if (dist < .75){ const w = q * (1 + 3 * (1 - dist / .75)); cen[f] += w; tc += w; }
+      if (fx < .12 || fx > .88 || fy < .1 || fy > .9){ bor[f] += q; tb += q; }
+    }
+    if (!tc) return 'noir';
+    const score = f => cen[f] / tc - (box || !tb ? 0 : .85 * bor[f] / tb);
+    const best = CFAM.map(f => f.id).sort((a, b) => score(b) - score(a))[0];
+    return score(best) > 0 ? best : CFAM.map(f => f.id).sort((a, b) => cen[b] - cen[a])[0];
+  }
+  function cigFam(c){ return CFBY[c.color] || CFBY[cigAuto[c.id]] || null; }
+  let cigAutoBusy = false;
+  function cigAutoFill(list){
+    if (cigAutoBusy) return;
+    const todo = list.filter(c => !CFBY[c.color] && !cigAuto[c.id] && CIG_THUMBS[c.id]); if (!todo.length) return;
+    cigAutoBusy = true; let left = todo.length;
+    for (const c of todo){ const im = new Image();
+      im.onload = () => { try { cigAuto[c.id] = packColor(im); } catch {} if (--left === 0){ cigAutoBusy = false; cigRender(); } };
+      im.onerror = () => { cigAuto[c.id] = 'noir'; if (--left === 0){ cigAutoBusy = false; cigRender(); } };
+      im.src = CIG_THUMBS[c.id]; }
+  }
+  // distinctions : 1er paquet du voyage, 1er de chaque ville
+  function cigSpecials(all){
+    const sp = {}; if (all[0]) sp[all[0].id] = {k: 'first', txt: '<b>首</b> 1er du voyage', short: '<b>首</b> 1er du voyage'};
+    const seen = new Set();
+    for (const c of all){ if (!c.city || c.city === 'autre' || seen.has(c.city)) continue; seen.add(c.city);
+      if (!sp[c.id]) sp[c.id] = {k: 'city', txt: `<b>${CIGC[c.city].cn}</b> 1er paquet de ${CIGC[c.city].name}`, short: `<b>${CIGC[c.city].cn}</b> 1er ici`};
+      else sp[c.id].txt += ` · ${CIGC[c.city].name}`; }
+    return sp;
+  }
+  const cigLook = c => { const f = cigFam(c), h = hsh(c.id); return {f, frame: FRAMES[h % FRAMES.length], rot: (h % 25) - 12}; };
   function cigRender(){
     const all = cigList(), cities = [...new Set(all.map(c => c.city).filter(Boolean))];
     if (cigFilter !== 'all' && !cities.includes(cigFilter)) cigFilter = 'all';
@@ -1788,8 +1890,10 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('cigChips').innerHTML = all.length ? [`<button type="button" data-cf="all" aria-pressed="${cigFilter === 'all'}">Tous</button>`,
       ...CIG_CITIES.filter(c => cities.includes(c.id)).map(c => `<button type="button" data-cf="${c.id}" aria-pressed="${cigFilter === c.id}">${c.name}<small>${c.cn}</small></button>`)].join('') : '';
     const shown = all.map((c, i) => [c, i + 1]).filter(([c]) => cigFilter === 'all' || c.city === cigFilter);
-    let h = shown.map(([c, n]) => `<button type="button" class="cigc${c.pend ? ' pend' : ''}" data-cig="${c.id}"><span class="no">#${String(n).padStart(3, '0')}</span>
-      <img src="${CIG_THUMBS[c.id] || ''}" alt="">${''}<span class="nm">${esc(c.name) || 'Sans nom'}</span><span class="ct">${c.pend ? '⏳ envoi…' : `📍 ${c.city ? CIGC[c.city].name : '?'} · ${PBY[c.who] ? PBY[c.who].name : ''}`}</span></button>`).join('');
+    const sp = cigSpecials(all); cigAutoFill(all);
+    let h = shown.map(([c, n]) => { const L = cigLook(c), S = sp[c.id];
+      return `<button type="button" class="cigc${c.pend ? ' pend' : ''}${L.f ? ` fr fr-${L.frame}${L.f.id === 'noir' ? ' dark' : ''}` : ''}${S ? ' sp-' + S.k : ''}" data-cig="${c.id}"${L.f ? ` style="--c:${L.f.c};--sc:${L.f.sc};--rot:${L.rot}deg"` : ''}><span class="no">#${String(n).padStart(3, '0')}</span>${L.f ? `<span class="seal">${L.f.cn}</span>` : ''}
+      <img src="${CIG_THUMBS[c.id] || ''}" alt="">${S ? `<span class="rib">${S.short}</span>` : ''}<span class="nm">${esc(c.name) || 'Sans nom'}</span><span class="ct">${c.pend ? '⏳ envoi…' : `📍 ${c.city ? CIGC[c.city].name : '?'} · ${PBY[c.who] ? PBY[c.who].name : ''}`}</span></button>`; }).join('');
     if (canWrite && CREW) h += `<button type="button" class="cigc add" id="cigAdd"><span class="plus">+</span>Nouveau<br>paquet</button>`;
     if (cigFilter === 'all') for (let k = 1; k <= (all.length ? 2 : 1); k++) h += `<div class="cigc unk" aria-hidden="true"><span class="no">#${String(all.length + k).padStart(3, '0')}</span><div class="sil">?</div><span class="nm">???</span></div>`;
     if (!all.length) h += `<p class="cig-empty">Le premier paquet chinois croisé ouvre le Clopédex. Meimei attend.</p>`;
@@ -1806,8 +1910,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     try {
       const r = await api('rpc/list_cigs', {method: 'POST', body: JSON.stringify({p_crew: CREW})}); if (!r.ok) return;
       const list = await r.json(); if (!Array.isArray(list)) return;
-      let changed = JSON.stringify(list.map(c => [c.id, c.v, c.name, c.note, c.city, c.who])) !== JSON.stringify(CIGS.map(c => [c.id, c.v, c.name, c.note, c.city, c.who]));
-      CIGS = list.map(c => ({id: c.id, who: c.who, name: c.name, note: c.note, city: c.city, at: Number(c.at), v: c.v}));
+      let changed = JSON.stringify(list.map(c => [c.id, c.v, c.name, c.note, c.city, c.who, c.color || ''])) !== JSON.stringify(CIGS.map(c => [c.id, c.v, c.name, c.note, c.city, c.who, c.color || '']));
+      CIGS = list.map(c => ({id: c.id, who: c.who, name: c.name, note: c.note, city: c.city, at: Number(c.at), v: c.v, color: c.color || ''}));
       const ids = new Set(CIGS.map(c => c.id)), pend = new Set(cigOut.map(o => o.op === 'add' ? o.row.id : o.id));
       for (const id of Object.keys(CIG_THUMBS)) if (!ids.has(id) && !pend.has(id)){ delete CIG_THUMBS[id]; delete CIG_VER[id]; changed = true; }
       const need = CIGS.filter(c => !pend.has(c.id) && (!CIG_THUMBS[c.id] || CIG_VER[c.id] !== c.v)).map(c => c.id);
@@ -1826,9 +1930,14 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     try {
       while (cigOut.length){
         const o = cigOut[0]; let r;
-        if (o.op === 'add') r = await api('rpc/add_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.row.id, p_who: o.row.who, p_name: o.row.name, p_note: o.row.note, p_city: o.row.city, p_at: o.row.at, p_thumb: o.thumb, p_img: o.img})});
-        else if (o.op === 'edit') r = await api('rpc/edit_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id, p_name: o.name, p_note: o.note, p_city: o.city, p_who: o.who || null, p_thumb: o.thumb || null, p_img: o.img || null})});
+        if (o.op === 'add') r = await api('rpc/add_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.row.id, p_who: o.row.who, p_name: o.row.name, p_note: o.row.note, p_city: o.row.city, p_at: o.row.at, p_color: o.row.color || '', p_thumb: o.thumb, p_img: o.img})});
+        else if (o.op === 'edit') r = await api('rpc/edit_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id, p_name: o.name, p_note: o.note, p_city: o.city, p_who: o.who || null, p_color: o.color || '', p_thumb: o.thumb || null, p_img: o.img || null})});
         else r = await api('rpc/remove_cig', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: o.id})});
+        if (r.status === 404 && o.op !== 'del'){   // serveur pas encore à jour (couleur) : on renvoie sans la couleur
+          const body = o.op === 'add' ? {p_crew: CREW, p_id: o.row.id, p_who: o.row.who, p_name: o.row.name, p_note: o.row.note, p_city: o.row.city, p_at: o.row.at, p_thumb: o.thumb, p_img: o.img}
+            : {p_crew: CREW, p_id: o.id, p_name: o.name, p_note: o.note, p_city: o.city, p_who: o.who || null, p_thumb: o.thumb || null, p_img: o.img || null};
+          r = await api(o.op === 'add' ? 'rpc/add_cig' : 'rpc/edit_cig', {method: 'POST', body: JSON.stringify(body)});
+        }
         if (r.status === 401 || r.status === 403) break;
         if (!r.ok && !(r.status >= 400 && r.status < 500 && r.status !== 408 && r.status !== 429)) break;
         if (!r.ok) toast('Le serveur a refusé une entrée du Clopédex.');
@@ -1853,8 +1962,24 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const pv = $('cigPrev'), t = c && CIG_THUMBS[c.id];
     pv.classList.toggle('has', !!t); pv.innerHTML = t ? `<img src="${t}" alt="">` : '<span>📷</span>';
     $('cigCam').textContent = t ? '📷 Changer la photo' : '📷 Prendre la photo';
-    $('cigErr').hidden = true; $('cigModal').hidden = false;
+    cigDraft.color = c ? (cigFam(c) || {}).id || '' : '';
+    cigColRender(); $('cigErr').hidden = true; $('cigModal').hidden = false;
   }
+  function cigColRender(){
+    $('cigColRow').hidden = !$('cigPrev').classList.contains('has');
+    $('cigCols').innerHTML = CFAM.map(f => `<button type="button" data-col="${f.id}" aria-label="${f.fr}" aria-pressed="${cigDraft && cigDraft.color === f.id}" style="--c:${f.c};--sc:${f.sc}">${f.cn}</button>`).join('');
+    if (cigDraft && CFBY[cigDraft.color]) $('cigColHint').textContent = `Couleur : ${CFBY[cigDraft.color].fr}. Pas ça ? Touche le paquet sur la photo, ou choisis :`;
+  }
+  $('cigCols').addEventListener('click', e => { const b = e.target.closest('[data-col]'); if (!b || !cigDraft) return; cigDraft.color = b.dataset.col; cigColRender(); });
+  $('cigPrev').addEventListener('click', e => {
+    const im = $('cigPrev').querySelector('img'); if (!im || !cigDraft) return;
+    const r = im.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+    if (fx < 0 || fx > 1 || fy < 0 || fy > 1) return;
+    cigDraft.color = packColor(im, {x0: Math.max(0, fx - .08), y0: Math.max(0, fy - .06), x1: Math.min(1, fx + .08), y1: Math.min(1, fy + .06)});
+    let pin = $('cigPrev').querySelector('.pin'); if (!pin){ pin = document.createElement('i'); pin.className = 'pin'; $('cigPrev').appendChild(pin); }
+    pin.style.left = (fx * 100) + '%'; pin.style.top = (fy * 100) + '%'; pin.style.background = CFBY[cigDraft.color].c;
+    cigColRender();
+  });
   const cigPick = cam => { const f = $(cam ? 'cigFileCam' : 'cigFileLib'); f.value = ''; phTarget = 'cig'; f.click(); };
   $('cigCam').addEventListener('click', () => cigPick(true));
   $('cigLib').addEventListener('click', () => cigPick(false));
@@ -1862,7 +1987,9 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     phTarget = null; const f = e.target.files && e.target.files[0]; if (!f || !cigDraft) return;
     $('cigPrev').innerHTML = '<span>⏳</span>';
     try { const r = await phProcess(f, 240, 320); cigDraft.thumb = r.thumb; cigDraft.img = r.img;
-      $('cigPrev').classList.add('has'); $('cigPrev').innerHTML = `<img src="${r.thumb}" alt="">`; $('cigCam').textContent = '📷 Changer la photo'; $('cigErr').hidden = true; }
+      $('cigPrev').classList.add('has'); $('cigPrev').innerHTML = `<img src="${r.thumb}" alt="">`; $('cigCam').textContent = '📷 Changer la photo'; $('cigErr').hidden = true;
+      const im = $('cigPrev').querySelector('img'); const auto = () => { try { cigDraft.color = packColor(im); } catch {} cigColRender(); };
+      if (im.complete) auto(); else im.onload = auto; }
     catch { $('cigPrev').innerHTML = '<span>📷</span>'; $('cigErr').textContent = 'Impossible de lire cette photo. Essaie une photo JPEG ou PNG.'; $('cigErr').hidden = false; }
   };
   $('cigFileCam').addEventListener('change', cigPicked); $('cigFileLib').addEventListener('change', cigPicked);
@@ -1874,12 +2001,14 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (!cigDraft.id){
       if (!cigDraft.img){ $('cigErr').textContent = 'Il faut une photo du paquet (ou de la clope).'; $('cigErr').hidden = false; return; }
       const id = uuid(); CIG_THUMBS[id] = cigDraft.thumb; CIG_FULL[id] = cigDraft.img;
-      cigOut.push({op: 'add', row: {id, who, name, note, city, at: Date.now()}, thumb: cigDraft.thumb, img: cigDraft.img});
+      cigOut.push({op: 'add', row: {id, who, name, note, city, at: Date.now(), color: cigDraft.color || ''}, thumb: cigDraft.thumb, img: cigDraft.img});
       toast(`烟谱 +1 · ${name || 'Nouveau paquet'} entre au Clopédex !`); try { chime(); } catch {}
     } else {
       const id = cigDraft.id, a = cigOut.find(o => o.op === 'add' && o.row.id === id);
-      if (a){ Object.assign(a.row, {name, note, city, who}); if (cigDraft.img){ a.thumb = cigDraft.thumb; a.img = cigDraft.img; } }
-      else cigOut.push({op: 'edit', id, name, note, city, who, thumb: cigDraft.thumb, img: cigDraft.img});
+      const color = cigDraft.color || '';
+      if (a){ Object.assign(a.row, {name, note, city, who, color}); if (cigDraft.img){ a.thumb = cigDraft.thumb; a.img = cigDraft.img; } }
+      else cigOut.push({op: 'edit', id, name, note, city, who, color, thumb: cigDraft.thumb, img: cigDraft.img});
+      if (cigDraft.img) delete cigAuto[id];
       if (cigDraft.img){ CIG_THUMBS[id] = cigDraft.thumb; CIG_FULL[id] = cigDraft.img; }
       toast('Fiche mise à jour.');
     }
@@ -1897,11 +2026,37 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('cvCity').textContent = c.city ? `📍 ${CIGC[c.city].name} ${CIGC[c.city].cn}` : '?';
     const t = sh(c.at); $('cvWho').textContent = `${PBY[c.who] ? PBY[c.who].name : c.who} · ${dayLabel(t.date)} ${hm(t.h, t.m)}`;
     $('cvNote').textContent = c.note ? `« ${c.note} »` : '…';
+    { const L = cigLook(c), S = cigSpecials(all)[id], card = document.querySelector('.cig-card'); card.querySelector('.seal')?.remove();
+      card.classList.toggle('fr', !!L.f);
+      if (L.f){ card.style.setProperty('--c', L.f.c); card.style.setProperty('--sc', L.f.sc); card.style.setProperty('--rot', L.rot + 'deg');
+        const sl = document.createElement(cigCan(c) ? 'button' : 'span'); sl.className = 'seal'; sl.textContent = L.f.cn; sl.title = L.f.fr;
+        if (cigCan(c)){ sl.type = 'button'; sl.setAttribute('aria-label', `Couleur : ${L.f.fr}. Toucher pour changer`); sl.addEventListener('click', ev => { ev.stopPropagation(); cvColToggle(c); }); }
+        card.appendChild(sl); }
+      card.querySelector('.cv-cols')?.remove();
+      $('cvRib').hidden = !S; if (S) $('cvRib').innerHTML = S.txt; }
     $('cvEdit').hidden = $('cvDel').hidden = !cigCan(c);
     $('cvPrev').disabled = i === 0; $('cvNext').disabled = i === all.length - 1;
     $('cigView').hidden = false;
     if (!CIG_FULL[id] && CREW && !c.pend) api('rpc/get_cig_photo', {method: 'POST', body: JSON.stringify({p_crew: CREW, p_id: id})})
       .then(r => r.ok ? r.json() : null).then(d => { if (typeof d === 'string' && d.startsWith('data:image/jpeg;base64,')){ CIG_FULL[id] = d; if (cigCur === id){ img.src = d; img.classList.remove('loading'); } } }).catch(() => {});
+  }
+  // pastille de couleur sur la fiche : un tap ouvre les 9 couleurs, un tap sur une couleur l'enregistre
+  function cvColToggle(c){
+    const card = document.querySelector('.cig-card'), old = card.querySelector('.cv-cols'); if (old){ old.remove(); return; }
+    const box = document.createElement('div'); box.className = 'cv-cols cig-cols';
+    const cur = (cigFam(c) || {}).id;
+    box.innerHTML = CFAM.map(f => `<button type="button" data-col="${f.id}" aria-label="${f.fr}" aria-pressed="${cur === f.id}" style="--c:${f.c};--sc:${f.sc}">${f.cn}</button>`).join('');
+    box.addEventListener('click', e => { const b = e.target.closest('[data-col]'); if (!b) return; e.stopPropagation(); cigSetColor(c.id, b.dataset.col); });
+    card.appendChild(box);
+  }
+  function cigSetColor(id, color){
+    const c = cigList().find(x => x.id === id); if (!c || !CFBY[color]) return;
+    const a = cigOut.find(o => o.op === 'add' && o.row.id === id && !(o === cigOut[0] && cigBusy));
+    if (a) a.row.color = color;
+    else { const e = cigOut.find(o => o.op === 'edit' && o.id === id && !(o === cigOut[0] && cigBusy));
+      if (e) e.color = color; else cigOut.push({op: 'edit', id, name: c.name, note: c.note, city: c.city, who: c.who, color}); }
+    const sv = CIGS.find(x => x.id === id); if (sv) sv.color = color;
+    saveCigOut(); saveCigs(); cigRender(); cigOpen(id); cigFlush();
   }
   const cvClose = () => { $('cigView').hidden = true; cigCur = null; };
   $('cvClose').addEventListener('click', cvClose);
@@ -2564,7 +2719,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261105-185249';
+  const BUILD = '20261105-190913';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
