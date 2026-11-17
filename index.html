@@ -703,7 +703,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     </div>
 
     <div class="pane" id="p-recs" role="tabpanel" aria-labelledby="tab-recs" hidden>
-      <button type="button" class="wr-cta" id="wrRecs"><span class="g">🎁</span><span><b>Ganbei Wrapped</b><em id="wrRecsTxt" style="font-style:normal">Le grand récap, le 18 nov. à midi</em></span><span class="g">→</span></button>
+      <button type="button" class="wr-cta" id="wrRecs"><span class="g">🎁</span><span><b>Ganbei Wrapped</b><em id="wrRecsTxt" style="font-style:normal">Le grand récap, le 19 nov. à 7 h (heure de Paris)</em></span><span class="g">→</span></button>
       <section class="panel peeky" aria-labelledby="h-recs">
         <img class="peek pk-r" data-mm="head5" alt="" aria-hidden="true"><button type="button" class="peek-hit pk-r" data-mm="head5" aria-label="Meimei"></button>
         <div class="ph"><h2 id="h-recs"><span class="zh">纪录</span>Records</h2></div>
@@ -2534,12 +2534,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   if (CREW && !ME) whoOpen();
 
   // ---------- Ganbei Wrapped ----------
-  const WR_OPEN = BJ('2026-11-18T12:00:00');
+  const WR_OPEN = PARIS('2026-11-19T07:00:00');   // à l'atterrissage des derniers vols retour (AF111 05:50, GF019 06:45 à Paris)
   const wrUnlocked = () => Date.now() >= WR_OPEN || location.hash === '#wrapped';
   function wrButtons(){
     const u = wrUnlocked();
     $('wrTop').hidden = !u || beers.length === 0;
-    $('wrRecs').disabled = !u; $('wrRecsTxt').textContent = u ? 'Ouvrir le grand récap' : 'Le grand récap, le 18 nov. à midi';
+    $('wrRecs').disabled = !u; $('wrRecsTxt').textContent = u ? 'Ouvrir le grand récap' : 'Le grand récap, le 19 nov. à 7 h (heure de Paris)';
   }
   const HOUR_TYPES = h => h >= 5 && h < 12 ? ['早酒', 'Lève-coude', 'la bière du matin ne te fait pas peur']
     : h < 18 && h >= 12 ? ['午后', "Apéro de l'après-midi", 'tu lances les hostilités avant tout le monde']
@@ -2630,7 +2630,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   }
   function wrStart(me){ wrMe = me; try { localStorage.setItem('mcb.me', me); } catch {} ME = me; wrS = wrSlides(wrData(me)); wrMmInit(); wrShow(0); }
   function wrOpen(){ if (!wrUnlocked()) return; $('wr').hidden = false; document.body.style.overflow = 'hidden'; if (ME) wrStart(ME); else wrPick(); }
-  function wrClose(){ clearTimeout(wrTimer); wgClose(); $('wr').hidden = true; document.body.style.overflow = ''; }
+  function wrClose(){ wgClose(); clearTimeout(wrTimer); $('wr').hidden = true; document.body.style.overflow = ''; }   // galerie fermée d'abord : sinon elle relance le défilement des slides en arrière-plan
   $('wrTop').addEventListener('click', wrOpen); $('wrRecs').addEventListener('click', wrOpen); $('wrX').addEventListener('click', wrClose);
   let wrDown = 0;
   $('wrStage').addEventListener('pointerdown', () => { wrDown = Date.now(); $('wr').classList.add('paused'); clearTimeout(wrTimer); });
@@ -2660,6 +2660,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   const wrPeek = i => { const p = wrPeeks[i]; return p ? `<button type="button" class="wr-peek pk-${p.side}" style="--pos:${p.pos}%" data-wrmm aria-label="Meimei"><img src="${MM[p.img]}" alt=""></button>` : ''; };
   // colonnes de photos qui défilent en boucle (chaque piste est dupliquée pour une boucle sans couture), avec Meimei glissée dedans
   function wrMarq(srcs, key, cls){
+    if (srcs.length > 36){ const st = srcs.length / 36; srcs = [...Array(36)].map((_, k) => srcs[Math.floor(k * st)]); }   // 36 max (dupliquées pour la boucle) : fluide même sur un vieux téléphone
     const cols = [[], [], []]; srcs.forEach((s, k) => cols[k % 3].push(`<img src="${s}" alt="" loading="lazy">`));
     const c = Math.floor(Math.random() * 3); cols[c].splice(Math.floor(Math.random() * (cols[c].length + 1)), 0, `<button type="button" class="wr-mmtile" data-wrmm aria-label="Meimei"><img src="${MM[key === 'wall' ? 'head1' : 'head2']}" alt=""></button>`);
     return `<div class="wr-marq ${cls}" aria-hidden="true">${cols.map((col, k) => `<div class="col"><div class="trk" style="--t:${Math.max(18, col.length * 2.6)}s;${k === 1 ? 'animation-direction:reverse;' : ''}">${col.join('')}${col.join('')}</div></div>`).join('')}</div>`;
@@ -2774,7 +2775,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const topB = by(beers, b => BBY[b.brand] && b.brand !== 'biere' && !BBY[b.brand].other ? b.brand : null)[0];
     const airN = beers.filter(b => airportOf(b.at, b.who)).length, skyN = beers.filter(b => (airportOf(b.at, b.who) || {}).sky).length;
     const cityN = by(beers, b => { const c = cityAt(b.at, b.who); return c === 'retour' ? null : c; });
-    const days = new Set(beers.map(b => sh(b.at).date)).size;
+    const tripDays = dayDiff('2026-11-18', '2026-11-04') + 1, days = new Set(beers.map(b => sh(b.at).date).filter(dt => dt >= '2026-11-04' && dt <= '2026-11-18')).size;
     const phB = beers.filter(b => PH_THUMBS[b.id]), phPick = phB.filter(b => /^data:/.test(PH_THUMBS[b.id]));
     const fastTxt = d.fast ? (d.fast.g < 60000 ? Math.round(d.fast.g / 1000) + ' s' : Math.round(d.fast.g / 60000) + ' min') : '';
     const highs = [];
@@ -2782,14 +2783,15 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (topB) highs.push(['Marque reine', `${BBY[topB[0]].label} ${BBY[topB[0]].cn} · ${topB[1]}`]);
     highs.push(['Airport beers', `${airN}${skyN ? ` dont ${skyN} en vol` : ''}`]);
     if (d.othersAll) highs.push(['Infidélités (pas bière)', String(d.othersAll)]);
-    highs.push(['Jours avec au moins une bière', String(days)]);
+    highs.push(['Jours avec au moins une bière', `${days} / ${tripDays}`]);
     if (phB.length) highs.push(['Photos', String(phB.length)]);
     const recs = [];
     if (d.early) recs.push(['🌅 Bière du petit-déj', `${PBY[d.early.who].name} · ${hm(d.early.t.h, d.early.t.m)}, ${dayLabel(d.early.t.date)}`]);
     if (d.late) recs.push(['🌙 Dernier debout', `${PBY[d.late.who].name} · ${hm(d.late.t.h, d.late.t.m)}, ${dayLabel(d.late.t.date)}`]);
     if (d.fast) recs.push(['⚡ Doublé éclair', `${PBY[d.fast.who].name} · ${fastTxt}`]);
     if (d.airAll) recs.push(["✈ Roi de l'airport beer", `${PBY[d.airAll[0]].name} · ${d.airAll[1]}`]);
-    const pics = phPick.length >= 4 ? (() => { const n = Math.min(8, phPick.length), st = phPick.length / n; return [...Array(n)].map((_, k) => phPick[Math.floor(k * st)]); })() : [];
+    // une photo tirée au hasard dans chaque tranche du voyage : bien réparties, et différentes à chaque partage
+    const pics = phPick.length >= 4 ? (() => { const n = Math.min(8, phPick.length), st = phPick.length / n; return [...Array(n)].map((_, k) => phPick[Math.min(phPick.length - 1, Math.floor(k * st + Math.random() * st))]); })() : [];
     // contenu dessiné sur un calque transparent très haut, puis recadré sur le fond à la bonne hauteur
     const c = document.createElement('canvas'); c.width = W; c.height = 6000; let x = c.getContext('2d');
     const T = (t, y, size, font, col, w, al, xx) => { x.font = `${w || 400} ${size}px ${font}`; x.fillStyle = col; x.textAlign = al || 'center'; x.fillText(t, xx == null ? 540 : xx, y); };
@@ -2960,7 +2962,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261117-155000';
+  const BUILD = '20261117-161648';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)

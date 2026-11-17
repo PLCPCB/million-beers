@@ -703,7 +703,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     </div>
 
     <div class="pane" id="p-recs" role="tabpanel" aria-labelledby="tab-recs" hidden>
-      <button type="button" class="wr-cta" id="wrRecs"><span class="g">🎁</span><span><b>Ganbei Wrapped</b><em id="wrRecsTxt" style="font-style:normal">Le grand récap, le 18 nov. à midi</em></span><span class="g">→</span></button>
+      <button type="button" class="wr-cta" id="wrRecs"><span class="g">🎁</span><span><b>Ganbei Wrapped</b><em id="wrRecsTxt" style="font-style:normal">Le grand récap, le 19 nov. à 7 h (heure de Paris)</em></span><span class="g">→</span></button>
       <section class="panel peeky" aria-labelledby="h-recs">
         <img class="peek pk-r" data-mm="head5" alt="" aria-hidden="true"><button type="button" class="peek-hit pk-r" data-mm="head5" aria-label="Meimei"></button>
         <div class="ph"><h2 id="h-recs"><span class="zh">纪录</span>Records</h2></div>
@@ -2534,12 +2534,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   if (CREW && !ME) whoOpen();
 
   // ---------- Ganbei Wrapped ----------
-  const WR_OPEN = BJ('2026-11-18T12:00:00');
+  const WR_OPEN = PARIS('2026-11-19T07:00:00');   // à l'atterrissage des derniers vols retour (AF111 05:50, GF019 06:45 à Paris)
   const wrUnlocked = () => Date.now() >= WR_OPEN || location.hash === '#wrapped';
   function wrButtons(){
     const u = wrUnlocked();
     $('wrTop').hidden = !u || beers.length === 0;
-    $('wrRecs').disabled = !u; $('wrRecsTxt').textContent = u ? 'Ouvrir le grand récap' : 'Le grand récap, le 18 nov. à midi';
+    $('wrRecs').disabled = !u; $('wrRecsTxt').textContent = u ? 'Ouvrir le grand récap' : 'Le grand récap, le 19 nov. à 7 h (heure de Paris)';
   }
   const HOUR_TYPES = h => h >= 5 && h < 12 ? ['早酒', 'Lève-coude', 'la bière du matin ne te fait pas peur']
     : h < 18 && h >= 12 ? ['午后', "Apéro de l'après-midi", 'tu lances les hostilités avant tout le monde']
@@ -2630,7 +2630,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   }
   function wrStart(me){ wrMe = me; try { localStorage.setItem('mcb.me', me); } catch {} ME = me; wrS = wrSlides(wrData(me)); wrMmInit(); wrShow(0); }
   function wrOpen(){ if (!wrUnlocked()) return; $('wr').hidden = false; document.body.style.overflow = 'hidden'; if (ME) wrStart(ME); else wrPick(); }
-  function wrClose(){ clearTimeout(wrTimer); wgClose(); $('wr').hidden = true; document.body.style.overflow = ''; }
+  function wrClose(){ wgClose(); clearTimeout(wrTimer); $('wr').hidden = true; document.body.style.overflow = ''; }   // galerie fermée d'abord : sinon elle relance le défilement des slides en arrière-plan
   $('wrTop').addEventListener('click', wrOpen); $('wrRecs').addEventListener('click', wrOpen); $('wrX').addEventListener('click', wrClose);
   let wrDown = 0;
   $('wrStage').addEventListener('pointerdown', () => { wrDown = Date.now(); $('wr').classList.add('paused'); clearTimeout(wrTimer); });
@@ -2660,6 +2660,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   const wrPeek = i => { const p = wrPeeks[i]; return p ? `<button type="button" class="wr-peek pk-${p.side}" style="--pos:${p.pos}%" data-wrmm aria-label="Meimei"><img src="${MM[p.img]}" alt=""></button>` : ''; };
   // colonnes de photos qui défilent en boucle (chaque piste est dupliquée pour une boucle sans couture), avec Meimei glissée dedans
   function wrMarq(srcs, key, cls){
+    if (srcs.length > 36){ const st = srcs.length / 36; srcs = [...Array(36)].map((_, k) => srcs[Math.floor(k * st)]); }   // 36 max (dupliquées pour la boucle) : fluide même sur un vieux téléphone
     const cols = [[], [], []]; srcs.forEach((s, k) => cols[k % 3].push(`<img src="${s}" alt="" loading="lazy">`));
     const c = Math.floor(Math.random() * 3); cols[c].splice(Math.floor(Math.random() * (cols[c].length + 1)), 0, `<button type="button" class="wr-mmtile" data-wrmm aria-label="Meimei"><img src="${MM[key === 'wall' ? 'head1' : 'head2']}" alt=""></button>`);
     return `<div class="wr-marq ${cls}" aria-hidden="true">${cols.map((col, k) => `<div class="col"><div class="trk" style="--t:${Math.max(18, col.length * 2.6)}s;${k === 1 ? 'animation-direction:reverse;' : ''}">${col.join('')}${col.join('')}</div></div>`).join('')}</div>`;
@@ -2961,7 +2962,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261117-160000';
+  const BUILD = '20261117-161648';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)

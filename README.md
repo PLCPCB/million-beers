@@ -126,3 +126,5 @@ Ajouter une page (par exemple `programme.html`) ne touche jamais aux bières : e
 - Polices : Bungee, ZCOOL KuaiLe, Barlow Semi Condensed (Google Fonts).
 
 <p align="center"><sub>L'abus d'alcool est dangereux pour la santé. 一口闷 !</sub></p>
+
+> **Important pour modifier l'app :** `index.html` et `404.html` doivent toujours être **identiques** (le lien du groupe passe par `404.html`, l'app installée par `index.html`), et `version.json` doit contenir la même valeur que `const BUILD` dans la page. Sinon l'app installée se recharge en boucle ou reste sur une ancienne version.
