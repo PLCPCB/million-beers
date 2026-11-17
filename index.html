@@ -502,6 +502,59 @@ textarea.ad-in{resize:vertical;min-height:70px}
 #phBigCap{margin:0;text-align:center;font-size:15px;color:var(--ink)}
 #phBigCap b{font-family:var(--f-display);font-weight:400;color:var(--gold)}
 #phBig .avc-b{width:min(100%,360px)}
+.wr-ov > *:not(.wr-marq):not(.wr-peek){position:relative;z-index:1}
+.wr-ov .wr-big,.wr-ov .wr-h,.wr-ov .wr-p,.wr-ov .wr-k{text-shadow:0 2px 12px rgba(0,0,0,.85)}
+.wr-marq{position:absolute!important;inset:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 10px;overflow:hidden;animation:wrfade 1s ease both!important}
+.wr-marq::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(10,0,2,.82),rgba(10,0,2,.45) 70%);pointer-events:none}
+.wr-marq .col{overflow:hidden}
+.wr-marq .trk{display:flex;flex-direction:column;gap:10px;animation:wrscroll var(--t,40s) linear infinite}
+.wr-marq img,.wr-mmtile{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:#fff8e6;padding:4px 4px 14px;border-radius:3px;box-shadow:0 6px 16px rgba(0,0,0,.45)}
+.wr-marq.cig img{aspect-ratio:3/4;padding:3px;background:#f3ead2}
+.wr-mmtile{border:none;cursor:pointer;position:relative;z-index:2;background:#ffd6ec;font:inherit}
+.wr-mmtile img{width:100%;height:100%;padding:0;box-shadow:none;border-radius:50%;object-fit:cover;background:none}
+.wr-marq .wr-mmtile{aspect-ratio:1}
+@keyframes wrscroll{from{transform:translateY(0)}to{transform:translateY(calc(-50% - 5px))}}
+@keyframes wrfade{from{opacity:0}}
+.wr-peek{position:absolute;z-index:2;width:62px;height:62px;padding:0;border:3px solid var(--gold);border-radius:50%;overflow:hidden;background:#ffd6ec;cursor:pointer;animation:wrpeek 5.5s ease-in-out .8s infinite both!important}
+.wr-peek img{width:100%;height:100%;object-fit:cover;display:block}
+.wr-peek.pk-l{left:-34px;top:var(--pos);--px:22px;--py:0px}
+.wr-peek.pk-r{right:-34px;top:var(--pos);--px:-22px;--py:0px}
+.wr-peek.pk-b{bottom:-34px;left:var(--pos);--px:0px;--py:-22px}
+.wr-peek.pk-t{top:calc(-34px + env(safe-area-inset-top, 0px) + 40px);left:var(--pos);--px:0px;--py:22px;opacity:.9}
+@keyframes wrpeek{0%,55%,100%{transform:translate(0,0) rotate(0)}65%,85%{transform:translate(var(--px),var(--py)) rotate(-8deg)}75%{transform:translate(var(--px),var(--py)) rotate(8deg)}}
+.wr-peek.got,.wr-mmtile.got{animation:wrgot .55s ease forwards!important}
+@keyframes wrgot{to{transform:scale(1.8) rotate(25deg);opacity:0}}
+.wr-msg{position:absolute;z-index:8;left:50%;bottom:calc(28px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);max-width:calc(100% - 32px);background:#FF7AC6;color:#3a0020;font:700 16px var(--f-body);padding:10px 16px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.4);text-align:center;animation:wrin .4s cubic-bezier(.2,.9,.25,1.15) both}
+.wr-mmc{font-size:16px}
+.wr-gal{position:absolute;inset:0;z-index:5;background:#140103;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px))}
+.wr-gal[hidden]{display:none}
+.wg-top{display:flex;align-items:center;gap:8px;padding-bottom:8px}
+.wg-top b{flex:1;font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--gold)}
+.wg-btn{min-height:40px;min-width:40px;border-radius:12px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:700 15px var(--f-body);padding:0 12px;cursor:pointer}
+.wg-tabs,.wg-who{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.wg-tabs button,.wg-who button{flex:none;display:flex;align-items:center;gap:6px;min-height:36px;border-radius:99px;border:1.5px solid rgba(255,255,255,.25);background:rgba(0,0,0,.3);color:#fff;font:700 14px var(--f-body);padding:0 12px;cursor:pointer}
+.wg-tabs button.on,.wg-who button.on{background:var(--gold);color:var(--lacquer-deep);border-color:var(--gold)}
+.wg-who .mini{width:24px;height:24px;display:block} .wg-who .mini svg{width:100%;height:100%;overflow:visible}
+.wg-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px))}
+.wg-grid h4{display:flex;justify-content:space-between;align-items:baseline;margin:14px 2px 8px;font:700 14px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.wg-grid h4 small{font-family:var(--f-display);font-weight:400;font-size:16px;color:var(--gold)}
+.wg-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+.wg-t{display:block;padding:0;border:none;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#2a0a0e;cursor:pointer;animation:wrin .4s ease both}
+.wg-t.cig{aspect-ratio:3/4}
+.wg-t img{width:100%;height:100%;object-fit:cover;display:block}
+.wg-t.wr-mmtile{padding:8px;box-shadow:none;background:#3a0a14}
+.wg-none{color:rgba(255,255,255,.7);text-align:center;margin-top:40px}
+.wg-view{position:absolute;inset:0;z-index:2;background:rgba(10,0,2,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));touch-action:pan-y}
+.wg-view[hidden]{display:none}
+.wg-view img{width:min(100%,560px);height:auto;max-height:calc(100% - 150px);object-fit:contain;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.wg-view img.loading{filter:blur(4px)}
+.wg-view img.kb{animation:wgkb 3.6s ease-out both}
+@keyframes wgkb{from{transform:scale(1.12) translateY(8px);opacity:.3}12%{opacity:1}to{transform:scale(1)}}
+.wg-cap{margin:0;text-align:center;font-size:16px;line-height:1.35;color:rgba(255,255,255,.85);max-width:36ch}
+.wg-cap b{color:#fff}
+.wg-nav{display:flex;align-items:center;gap:10px} .wg-nav span{min-width:70px;text-align:center;font-family:var(--f-display);color:var(--gold)}
+.wg-nav #wgPrev,.wg-nav #wgNext{font-size:26px;line-height:1}
+@media (prefers-reduced-motion:reduce){.wr-marq .trk,.wr-peek,.wg-view img.kb{animation:none!important}}
 .wr-wall{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:min(100%,330px)}
 .wr-wall img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:#fff8e6;padding:4px 4px 14px;border-radius:3px;box-shadow:0 6px 16px rgba(0,0,0,.45)}
 
@@ -721,7 +774,12 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     </div>
   </div>
 </div>
-<div id="wr" hidden aria-modal="true" role="dialog" aria-label="Ganbei Wrapped"><div class="wr-bars" id="wrBars"></div><button type="button" class="wr-x" id="wrX" aria-label="Fermer">✕</button><div id="wrStage"></div></div>
+<div id="wr" hidden aria-modal="true" role="dialog" aria-label="Ganbei Wrapped"><div class="wr-bars" id="wrBars"></div><button type="button" class="wr-x" id="wrX" aria-label="Fermer">✕</button><div id="wrStage"></div>
+  <div id="wrGal" class="wr-gal" hidden><div class="wg-top"><b>Tout revoir</b><button type="button" id="wgPlay" class="wg-btn">▶ Diaporama</button><button type="button" id="wgX" class="wg-btn" aria-label="Fermer la galerie">✕</button></div>
+    <div class="wg-tabs" id="wgTabs"></div><div class="wg-who" id="wgWho"></div><div class="wg-grid" id="wgGrid"></div>
+    <div class="wg-view" id="wgView" hidden><img id="wgImg" alt=""><p class="wg-cap" id="wgCap"></p>
+      <div class="wg-nav"><button type="button" id="wgPrev" class="wg-btn" aria-label="Précédente">‹</button><span id="wgN"></span><button type="button" id="wgPlay2" class="wg-btn" aria-label="Diaporama">▶</button><button type="button" id="wgBack" class="wg-btn">Grille</button><button type="button" id="wgNext" class="wg-btn" aria-label="Suivante">›</button></div></div>
+  </div></div>
 <div id="eggFrost" aria-hidden="true"></div><div id="eggCap" aria-hidden="true"><b>XUE HUA PIAO PIAO</b><span>雪花飘飘</span><small>Brother Egg 蛋哥 approuve</small></div><div id="egg" aria-hidden="true"><img alt=""></div>
 <div id="whoModal" hidden><div class="avc" role="dialog" aria-labelledby="whoTitle">
   <div id="whoStep1" style="display:contents">
@@ -1018,13 +1076,34 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (sky) return {...sky, sky: true};
     return FLIGHTS.find(f => f.who.includes(who) && ms >= f.dep - AIRPORT_WIN && ms < f.dep) || null;
   };
+  // Records petit-déj / dernier debout : seulement au sol en Chine (ni en vol, ni à Bahreïn, ni à Paris),
+  // et par session (bières à moins de 4 h d'écart). Petit-déj = 1re bière d'une session entre 6h et 12h.
+  // Dernier debout = dernière bière d'une session avant 7h du matin, qui n'est pas un petit-déj.
+  const FL = Object.fromEntries(FLIGHTS.map(f => [f.code, f])), SESSION_GAP = 4*3600000;
+  const GROUND = Object.fromEntries(ALL.map(id => [id, [
+    (['felix','paulin','pilou'].includes(id) ? FL.GF124 : FL.AF116).arr,
+    (id === 'pilou' ? FL.CA457 : ['felix','paulin'].includes(id) ? FL.GF125 : FL.AF111).dep]]));
+  function dawnDusk(list){
+    let early = null, late = null; const by = {};
+    for (const b of list){ const g = GROUND[b.who]; if (!g || b.at < g[0] || b.at >= g[1] || (airportOf(b.at, b.who) || {}).sky) continue; (by[b.who] = by[b.who] || []).push(b); }
+    for (const who in by){
+      const a = by[who].sort((x, y) => x.at - y.at);
+      for (let i = 0; i < a.length; i++){
+        const b = a[i], t = sh(b.at), mins = t.h * 60 + t.m;
+        const first = i === 0 || b.at - a[i-1].at >= SESSION_GAP, last = i === a.length - 1 || a[i+1].at - b.at >= SESSION_GAP;
+        if (first && t.h >= 6 && t.h < 12){ if (!early || mins < early.mins) early = {mins, who, b, t}; }
+        else if (last && t.h < 7 && (!late || mins > late.mins)) late = {mins, who, b, t};
+      }
+    }
+    return {early, late};
+  }
   const flTxt = fl => fl.sky ? `🛫 en vol (${fl.code})` : `✈ airport (${fl.code})`;
   function hereText(ms){
     const mv = MOVES.find(m => ms >= m.from && ms < m.to); if (mv) return mv.txt;
     if (ms < BJ('2026-11-03T17:50:00')) return 'Prochain arrêt : Shanghai';
     const c = CBY[cityAt(ms)]; return `${c.name} ${c.cn}`;
   }
-  const TITLES = [['皇帝',"L'Empereur"],['将军','Le Général'],['大侠','Le Maître kung-fu'],['学徒',"L'Apprenti"],['游客','Le Touriste']];
+  const TITLES = [['皇帝',"L'Empereur"],['将军','Le Général'],['大侠','Le Maître kung-fu'],['学徒',"L'Apprenti"],['游客','Le Touriste'],['热水','Team Eau chaude']];
   const TRIP_START = '2026-11-04', TRIP_DAYS = 15, TZ = 'Asia/Shanghai';
   const CHART_START = '2026-11-03', CHART_DAYS = 17;
   const GOAL = 1000000;
@@ -1650,7 +1729,6 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const counts = {}, todayC = {}, byWho = {}; PEOPLE.forEach(p => { counts[p.id] = 0; todayC[p.id] = 0; byWho[p.id] = []; });
     const perDay = Array.from({length:CHART_DAYS}, () => Object.fromEntries(PEOPLE.map(p => [p.id,0])));
     const perHour = new Array(24).fill(0), dayTot = {}, pDay = {}, brandC = {}, cityC = {}, cityP = {};
-    let early = null, late = null;
     for (const b of beers){
       const t = sh(b.at); counts[b.who]++; byWho[b.who].push(b); if (t.date === today) todayC[b.who]++;
       const di = dayDiff(t.date, CHART_START); if (di >= 0 && di < CHART_DAYS) perDay[di][b.who]++;
@@ -1659,10 +1737,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
       brandC[b.brand] = (brandC[b.brand]||0) + 1;
       const bc = cityAt(b.at, b.who);
       if (bc !== 'retour'){ cityC[bc] = (cityC[bc]||0) + 1; const ck = bc+'|'+b.who; cityP[ck] = (cityP[ck]||0) + 1; }
-      const mins = t.h*60 + t.m;
-      if (t.h >= 5 && t.h < 12 && (!early || mins < early.mins)) early = {mins, who:b.who, t};
-      if (t.h < 5 && (!late || mins > late.mins)) late = {mins, who:b.who, t};
     }
+    const {early, late} = dawnDusk(beers);
     const total = beers.length, can = canWrite;
     const airC = {}; PEOPLE.forEach(p => airC[p.id] = 0); let airTotal = 0;
     const skyC = {}; PEOPLE.forEach(p => skyC[p.id] = 0); let skyTotal = 0;
@@ -2490,10 +2566,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const groupDay = by(beers, b => sh(b.at).date)[0];
     const cityCup = by(beers, b => { const c = cityAt(b.at, b.who); return c === 'retour' ? null : c; })[0];
     const airAll = by(beers.filter(b => airportOf(b.at, b.who)), b => b.who)[0];
-    let early = null, late = null, fast = null;
-    for (const b of beers){ const t = sh(b.at), mins = t.h * 60 + t.m;
-      if (t.h >= 5 && t.h < 12 && (!early || mins < early.mins)) early = {mins, b, t};
-      if (t.h < 5 && (!late || mins > late.mins)) late = {mins, b, t}; }
+    const {early, late} = dawnDusk(beers); let fast = null;
     for (const p of PEOPLE){ const a = beers.filter(b => b.who === p.id); for (let i = 1; i < a.length; i++){ const g = a[i].at - a[i-1].at; if (g > 0 && (!fast || g < fast.g)) fast = {g, who: p.id}; } }
     return {me, total, counts, ranked, rank, n, pct: total ? Math.round(n / total * 100) : 0, bestDay, bestDayCity, peak, cities, brands, air, groupDay, cityCup, airAll, early, late, fast, sky, others, othersAll, liters, yuan};
   }
@@ -2528,29 +2601,31 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (rec.length) S.push({bg: 'bg-sky', h: `<p class="wr-k">Les records</p><p class="wr-h">Pour la postérité</p><ul class="wr-list">${rec.join('')}</ul>`});
     const phB = beers.filter(b => PH_THUMBS[b.id]);
     if (phB.length){
-      const pickN = Math.min(9, phB.length), step = phB.length / pickN, sel = [...Array(pickN)].map((_, k) => phB[Math.floor(k * step)]);
-      const mineN = phB.filter(b => b.who === d.me).length;
-      S.push({bg: 'bg-night', h: `<p class="wr-k">Le mur des bières</p><div class="wr-wall">${sel.map((b, k) => `<img src="${PH_THUMBS[b.id]}" alt="" style="transform:rotate(${[-4, 3, -2, 2, -3, 4, -1, 3, -4][k]}deg)">`).join('')}</div>
-        <p class="wr-p"><b>${phB.length}</b> photo${phB.length > 1 ? 's' : ''} pour la postérité${mineN ? `, dont <b>${mineN}</b> par toi` : ''}.</p>`});
+      const mineN = phB.filter(b => b.who === d.me).length, topPh = Object.entries(phB.reduce((m, b) => (m[b.who] = (m[b.who] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1])[0];
+      S.push({bg: 'bg-night wr-ov', dur: 11000, h: `${wrMarq(phB.map(b => PH_THUMBS[b.id]), 'wall', '')}<p class="wr-k">Le mur des bières</p><p class="wr-big">${phB.length}</p><p class="wr-h">photo${phB.length > 1 ? 's' : ''} pour la postérité</p>
+        <p class="wr-p">${mineN ? `Dont <b>${mineN}</b> par toi. ` : ''}${topPh && phB.length > 1 ? `Photographe officiel : <b>${PBY[topPh[0]].name}</b> (${topPh[1]}).` : ''}</p>
+        <div class="wr-btns"><button type="button" class="pri" data-wr="gal-ph">🖼️ Tout revoir</button></div>`});
     }
     const cl = cigList().filter(c => CIG_THUMBS[c.id]);
     if (cl.length){
-      const mineC = cl.filter(c => c.who === d.me).length, pick = cl.slice(-6);
-      S.push({bg: 'bg-jade', h: `<p class="wr-k">Le Clopédex 烟谱</p><p class="wr-big">${cl.length}</p><p class="wr-h">trouvaille${cl.length > 1 ? 's' : ''}</p><div class="wr-wall">${pick.map((c, k) => `<img src="${CIG_THUMBS[c.id]}" alt="" style="aspect-ratio:3/4;transform:rotate(${[-4, 3, -2, 2, -3, 4][k]}deg)">`).join('')}</div>
-        <p class="wr-p">${mineC ? `Dont <b>${mineC}</b> trouvée${mineC > 1 ? 's' : ''} par toi.` : 'Aucune par toi : les autres ont fait le boulot.'}</p>`});
+      const mineC = cl.filter(c => c.who === d.me).length, topC = Object.entries(cl.reduce((m, c) => (m[c.who] = (m[c.who] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1])[0];
+      S.push({bg: 'bg-jade wr-ov', dur: 11000, h: `${wrMarq(cl.map(c => CIG_THUMBS[c.id]), 'clope', 'cig')}<p class="wr-k">Le Clopédex 烟谱</p><p class="wr-big">${cl.length}</p><p class="wr-h">trouvaille${cl.length > 1 ? 's' : ''}</p>
+        <p class="wr-p">${mineC ? `Dont <b>${mineC}</b> trouvée${mineC > 1 ? 's' : ''} par toi.` : 'Aucune par toi : les autres ont fait le boulot.'}${topC && PBY[topC[0]] && cl.length > 1 ? ` Collectionneur en chef : <b>${PBY[topC[0]].name}</b> (${topC[1]}).` : ''}</p>
+        <div class="wr-btns"><button type="button" class="pri" data-wr="gal-cig">🚬 Feuilleter le Clopédex</button></div>`});
     }
-    S.push({bg: 'bg-snow', snow: true, h: `<p class="wr-k">Interlude</p><img class="wr-egg" src="${EGG.sticker}" alt=""><p class="wr-h">XUE HUA PIAO PIAO</p><p class="wr-cn" style="font-size:clamp(46px,14vw,72px);color:#fff;text-shadow:0 0 18px #5CC8FF,0 4px 0 #0b2547">雪花飘飘</p><p class="wr-p">Brother Egg 蛋哥 salue ton voyage. La neige tombe, la bière reste.</p>`});
     S.push({bg: 'bg-red', end: true, h: `<img class="wr-mm" src="${MM.head5}" alt=""><p class="wr-cn" style="font-size:clamp(50px,16vw,84px)">一路平安</p><p class="wr-h">Bon retour, ${P.name}</p><p class="wr-p">Meimei a tout vu. Rendez-vous pour le prochain million.</p>
-      <div class="wr-btns"><button type="button" class="pri" data-wr="share">📸 Partager mon Wrapped</button><button type="button" class="sec" data-wr="again">Revoir</button></div>`});
+      <p class="wr-p wr-mmc" id="wrMmc"></p><div class="wr-btns"><button type="button" class="pri" data-wr="share">📸 Partager mon Wrapped</button><button type="button" class="pri" data-wr="group">👥 Wrapped du groupe</button><button type="button" class="sec" data-wr="again">Revoir</button></div>`});
     return S;
   }
   let wrS = [], wrI = 0, wrTimer = 0, wrMe = '';
   const WR_DUR = 6500;
   function wrShow(i){
     wrI = Math.max(0, Math.min(i, wrS.length - 1)); clearTimeout(wrTimer);
-    $('wrBars').innerHTML = wrS.map((_, k) => `<i class="${k < wrI ? 'done' : k === wrI ? 'cur' : ''}" style="--d:${WR_DUR}ms"><b></b></i>`).join('');
-    const sl = wrS[wrI]; $('wrStage').innerHTML = `<div class="wr-s ${sl.bg}">${sl.h}</div>`;
-    if (!sl.end) wrTimer = setTimeout(() => wrShow(wrI + 1), WR_DUR);
+    $('wrBars').innerHTML = wrS.map((s, k) => `<i class="${k < wrI ? 'done' : k === wrI ? 'cur' : ''}" style="--d:${s.dur || WR_DUR}ms"><b></b></i>`).join('');
+    const sl = wrS[wrI]; $('wrStage').innerHTML = `<div class="wr-s ${sl.bg}">${sl.h}${wrPeek(wrI)}</div>`;
+    for (const k of wrFound) $('wrStage').querySelectorAll(`[data-wrmm="${k}"]`).forEach(e => e.remove());
+    if (sl.end) wrMmCount();
+    if (!sl.end) wrTimer = setTimeout(() => wrShow(wrI + 1), sl.dur || WR_DUR);
     if (wrI === 1 || sl.end) { try { burst(innerWidth / 2, innerHeight * .4, '#FFC93C', 70); } catch {} }
     if (sl.snow) { snow(110); wind(); }
   }
@@ -2558,9 +2633,9 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     clearTimeout(wrTimer); $('wrBars').innerHTML = '';
     $('wrStage').innerHTML = `<div class="wr-s bg-red"><p class="wr-cn">干杯</p><p class="wr-h">C'est qui ?</p><div class="wr-pick">${PEOPLE.map(p => `<button type="button" data-wrme="${p.id}">${wrMini(p.id)}${p.name}</button>`).join('')}</div></div>`;
   }
-  function wrStart(me){ wrMe = me; try { localStorage.setItem('mcb.me', me); } catch {} ME = me; wrS = wrSlides(wrData(me)); wrShow(0); }
+  function wrStart(me){ wrMe = me; try { localStorage.setItem('mcb.me', me); } catch {} ME = me; wrS = wrSlides(wrData(me)); wrMmInit(); wrShow(0); }
   function wrOpen(){ if (!wrUnlocked()) return; $('wr').hidden = false; document.body.style.overflow = 'hidden'; if (ME) wrStart(ME); else wrPick(); }
-  function wrClose(){ clearTimeout(wrTimer); $('wr').hidden = true; document.body.style.overflow = ''; }
+  function wrClose(){ clearTimeout(wrTimer); wgClose(); $('wr').hidden = true; document.body.style.overflow = ''; }
   $('wrTop').addEventListener('click', wrOpen); $('wrRecs').addEventListener('click', wrOpen); $('wrX').addEventListener('click', wrClose);
   let wrDown = 0;
   $('wrStage').addEventListener('pointerdown', () => { wrDown = Date.now(); $('wr').classList.add('paused'); clearTimeout(wrTimer); });
@@ -2573,10 +2648,113 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   });
   $('wrStage').addEventListener('click', e => {
     const me = e.target.closest('[data-wrme]'); if (me) { wrStart(me.dataset.wrme); return; }
+    const mm = e.target.closest('[data-wrmm]'); if (mm) { wrMmFound(mm, e); return; }
     const a = e.target.closest('[data-wr]'); if (!a) return;
-    if (a.dataset.wr === 'again') wrShow(0); else wrShare();
+    if (a.dataset.wr === 'gal-ph' || a.dataset.wr === 'gal-cig') { wgOpen(a.dataset.wr === 'gal-ph' ? 'ph' : 'cig'); return; }
+    if (a.dataset.wr === 'again') wrShow(0); else wrShare(a.dataset.wr === 'group');
   });
-  document.addEventListener('keydown', e => { if ($('wr').hidden) return; if (e.key === 'Escape') wrClose(); if (e.key === 'ArrowRight') wrShow(wrI + 1); if (e.key === 'ArrowLeft') wrShow(wrI - 1); });
+  document.addEventListener('keydown', e => { if ($('wr').hidden) return; if (!$('wrGal').hidden) { wgKey(e); return; } if (e.key === 'Escape') wrClose(); if (e.key === 'ArrowRight') wrShow(wrI + 1); if (e.key === 'ArrowLeft') wrShow(wrI - 1); });
+  // ---------- Wrapped : murs animés, galerie complète, Meimei cachées ----------
+  const MM_HIDE = ['paw', 'pepper', 'hashbrown', 'crocs', 'head3', 'head4'];
+  const MM_LINES = ['喵 ! Meimei était là depuis le début', 'Trouvée ! Meimei réclame une bière', 'Meimei t\'a vu 👀', 'Meimei valide ce Wrapped', 'Encore elle !', 'Meimei : 一口闷 !'];
+  let wrFound = new Set(), wrEggs = [], wrPeeks = {};
+  function wrMmInit(){
+    wrFound = new Set(); wrPeeks = {};
+    const mid = wrS.map((s, k) => k).filter(k => k > 0 && !wrS[k].end && !/wr-ov/.test(wrS[k].bg));
+    for (let n = 0; n < 3 && mid.length; n++){ const k = mid.splice(Math.floor(Math.random() * mid.length), 1)[0]; wrPeeks[k] = {key: 'p' + n, img: MM_HIDE[n], side: ['l', 'r', 'b'][Math.floor(Math.random() * 3)], pos: 18 + Math.round(Math.random() * 60)}; }
+    wrEggs = Object.values(wrPeeks).map(p => p.key);
+    if (beers.some(b => PH_THUMBS[b.id])) wrEggs.push('wall', 'gal');
+    if (cigList().some(c => CIG_THUMBS[c.id])) wrEggs.push('clope');
+  }
+  const wrPeek = i => { const p = wrPeeks[i]; return p ? `<button type="button" class="wr-peek pk-${p.side}" style="--pos:${p.pos}%" data-wrmm="${p.key}" aria-label="Meimei"><img src="${MM[p.img]}" alt=""></button>` : ''; };
+  // colonnes de photos qui défilent en boucle (chaque piste est dupliquée pour une boucle sans couture), avec une Meimei glissée dedans
+  function wrMarq(srcs, key, cls){
+    const cols = [[], [], []]; srcs.forEach((s, k) => cols[k % 3].push(`<img src="${s}" alt="" loading="lazy">`));
+    const c = Math.floor(Math.random() * 3); cols[c].splice(Math.floor(Math.random() * (cols[c].length + 1)), 0, `<button type="button" class="wr-mmtile" data-wrmm="${key}" aria-label="Meimei"><img src="${MM[key === 'wall' ? 'head1' : 'head2']}" alt=""></button>`);
+    return `<div class="wr-marq ${cls}" aria-hidden="true">${cols.map((col, k) => `<div class="col"><div class="trk" style="--t:${Math.max(18, col.length * 2.6)}s;${k === 1 ? 'animation-direction:reverse;' : ''}">${col.join('')}${col.join('')}</div></div>`).join('')}</div>`;
+  }
+  function wrMmCount(){
+    const el = $('wrMmc'); if (!el || !wrEggs.length) return; const n = wrEggs.filter(k => wrFound.has(k)).length, t = wrEggs.length;
+    el.innerHTML = n === t ? `🐾 Les <b>${t}</b> Meimei trouvées. Respect.` : n ? `🐾 Meimei trouvées : <b>${n} / ${t}</b>. Les autres se cachent encore.` : `🐾 <b>${t}</b> Meimei se cachent dans ce Wrapped. Revois-le bien.`;
+  }
+  function wrMmFound(el, e){
+    const k = el.dataset.wrmm; if (wrFound.has(k)) return; wrFound.add(k);
+    try { burst(e.clientX, e.clientY, '#FF7AC6', 50); } catch {}
+    document.querySelectorAll(`#wr [data-wrmm="${k}"]`).forEach(x => { x.classList.add('got'); setTimeout(() => x.remove(), 600); });
+    const n = wrEggs.filter(x => wrFound.has(x)).length;
+    wrMsg(`${MM_LINES[(n - 1) % MM_LINES.length]} <b>${n} / ${wrEggs.length}</b>`);
+    if ($('wrGal').hidden && !wrS[wrI].end){ clearTimeout(wrTimer); wrTimer = setTimeout(() => wrShow(wrI + 1), 2500); }
+  }
+  function wrMsg(html){ const t = document.createElement('div'); t.className = 'wr-msg'; t.innerHTML = html; $('wr').appendChild(t); setTimeout(() => t.remove(), 2600); }
+
+  // galerie : tout revoir, groupé par jour, filtre par personne, visionneuse plein écran et diaporama
+  let wgKind = 'ph', wgWho = 'all', wgList = [], wgI = -1, wgAuto = 0, wgX0 = null, wgSwiped = 0;
+  function wgItems(kind){
+    return kind === 'ph'
+      ? beers.filter(b => PH_THUMBS[b.id]).map(b => ({id: b.id, at: b.at, who: b.who, th: PH_THUMBS[b.id], b}))
+      : cigList().filter(c => CIG_THUMBS[c.id]).map(c => ({id: c.id, at: c.at, who: c.who, th: CIG_THUMBS[c.id], c}));
+  }
+  function wgOpen(kind){
+    clearTimeout(wrTimer); $('wr').classList.add('paused'); wgKind = kind; wgWho = 'all'; $('wrGal').hidden = false; wgRender(); $('wgGrid').scrollTop = 0;
+  }
+  function wgClose(){
+    const g = $('wrGal'); if (!g || g.hidden) return; wgStop(); $('wgView').hidden = true; g.hidden = true; $('wr').classList.remove('paused');
+    if (wrS.length && !wrS[wrI].end){ clearTimeout(wrTimer); wrTimer = setTimeout(() => wrShow(wrI + 1), 4000); }
+  }
+  function wgRender(){
+    const all = wgItems(wgKind), nPh = wgItems('ph').length, nCig = wgItems('cig').length;
+    $('wgTabs').innerHTML = (nPh ? `<button type="button" data-wgk="ph" class="${wgKind === 'ph' ? 'on' : ''}">🍺 Bières · ${nPh}</button>` : '') + (nCig ? `<button type="button" data-wgk="cig" class="${wgKind === 'cig' ? 'on' : ''}">🚬 Clopes · ${nCig}</button>` : '');
+    const per = {}; all.forEach(x => per[x.who] = (per[x.who] || 0) + 1);
+    $('wgWho').innerHTML = `<button type="button" data-wgw="all" class="${wgWho === 'all' ? 'on' : ''}">Tous</button>` + PEOPLE.filter(p => per[p.id]).map(p => `<button type="button" data-wgw="${p.id}" class="${wgWho === p.id ? 'on' : ''}"><span class="mini">${avatarHTML(p.id)}</span>${p.name} · ${per[p.id]}</button>`).join('');
+    wgList = all.filter(x => wgWho === 'all' || x.who === wgWho).sort((a, b) => a.at - b.at);
+    const days = []; wgList.forEach((x, k) => { const dt = sh(x.at).date; if (!days.length || days[days.length - 1].dt !== dt) days.push({dt, at: x.at, who: x.who, items: []}); days[days.length - 1].items.push(k); });
+    const egg = wgKind === 'ph' && wgWho === 'all' && !wrFound.has('gal') && wrEggs.includes('gal') ? Math.floor(Math.random() * days.length) : -1;
+    $('wgGrid').innerHTML = days.map((dd, di) => {
+      const c = CBY[cityAt(dd.at, dd.who)], tiles = dd.items.map(k => `<button type="button" class="wg-t${wgKind === 'cig' ? ' cig' : ''}" data-wgi="${k}"><img src="${wgList[k].th}" alt="" loading="lazy"></button>`);
+      if (di === egg) tiles.splice(Math.floor(Math.random() * (tiles.length + 1)), 0, `<button type="button" class="wg-t wr-mmtile" data-wrmm="gal" aria-label="Meimei"><img src="${MM.paw}" alt=""></button>`);
+      return `<h4>${dayLabel(dd.dt)}${c ? ` · ${c.name} ${c.cn}` : ''}<small>${dd.items.length}</small></h4><div class="wg-g">${tiles.join('')}</div>`;
+    }).join('') || '<p class="wg-none">Rien ici.</p>';
+  }
+  function wgCap(x){
+    const t = sh(x.at), who = PBY[x.who] ? PBY[x.who].name : x.who;
+    if (x.b){ const afl = airportOf(x.at, x.who); return `<b>${who}</b> · ${kindTxt(x.b.brand)} · ${afl ? flTxt(afl) : CBY[cityAt(x.at, x.who)].name}<br>${dayLabel(t.date)} ${hm(t.h, t.m)}`; }
+    const cc = x.c.city && CIGC[x.c.city];
+    return `<b>${esc(x.c.name || 'Sans nom')}</b> · trouvée par ${who}${cc ? ` · ${cc.name} ${cc.cn}` : ''}<br>${x.c.note ? `« ${esc(x.c.note)} »<br>` : ''}${dayLabel(t.date)} ${hm(t.h, t.m)}`;
+  }
+  function wgShow(i){
+    if (!wgList.length) return; wgI = (i + wgList.length) % wgList.length; const x = wgList[wgI], img = $('wgImg'), full = x.b ? PH_FULL : CIG_FULL;
+    img.src = full[x.id] || x.th; img.classList.toggle('loading', !full[x.id]); img.classList.remove('kb'); void img.offsetWidth; if (wgAuto) img.classList.add('kb');
+    $('wgCap').innerHTML = wgCap(x); $('wgN').textContent = `${wgI + 1} / ${wgList.length}`; $('wgView').hidden = false;
+    if (!full[x.id] && CREW) api(x.b ? 'rpc/get_beer_photo' : 'rpc/get_cig_photo', {method: 'POST', body: JSON.stringify(x.b ? {p_crew: CREW, p_beer: x.id} : {p_crew: CREW, p_id: x.id})})
+      .then(r => r.ok ? r.json() : null).then(d => { if (typeof d === 'string' && d.startsWith('data:image/jpeg;base64,')){ full[x.id] = d; if (wgList[wgI] === x){ img.src = d; img.classList.remove('loading'); } } }).catch(() => {});
+    const nx = wgList[(wgI + 1) % wgList.length];   // précharge la suivante
+    if (nx && CREW && !(nx.b ? PH_FULL : CIG_FULL)[nx.id]) api(nx.b ? 'rpc/get_beer_photo' : 'rpc/get_cig_photo', {method: 'POST', body: JSON.stringify(nx.b ? {p_crew: CREW, p_beer: nx.id} : {p_crew: CREW, p_id: nx.id})})
+      .then(r => r.ok ? r.json() : null).then(d => { if (typeof d === 'string' && d.startsWith('data:image/jpeg;base64,')) (nx.b ? PH_FULL : CIG_FULL)[nx.id] = d; }).catch(() => {});
+  }
+  function wgStop(){ clearInterval(wgAuto); wgAuto = 0; $('wgPlay').textContent = '▶ Diaporama'; $('wgPlay2').textContent = '▶'; $('wgImg').classList.remove('kb'); }
+  function wgPlay(){
+    if (wgAuto){ wgStop(); return; }
+    if (!wgList.length) return; wgAuto = setInterval(() => wgShow(wgI + 1), 3400); $('wgPlay').textContent = '⏸ Pause'; $('wgPlay2').textContent = '⏸'; wgShow($('wgView').hidden ? 0 : wgI);
+  }
+  function wgKey(e){
+    if (e.key === 'Escape'){ if (!$('wgView').hidden){ wgStop(); $('wgView').hidden = true; } else wgClose(); }
+    else if (e.key === ' '){ e.preventDefault(); wgPlay(); }
+    else if (!$('wgView').hidden && e.key === 'ArrowRight') wgShow(wgI + 1);
+    else if (!$('wgView').hidden && e.key === 'ArrowLeft') wgShow(wgI - 1);
+  }
+  $('wrGal').addEventListener('click', e => {
+    const mm = e.target.closest('[data-wrmm]'); if (mm){ wrMmFound(mm, e); return; }
+    const k = e.target.closest('[data-wgk]'); if (k){ wgKind = k.dataset.wgk; wgWho = 'all'; wgRender(); $('wgGrid').scrollTop = 0; return; }
+    const w = e.target.closest('[data-wgw]'); if (w){ wgWho = w.dataset.wgw; wgRender(); return; }
+    const t = e.target.closest('[data-wgi]'); if (t){ wgShow(+t.dataset.wgi); return; }
+    if (e.target.closest('#wgX')) wgClose();
+    else if (e.target.closest('#wgPlay, #wgPlay2')) wgPlay();
+    else if (e.target.closest('#wgPrev')) { wgShow(wgI - 1); }
+    else if (e.target.closest('#wgNext')) { wgShow(wgI + 1); }
+    else if (e.target.closest('#wgBack') || (e.target.id === 'wgView' && Date.now() - wgSwiped > 400)){ wgStop(); $('wgView').hidden = true; }
+  });
+  $('wgView').addEventListener('pointerdown', e => { wgX0 = e.clientX; });
+  $('wgView').addEventListener('pointerup', e => { if (wgX0 == null) return; const dx = e.clientX - wgX0; wgX0 = null; if (Math.abs(dx) > 50){ wgSwiped = Date.now(); wgShow(wgI + (dx < 0 ? 1 : -1)); } });
   // shareable 1080×1920 card, drawn on a canvas (no library)
   function wrLoad(src){ return new Promise(r => { const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = src; }); }
   async function wrCard(){
@@ -2604,10 +2782,89 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     x.textAlign = 'left'; x.font = '400 52px "ZCOOL KuaiLe", sans-serif'; x.fillStyle = '#FFC93C'; x.fillText('一口闷 !', 110, 1815);
     return new Promise(r => c.toBlob(r, 'image/png'));
   }
-  async function wrShare(){
-    const blob = await wrCard(); if (!blob) return;
-    const file = new File([blob], `ganbei-wrapped-${wrMe}.png`, {type: 'image/png'});
-    try { if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], title: 'Ganbei Wrapped'}); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  // version groupe, plus complète : classement, temps forts, villes, records, photos (hauteur variable)
+  async function wrGroupCard(){
+    const d = wrData(wrMe || PEOPLE[0].id), W = 1080;
+    const by = (arr, key) => { const m = {}; for (const v of arr){ const k = key(v); if (k != null) m[k] = (m[k] || 0) + 1; } return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+    const rankOf = id => 1 + PEOPLE.filter(p => d.counts[p.id] > d.counts[id]).length;
+    const topB = by(beers, b => BBY[b.brand] && b.brand !== 'biere' && !BBY[b.brand].other ? b.brand : null)[0];
+    const airN = beers.filter(b => airportOf(b.at, b.who)).length, skyN = beers.filter(b => (airportOf(b.at, b.who) || {}).sky).length;
+    const cityN = by(beers, b => { const c = cityAt(b.at, b.who); return c === 'retour' ? null : c; });
+    const days = new Set(beers.map(b => sh(b.at).date)).size;
+    const phB = beers.filter(b => PH_THUMBS[b.id]), phPick = phB.filter(b => /^data:/.test(PH_THUMBS[b.id]));
+    const fastTxt = d.fast ? (d.fast.g < 60000 ? Math.round(d.fast.g / 1000) + ' s' : Math.round(d.fast.g / 60000) + ' min') : '';
+    const highs = [];
+    if (d.groupDay) highs.push(['Plus grosse journée', `${d.groupDay[1]} bières · ${dayLabel(d.groupDay[0])}`]);
+    if (topB) highs.push(['Marque reine', `${BBY[topB[0]].label} ${BBY[topB[0]].cn} · ${topB[1]}`]);
+    highs.push(['Airport beers', `${airN}${skyN ? ` dont ${skyN} en vol` : ''}`]);
+    if (d.othersAll) highs.push(['Infidélités (pas bière)', String(d.othersAll)]);
+    highs.push(['Jours avec au moins une bière', String(days)]);
+    if (phB.length) highs.push(['Photos', String(phB.length)]);
+    const recs = [];
+    if (d.early) recs.push(['🌅 Bière du petit-déj', `${PBY[d.early.who].name} · ${hm(d.early.t.h, d.early.t.m)}, ${dayLabel(d.early.t.date)}`]);
+    if (d.late) recs.push(['🌙 Dernier debout', `${PBY[d.late.who].name} · ${hm(d.late.t.h, d.late.t.m)}, ${dayLabel(d.late.t.date)}`]);
+    if (d.fast) recs.push(['⚡ Doublé éclair', `${PBY[d.fast.who].name} · ${fastTxt}`]);
+    if (d.airAll) recs.push(["✈ Roi de l'airport beer", `${PBY[d.airAll[0]].name} · ${d.airAll[1]}`]);
+    const pics = phPick.length >= 4 ? (() => { const n = Math.min(8, phPick.length), st = phPick.length / n; return [...Array(n)].map((_, k) => phPick[Math.floor(k * st)]); })() : [];
+    // contenu dessiné sur un calque transparent très haut, puis recadré sur le fond à la bonne hauteur
+    const c = document.createElement('canvas'); c.width = W; c.height = 6000; let x = c.getContext('2d');
+    const T = (t, y, size, font, col, w, al, xx) => { x.font = `${w || 400} ${size}px ${font}`; x.fillStyle = col; x.textAlign = al || 'center'; x.fillText(t, xx == null ? 540 : xx, y); };
+    const FIT = (t, xx, y, maxW, size, font, col, w, al) => { let sz = size; do { x.font = `${w || 400} ${sz}px ${font}`; sz -= 2; } while (x.measureText(t).width > maxW && sz > 18); x.fillStyle = col; x.textAlign = al || 'left'; x.fillText(t, xx, y); };
+    const BODY = '"Barlow Semi Condensed", "ZCOOL KuaiLe", sans-serif', BUNGEE = 'Bungee, Impact, sans-serif', CN = '"ZCOOL KuaiLe", sans-serif';
+    const head = (t, y) => { T(t, y, 40, BUNGEE, '#FFC93C'); x.fillStyle = 'rgba(255,201,60,.5)'; x.fillRect(110, y + 22, 860, 3); };
+    const row = (k, v, y) => { x.fillStyle = 'rgba(0,0,0,.25)'; x.beginPath(); x.roundRect(110, y - 62, 860, 92, 22); x.fill();
+      FIT(k, 145, y, 380, 36, BODY, 'rgba(255,255,255,.75)', 700); FIT(v, 935, y, 470, 38, BODY, '#fff', 700, 'right'); };
+    // en-tête
+    T('干杯 WRAPPED', 160, 92, CN, '#FFC93C'); T("L'ÉDITION DU GROUPE", 228, 40, BUNGEE, '#fff'); T('1 MILLION CHINESE BEERS · CHINE · NOVEMBRE 2026', 282, 28, BUNGEE, 'rgba(255,255,255,.7)');
+    T(nf0(d.total), 520, 230, BUNGEE, '#FFC93C'); T('bières à six', 600, 50, BODY, '#fff', 700);
+    T(`${nf1(d.liters)} litres · ≈ ${nf0(d.yuan)} ¥ · encore ${nf0(GOAL - d.total)} avant le million`, 660, 34, BODY, 'rgba(255,255,255,.8)', 700);
+    let y = 790; head('CLASSEMENT FINAL', y); y += 60;
+    const avs = await Promise.all(d.ranked.map(p => PHOTOS[p.id] ? wrLoad(PHOTOS[p.id]) : wrLoad('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(AVSVG[p.id].replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" ')))));
+    d.ranked.forEach((p, i) => {
+      const r = rankOf(p.id), n = d.counts[p.id], ti = n ? TITLES[Math.min(r - 1, TITLES.length - 1)] : ['清醒', 'Encore sobre'], top = y + i * 118;
+      x.fillStyle = r === 1 && n ? 'rgba(255,201,60,.22)' : 'rgba(0,0,0,.25)'; x.beginPath(); x.roundRect(110, top, 860, 104, 24); x.fill();
+      T(n && r <= 3 ? ['金', '银', '铜'][r - 1] : String(r), top + 68, n && r <= 3 ? 48 : 44, n && r <= 3 ? CN : BUNGEE, n && r <= 3 ? '#FFC93C' : 'rgba(255,255,255,.7)', 400, 'center', 160);
+      x.save(); x.beginPath(); x.arc(250, top + 52, 40, 0, 7); x.fillStyle = p.color; x.fill(); x.clip(); if (avs[i]) x.drawImage(avs[i], 210, top + 12, 80, 80); x.restore();
+      x.lineWidth = 5; x.strokeStyle = '#FFC93C'; x.beginPath(); x.arc(250, top + 52, 42, 0, 7); x.stroke();
+      T(p.name, top + 48, 42, BODY, '#fff', 700, 'left', 315);
+      T(`${ti[0]}  ${ti[1]}`, top + 86, 30, BODY, '#FFC93C', 700, 'left', 315);
+      T(String(n), top + 70, 56, BUNGEE, '#fff', 400, 'right', 935);
+      T(d.total ? Math.round(n / d.total * 100) + ' %' : '', top + 70, 28, BODY, 'rgba(255,255,255,.6)', 700, 'right', 935 - x.measureText(String(n)).width - 20);
+    });
+    y += PEOPLE.length * 118 + 80; head('LES TEMPS FORTS', y); y += 110;
+    for (const [k, v] of highs){ row(k, v, y); y += 100; }
+    if (cityN.length){
+      y += 20; head('COUPE DES VILLES', y); y += 80; const mx = cityN[0][1];
+      cityN.forEach(([id, n], i) => { const cc = CBY[id], top = y + i * 76;
+        T(`${cc.cn} ${cc.name}`, top + 40, 34, BODY, '#fff', 700, 'left', 110);
+        const bx = 470, bw = 360 * n / mx; x.fillStyle = i ? 'rgba(255,255,255,.35)' : '#FFC93C'; x.beginPath(); x.roundRect(bx, top + 12, Math.max(bw, 14), 36, 12); x.fill();
+        T(String(n), top + 42, 34, BUNGEE, '#fff', 400, 'right', 970); });
+      y += cityN.length * 76 + 50;
+    }
+    if (recs.length){ y += 10; head('LES RECORDS', y); y += 110; for (const [k, v] of recs){ row(k, v, y); y += 100; } }
+    if (pics.length){
+      y += 10; head('LE MUR DES BIÈRES', y); y += 70;
+      const ims = await Promise.all(pics.map(b => wrLoad(PH_THUMBS[b.id])));
+      ims.forEach((im, k) => { if (!im) return; const col = k % 4, ln = Math.floor(k / 4), px = 110 + col * 218, py = y + ln * 232, s0 = 200;
+        x.save(); x.translate(px + s0 / 2 + 6, py + s0 / 2 + 6); x.rotate([-4, 3, -2, 2, -3, 4, -1, 3][k] * Math.PI / 180);
+        x.fillStyle = '#fff'; x.fillRect(-s0 / 2 - 8, -s0 / 2 - 8, s0 + 16, s0 + 16);
+        const sc = Math.max(s0 / im.width, s0 / im.height), iw = im.width * sc, ih = im.height * sc;
+        x.beginPath(); x.rect(-s0 / 2, -s0 / 2, s0, s0); x.clip(); x.drawImage(im, -iw / 2, -ih / 2, iw, ih); x.restore(); });
+      y += Math.ceil(pics.length / 4) * 232 + 10;
+    }
+    const H = y + 300, out = document.createElement('canvas'); out.width = W; out.height = H; x = out.getContext('2d');
+    const g = x.createRadialGradient(540, 0, 100, 540, H * .4, H * .9); g.addColorStop(0, '#E0242C'); g.addColorStop(.55, '#7A0A10'); g.addColorStop(1, '#2a0206'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = 'rgba(255,201,60,.10)'; for (let yy = 15; yy < H; yy += 45) for (let xx = 15; xx < W; xx += 45){ x.beginPath(); x.arc(xx, yy, 3, 0, 7); x.fill(); }
+    x.drawImage(c, 0, 0);
+    const mm = await wrLoad(MM.head5), fy = H - 140;
+    if (mm){ x.save(); x.beginPath(); x.arc(930, fy, 80, 0, 7); x.clip(); x.drawImage(mm, 850, fy - 80, 160, 160); x.restore(); x.lineWidth = 8; x.strokeStyle = '#FFC93C'; x.beginPath(); x.arc(930, fy, 82, 0, 7); x.stroke(); }
+    T('一路平安 !', fy + 4, 56, CN, '#FFC93C', 400, 'left', 110); T(PEOPLE.map(p => p.name).join(' · '), fy + 56, 28, BODY, 'rgba(255,255,255,.7)', 700, 'left', 110);
+    return new Promise(r => out.toBlob(r, 'image/png'));
+  }
+  async function wrShare(group){
+    const blob = group ? await wrGroupCard() : await wrCard(); if (!blob) return;
+    const file = new File([blob], group ? 'ganbei-wrapped-groupe.png' : `ganbei-wrapped-${wrMe}.png`, {type: 'image/png'});
+    try { if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], title: group ? 'Ganbei Wrapped, édition groupe' : 'Ganbei Wrapped'}); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     toast('Image enregistrée 📸');
   }
@@ -2719,7 +2976,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261105-190913';
+  const BUILD = '20261117-154500';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
