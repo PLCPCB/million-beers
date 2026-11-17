@@ -515,17 +515,14 @@ textarea.ad-in{resize:vertical;min-height:70px}
 .wr-marq .wr-mmtile{aspect-ratio:1}
 @keyframes wrscroll{from{transform:translateY(0)}to{transform:translateY(calc(-50% - 5px))}}
 @keyframes wrfade{from{opacity:0}}
-.wr-peek{position:absolute;z-index:2;width:62px;height:62px;padding:0;border:3px solid var(--gold);border-radius:50%;overflow:hidden;background:#ffd6ec;cursor:pointer;animation:wrpeek 5.5s ease-in-out .8s infinite both!important}
+.wr-peek{position:absolute;z-index:2;width:62px;height:62px;padding:0;border:3px solid var(--gold);border-radius:50%;overflow:hidden;background:#ffd6ec;cursor:pointer;animation:wrpeek 4.5s ease-in-out .6s infinite both!important}
 .wr-peek img{width:100%;height:100%;object-fit:cover;display:block}
-.wr-peek.pk-l{left:-34px;top:var(--pos);--px:22px;--py:0px}
-.wr-peek.pk-r{right:-34px;top:var(--pos);--px:-22px;--py:0px}
-.wr-peek.pk-b{bottom:-34px;left:var(--pos);--px:0px;--py:-22px}
-.wr-peek.pk-t{top:calc(-34px + env(safe-area-inset-top, 0px) + 40px);left:var(--pos);--px:0px;--py:22px;opacity:.9}
-@keyframes wrpeek{0%,55%,100%{transform:translate(0,0) rotate(0)}65%,85%{transform:translate(var(--px),var(--py)) rotate(-8deg)}75%{transform:translate(var(--px),var(--py)) rotate(8deg)}}
-.wr-peek.got,.wr-mmtile.got{animation:wrgot .55s ease forwards!important}
-@keyframes wrgot{to{transform:scale(1.8) rotate(25deg);opacity:0}}
-.wr-msg{position:absolute;z-index:8;left:50%;bottom:calc(28px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);max-width:calc(100% - 32px);background:#FF7AC6;color:#3a0020;font:700 16px var(--f-body);padding:10px 16px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.4);text-align:center;animation:wrin .4s cubic-bezier(.2,.9,.25,1.15) both}
-.wr-mmc{font-size:16px}
+.wr-peek.pk-l{left:-30px;top:var(--pos);--px:34px;--py:0px}
+.wr-peek.pk-r{right:-30px;top:var(--pos);--px:-34px;--py:0px}
+.wr-peek.pk-b{bottom:-30px;left:var(--pos);--px:0px;--py:-38px}
+@keyframes wrpeek{0%,100%{transform:translate(0,0) rotate(0)}12%,70%{transform:translate(var(--px),var(--py)) rotate(-6deg)}40%{transform:translate(var(--px),var(--py)) rotate(6deg)}}
+.wr-peek.boop img,.wr-mmtile.boop img{animation:wrboop .6s ease}
+@keyframes wrboop{30%{transform:scale(1.25) rotate(-12deg)}60%{transform:scale(.95) rotate(8deg)}}
 .wr-gal{position:absolute;inset:0;z-index:5;background:#140103;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px))}
 .wr-gal[hidden]{display:none}
 .wg-top{display:flex;align-items:center;gap:8px;padding-bottom:8px}
@@ -2614,7 +2611,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
         <div class="wr-btns"><button type="button" class="pri" data-wr="gal-cig">🚬 Feuilleter le Clopédex</button></div>`});
     }
     S.push({bg: 'bg-red', end: true, h: `<img class="wr-mm" src="${MM.head5}" alt=""><p class="wr-cn" style="font-size:clamp(50px,16vw,84px)">一路平安</p><p class="wr-h">Bon retour, ${P.name}</p><p class="wr-p">Meimei a tout vu. Rendez-vous pour le prochain million.</p>
-      <p class="wr-p wr-mmc" id="wrMmc"></p><div class="wr-btns"><button type="button" class="pri" data-wr="share">📸 Partager mon Wrapped</button><button type="button" class="pri" data-wr="group">👥 Wrapped du groupe</button><button type="button" class="sec" data-wr="again">Revoir</button></div>`});
+      <div class="wr-btns"><button type="button" class="pri" data-wr="share">📸 Partager mon Wrapped</button><button type="button" class="pri" data-wr="group">👥 Wrapped du groupe</button><button type="button" class="sec" data-wr="again">Revoir</button></div>`});
     return S;
   }
   let wrS = [], wrI = 0, wrTimer = 0, wrMe = '';
@@ -2623,8 +2620,6 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     wrI = Math.max(0, Math.min(i, wrS.length - 1)); clearTimeout(wrTimer);
     $('wrBars').innerHTML = wrS.map((s, k) => `<i class="${k < wrI ? 'done' : k === wrI ? 'cur' : ''}" style="--d:${s.dur || WR_DUR}ms"><b></b></i>`).join('');
     const sl = wrS[wrI]; $('wrStage').innerHTML = `<div class="wr-s ${sl.bg}">${sl.h}${wrPeek(wrI)}</div>`;
-    for (const k of wrFound) $('wrStage').querySelectorAll(`[data-wrmm="${k}"]`).forEach(e => e.remove());
-    if (sl.end) wrMmCount();
     if (!sl.end) wrTimer = setTimeout(() => wrShow(wrI + 1), sl.dur || WR_DUR);
     if (wrI === 1 || sl.end) { try { burst(innerWidth / 2, innerHeight * .4, '#FFC93C', 70); } catch {} }
     if (sl.snow) { snow(110); wind(); }
@@ -2648,44 +2643,33 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   });
   $('wrStage').addEventListener('click', e => {
     const me = e.target.closest('[data-wrme]'); if (me) { wrStart(me.dataset.wrme); return; }
-    const mm = e.target.closest('[data-wrmm]'); if (mm) { wrMmFound(mm, e); return; }
+    const mm = e.target.closest('[data-wrmm]'); if (mm) { wrMm(mm, e); return; }
     const a = e.target.closest('[data-wr]'); if (!a) return;
     if (a.dataset.wr === 'gal-ph' || a.dataset.wr === 'gal-cig') { wgOpen(a.dataset.wr === 'gal-ph' ? 'ph' : 'cig'); return; }
     if (a.dataset.wr === 'again') wrShow(0); else wrShare(a.dataset.wr === 'group');
   });
   document.addEventListener('keydown', e => { if ($('wr').hidden) return; if (!$('wrGal').hidden) { wgKey(e); return; } if (e.key === 'Escape') wrClose(); if (e.key === 'ArrowRight') wrShow(wrI + 1); if (e.key === 'ArrowLeft') wrShow(wrI - 1); });
-  // ---------- Wrapped : murs animés, galerie complète, Meimei cachées ----------
-  const MM_HIDE = ['paw', 'pepper', 'hashbrown', 'crocs', 'head3', 'head4'];
-  const MM_LINES = ['喵 ! Meimei était là depuis le début', 'Trouvée ! Meimei réclame une bière', 'Meimei t\'a vu 👀', 'Meimei valide ce Wrapped', 'Encore elle !', 'Meimei : 一口闷 !'];
-  let wrFound = new Set(), wrEggs = [], wrPeeks = {};
+  // ---------- Wrapped : murs animés, galerie complète, Meimei un peu partout (thème de l'appli) ----------
+  const MM_PEEK = ['paw', 'pepper', 'hashbrown', 'crocs', 'head3', 'head4'];
+  let wrPeeks = {};
   function wrMmInit(){
-    wrFound = new Set(); wrPeeks = {};
-    const mid = wrS.map((s, k) => k).filter(k => k > 0 && !wrS[k].end && !/wr-ov/.test(wrS[k].bg));
-    for (let n = 0; n < 3 && mid.length; n++){ const k = mid.splice(Math.floor(Math.random() * mid.length), 1)[0]; wrPeeks[k] = {key: 'p' + n, img: MM_HIDE[n], side: ['l', 'r', 'b'][Math.floor(Math.random() * 3)], pos: 18 + Math.round(Math.random() * 60)}; }
-    wrEggs = Object.values(wrPeeks).map(p => p.key);
-    if (beers.some(b => PH_THUMBS[b.id])) wrEggs.push('wall', 'gal');
-    if (cigList().some(c => CIG_THUMBS[c.id])) wrEggs.push('clope');
+    wrPeeks = {};
+    const mid = wrS.map((s, k) => k).filter(k => k > 0 && !wrS[k].end && !/wr-ov/.test(wrS[k].bg)), imgs = [...MM_PEEK].sort(() => Math.random() - .5);
+    for (let n = 0; n < 4 && mid.length; n++){ const k = mid.splice(Math.floor(Math.random() * mid.length), 1)[0]; wrPeeks[k] = {img: imgs[n], side: ['l', 'r', 'b'][Math.floor(Math.random() * 3)], pos: 18 + Math.round(Math.random() * 60)}; }
   }
-  const wrPeek = i => { const p = wrPeeks[i]; return p ? `<button type="button" class="wr-peek pk-${p.side}" style="--pos:${p.pos}%" data-wrmm="${p.key}" aria-label="Meimei"><img src="${MM[p.img]}" alt=""></button>` : ''; };
-  // colonnes de photos qui défilent en boucle (chaque piste est dupliquée pour une boucle sans couture), avec une Meimei glissée dedans
+  const wrPeek = i => { const p = wrPeeks[i]; return p ? `<button type="button" class="wr-peek pk-${p.side}" style="--pos:${p.pos}%" data-wrmm aria-label="Meimei"><img src="${MM[p.img]}" alt=""></button>` : ''; };
+  // colonnes de photos qui défilent en boucle (chaque piste est dupliquée pour une boucle sans couture), avec Meimei glissée dedans
   function wrMarq(srcs, key, cls){
     const cols = [[], [], []]; srcs.forEach((s, k) => cols[k % 3].push(`<img src="${s}" alt="" loading="lazy">`));
-    const c = Math.floor(Math.random() * 3); cols[c].splice(Math.floor(Math.random() * (cols[c].length + 1)), 0, `<button type="button" class="wr-mmtile" data-wrmm="${key}" aria-label="Meimei"><img src="${MM[key === 'wall' ? 'head1' : 'head2']}" alt=""></button>`);
+    const c = Math.floor(Math.random() * 3); cols[c].splice(Math.floor(Math.random() * (cols[c].length + 1)), 0, `<button type="button" class="wr-mmtile" data-wrmm aria-label="Meimei"><img src="${MM[key === 'wall' ? 'head1' : 'head2']}" alt=""></button>`);
     return `<div class="wr-marq ${cls}" aria-hidden="true">${cols.map((col, k) => `<div class="col"><div class="trk" style="--t:${Math.max(18, col.length * 2.6)}s;${k === 1 ? 'animation-direction:reverse;' : ''}">${col.join('')}${col.join('')}</div></div>`).join('')}</div>`;
   }
-  function wrMmCount(){
-    const el = $('wrMmc'); if (!el || !wrEggs.length) return; const n = wrEggs.filter(k => wrFound.has(k)).length, t = wrEggs.length;
-    el.innerHTML = n === t ? `🐾 Les <b>${t}</b> Meimei trouvées. Respect.` : n ? `🐾 Meimei trouvées : <b>${n} / ${t}</b>. Les autres se cachent encore.` : `🐾 <b>${t}</b> Meimei se cachent dans ce Wrapped. Revois-le bien.`;
-  }
-  function wrMmFound(el, e){
-    const k = el.dataset.wrmm; if (wrFound.has(k)) return; wrFound.add(k);
-    try { burst(e.clientX, e.clientY, '#FF7AC6', 50); } catch {}
-    document.querySelectorAll(`#wr [data-wrmm="${k}"]`).forEach(x => { x.classList.add('got'); setTimeout(() => x.remove(), 600); });
-    const n = wrEggs.filter(x => wrFound.has(x)).length;
-    wrMsg(`${MM_LINES[(n - 1) % MM_LINES.length]} <b>${n} / ${wrEggs.length}</b>`);
+  // un appui sur Meimei : confettis roses et petite danse, sans casser le défilement
+  function wrMm(el, e){
+    try { burst(e.clientX, e.clientY, '#FF7AC6', 40); } catch {}
+    el.classList.remove('boop'); void el.offsetWidth; el.classList.add('boop');
     if ($('wrGal').hidden && !wrS[wrI].end){ clearTimeout(wrTimer); wrTimer = setTimeout(() => wrShow(wrI + 1), 2500); }
   }
-  function wrMsg(html){ const t = document.createElement('div'); t.className = 'wr-msg'; t.innerHTML = html; $('wr').appendChild(t); setTimeout(() => t.remove(), 2600); }
 
   // galerie : tout revoir, groupé par jour, filtre par personne, visionneuse plein écran et diaporama
   let wgKind = 'ph', wgWho = 'all', wgList = [], wgI = -1, wgAuto = 0, wgX0 = null, wgSwiped = 0;
@@ -2708,10 +2692,10 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('wgWho').innerHTML = `<button type="button" data-wgw="all" class="${wgWho === 'all' ? 'on' : ''}">Tous</button>` + PEOPLE.filter(p => per[p.id]).map(p => `<button type="button" data-wgw="${p.id}" class="${wgWho === p.id ? 'on' : ''}"><span class="mini">${avatarHTML(p.id)}</span>${p.name} · ${per[p.id]}</button>`).join('');
     wgList = all.filter(x => wgWho === 'all' || x.who === wgWho).sort((a, b) => a.at - b.at);
     const days = []; wgList.forEach((x, k) => { const dt = sh(x.at).date; if (!days.length || days[days.length - 1].dt !== dt) days.push({dt, at: x.at, who: x.who, items: []}); days[days.length - 1].items.push(k); });
-    const egg = wgKind === 'ph' && wgWho === 'all' && !wrFound.has('gal') && wrEggs.includes('gal') ? Math.floor(Math.random() * days.length) : -1;
+    const egg = wgKind === 'ph' && wgWho === 'all' && days.length ? Math.floor(Math.random() * days.length) : -1;
     $('wgGrid').innerHTML = days.map((dd, di) => {
       const c = CBY[cityAt(dd.at, dd.who)], tiles = dd.items.map(k => `<button type="button" class="wg-t${wgKind === 'cig' ? ' cig' : ''}" data-wgi="${k}"><img src="${wgList[k].th}" alt="" loading="lazy"></button>`);
-      if (di === egg) tiles.splice(Math.floor(Math.random() * (tiles.length + 1)), 0, `<button type="button" class="wg-t wr-mmtile" data-wrmm="gal" aria-label="Meimei"><img src="${MM.paw}" alt=""></button>`);
+      if (di === egg) tiles.splice(Math.floor(Math.random() * (tiles.length + 1)), 0, `<button type="button" class="wg-t wr-mmtile" data-wrmm aria-label="Meimei"><img src="${MM.paw}" alt=""></button>`);
       return `<h4>${dayLabel(dd.dt)}${c ? ` · ${c.name} ${c.cn}` : ''}<small>${dd.items.length}</small></h4><div class="wg-g">${tiles.join('')}</div>`;
     }).join('') || '<p class="wg-none">Rien ici.</p>';
   }
@@ -2743,7 +2727,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     else if (!$('wgView').hidden && e.key === 'ArrowLeft') wgShow(wgI - 1);
   }
   $('wrGal').addEventListener('click', e => {
-    const mm = e.target.closest('[data-wrmm]'); if (mm){ wrMmFound(mm, e); return; }
+    const mm = e.target.closest('[data-wrmm]'); if (mm){ wrMm(mm, e); return; }
     const k = e.target.closest('[data-wgk]'); if (k){ wgKind = k.dataset.wgk; wgWho = 'all'; wgRender(); $('wgGrid').scrollTop = 0; return; }
     const w = e.target.closest('[data-wgw]'); if (w){ wgWho = w.dataset.wgw; wgRender(); return; }
     const t = e.target.closest('[data-wgi]'); if (t){ wgShow(+t.dataset.wgi); return; }
@@ -2976,7 +2960,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261117-154500';
+  const BUILD = '20261117-155000';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
