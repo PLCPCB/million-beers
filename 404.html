@@ -2774,7 +2774,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const topB = by(beers, b => BBY[b.brand] && b.brand !== 'biere' && !BBY[b.brand].other ? b.brand : null)[0];
     const airN = beers.filter(b => airportOf(b.at, b.who)).length, skyN = beers.filter(b => (airportOf(b.at, b.who) || {}).sky).length;
     const cityN = by(beers, b => { const c = cityAt(b.at, b.who); return c === 'retour' ? null : c; });
-    const days = new Set(beers.map(b => sh(b.at).date)).size;
+    const tripDays = dayDiff('2026-11-18', '2026-11-04') + 1, days = new Set(beers.map(b => sh(b.at).date).filter(dt => dt >= '2026-11-04' && dt <= '2026-11-18')).size;
     const phB = beers.filter(b => PH_THUMBS[b.id]), phPick = phB.filter(b => /^data:/.test(PH_THUMBS[b.id]));
     const fastTxt = d.fast ? (d.fast.g < 60000 ? Math.round(d.fast.g / 1000) + ' s' : Math.round(d.fast.g / 60000) + ' min') : '';
     const highs = [];
@@ -2782,14 +2782,15 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     if (topB) highs.push(['Marque reine', `${BBY[topB[0]].label} ${BBY[topB[0]].cn} · ${topB[1]}`]);
     highs.push(['Airport beers', `${airN}${skyN ? ` dont ${skyN} en vol` : ''}`]);
     if (d.othersAll) highs.push(['Infidélités (pas bière)', String(d.othersAll)]);
-    highs.push(['Jours avec au moins une bière', String(days)]);
+    highs.push(['Jours avec au moins une bière', `${days} / ${tripDays}`]);
     if (phB.length) highs.push(['Photos', String(phB.length)]);
     const recs = [];
     if (d.early) recs.push(['🌅 Bière du petit-déj', `${PBY[d.early.who].name} · ${hm(d.early.t.h, d.early.t.m)}, ${dayLabel(d.early.t.date)}`]);
     if (d.late) recs.push(['🌙 Dernier debout', `${PBY[d.late.who].name} · ${hm(d.late.t.h, d.late.t.m)}, ${dayLabel(d.late.t.date)}`]);
     if (d.fast) recs.push(['⚡ Doublé éclair', `${PBY[d.fast.who].name} · ${fastTxt}`]);
     if (d.airAll) recs.push(["✈ Roi de l'airport beer", `${PBY[d.airAll[0]].name} · ${d.airAll[1]}`]);
-    const pics = phPick.length >= 4 ? (() => { const n = Math.min(8, phPick.length), st = phPick.length / n; return [...Array(n)].map((_, k) => phPick[Math.floor(k * st)]); })() : [];
+    // une photo tirée au hasard dans chaque tranche du voyage : bien réparties, et différentes à chaque partage
+    const pics = phPick.length >= 4 ? (() => { const n = Math.min(8, phPick.length), st = phPick.length / n; return [...Array(n)].map((_, k) => phPick[Math.min(phPick.length - 1, Math.floor(k * st + Math.random() * st))]); })() : [];
     // contenu dessiné sur un calque transparent très haut, puis recadré sur le fond à la bonne hauteur
     const c = document.createElement('canvas'); c.width = W; c.height = 6000; let x = c.getContext('2d');
     const T = (t, y, size, font, col, w, al, xx) => { x.font = `${w || 400} ${size}px ${font}`; x.fillStyle = col; x.textAlign = al || 'center'; x.fillText(t, xx == null ? 540 : xx, y); };
@@ -2960,7 +2961,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261117-155000';
+  const BUILD = '20261117-160000';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
