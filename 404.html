@@ -454,6 +454,9 @@ textarea.ad-in{resize:vertical;min-height:70px}
 .plus:active{transform:translateY(3px);box-shadow:0 1px 0 #8A4E00}
 .plus:disabled{filter:grayscale(1) brightness(.7);cursor:not-allowed}
 
+html.archive .ctrl,html.archive #undoBtn,html.archive #airBand{display:none!important}
+html.archive #board .plus{visibility:hidden}
+.ro .ro-btn{margin-top:8px;min-height:40px;border-radius:10px;border:none;background:var(--gold);color:var(--lacquer-deep);font:700 15px var(--f-body);padding:0 14px;cursor:pointer}
 .ro{background:var(--lacquer-deep);border:1.5px dashed var(--gold);border-radius:10px;padding:9px 12px;font-size:14px;color:var(--ink)}
 .ro b{color:var(--gold)}
 
@@ -992,6 +995,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // Photos uploaded by the band (shared through Supabase); the emoji stays as fallback.
   let PHOTOS = {}, PHOTO_VER = {};
   try { const c = JSON.parse(localStorage.getItem('mcb.avatars') || '{}'); if (c && c.photos) { PHOTOS = c.photos; PHOTO_VER = c.ver || {}; } } catch {}
+  const ARCHIVE = true;   // fin du voyage : mode souvenir, voir « mode souvenir » plus bas
+  if (ARCHIVE) document.documentElement.classList.add('archive');
   const ROWINFO = {}; let pvWho = null;
   // photos de bières : miniatures en cache sur le téléphone, images complètes chargées à l'ouverture
   let PH_THUMBS = {}, PH_VER = {}; const PH_FULL = {};
@@ -1463,7 +1468,8 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- status ----------
   function setStatus(kind, extra){
     const el = $('live'); el.className = 'live';
-    if (kind === 'live'){ el.classList.add('on'); el.textContent = 'En direct'; }
+    if (kind === 'live' && ARCHIVE){ el.textContent = 'Archive'; }
+    else if (kind === 'live'){ el.classList.add('on'); el.textContent = 'En direct'; }
     else if (kind === 'pending'){ el.classList.add('warn'); el.textContent = extra; }
     else if (kind === 'off'){ el.classList.add('warn'); el.textContent = 'Hors ligne'; }
     else if (kind === 'setup'){ el.classList.add('warn'); el.textContent = 'Base non configurée'; }
@@ -1476,7 +1482,64 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // pending beers stay in the outbox and go out as soon as the network is back.
   const CONFIGURED = /^https:\/\//.test(SB_URL) && SB_KEY.length > 20;
   const sbHeaders = () => { const h = {apikey: SB_KEY, 'Content-Type': 'application/json'}; if (!SB_KEY.startsWith('sb_')) h.Authorization = 'Bearer ' + SB_KEY; return h; };
-  const api = (path, opts = {}) => fetch(`${SB_URL.replace(/\/$/, '')}/rest/v1/${path}`, {...opts, headers: {...sbHeaders(), ...(opts.headers || {})}});
+  // ---------- mode souvenir (fin du voyage) ----------
+  // Tout est figé dans /archive/ sur GitHub, chiffré avec le code du lien (AES-GCM, clé tirée du code par PBKDF2).
+  // L'app ne parle plus à Supabase : elle lit l'archive, rien ne peut plus être ajouté, et ça marche même si Supabase est en pause ou supprimé.
+  const ARC_BASE = '/million-beers/archive/';
+  let ARC = null, ARC_KEY = null, ARC_CODE = '', arcRaw = null;
+  async function arcDerive(code, salt){
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256'}, base, {name: 'AES-GCM', length: 256}, false, ['decrypt']);
+  }
+  // true = ouverte avec ce code, false = mauvais code, null = archive injoignable
+  async function arcOpen(code){
+    if (!code) return false;
+    if (ARC && ARC_CODE === code) return true;
+    try {
+      if (!arcRaw){ const r = await fetch(ARC_BASE + 'data.bin'); if (!r.ok) return null; arcRaw = new Uint8Array(await r.arrayBuffer()); }
+      const key = await arcDerive(code, arcRaw.slice(0, 16));
+      const pt = await crypto.subtle.decrypt({name: 'AES-GCM', iv: arcRaw.slice(16, 28)}, key, arcRaw.slice(28));
+      ARC = JSON.parse(new TextDecoder().decode(pt)); ARC_KEY = key; ARC_CODE = code; return true;
+    } catch (e) { return e && e.name === 'OperationError' ? false : null; }
+  }
+  async function arcPhoto(kind, id){
+    if (!ARC_KEY || !/^[0-9a-f-]{36}$/.test(id)) return null;
+    try { const r = await fetch(`${ARC_BASE}p/${kind}-${id}.bin`); if (!r.ok) return null;
+      const b = new Uint8Array(await r.arrayBuffer());
+      return new TextDecoder().decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: b.slice(0, 12)}, ARC_KEY, b.slice(12))); }
+    catch { return null; }
+  }
+  const arcRes = (o, st = 200) => new Response(o === undefined ? '' : JSON.stringify(o), {status: st, headers: {'Content-Type': 'application/json'}});
+  async function arcApi(path, opts){
+    const name = path.split('?')[0], q = path.includes('?') ? path.slice(path.indexOf('?') + 1) : '';
+    let body = {}; try { body = opts.body ? JSON.parse(opts.body) : {}; } catch {}
+    if (name === 'rpc/check_crew') { const r = await arcOpen(normCode(body.p_crew)); return r === null ? arcRes({}, 503) : arcRes(r); }
+    if (name === 'rpc/admin_check') return arcRes(false);
+    const ok = await arcOpen(CREW);
+    if (name === 'avatars'){
+      const av = ok ? ARC.avatars || {} : {};
+      const want = /who=in\.\(([^)]*)\)/.exec(q); const ids = want ? want[1].split(',') : Object.keys(av);
+      return arcRes(ids.filter(w => av[w]).map(w => /img/.test(q) ? {who: w, img: av[w], updated_at: 'archive'} : {who: w, updated_at: 'archive'}));
+    }
+    if (!ok){
+      if (name === 'rpc/beers_since') return arcRes({rows: [], max: null});
+      if (name === 'beers') return arcRes([]);
+      return arcRes({code: '42501', message: 'archive : code du lien requis'}, 401);
+    }
+    switch (name){
+      case 'rpc/beers_since': return arcRes(body.p_since ? {rows: [], max: null} : {rows: ARC.beers.map(b => ({...b, del: false})), max: ARC.max || null});
+      case 'beers': return arcRes(ARC.beers);
+      case 'rpc/get_links': return arcRes(ARC.links || {});
+      case 'rpc/list_beer_photos': return arcRes(Object.fromEntries(Object.keys(ARC.phThumbs || {}).map(id => [id, 1])));
+      case 'rpc/get_beer_thumbs': return arcRes(Object.fromEntries((body.p_ids || []).filter(id => ARC.phThumbs[id]).map(id => [id, ARC.phThumbs[id]])));
+      case 'rpc/get_beer_photo': return arcRes(await arcPhoto('b', body.p_beer));
+      case 'rpc/list_cigs': return arcRes(ARC.cigs || []);
+      case 'rpc/get_cig_thumbs': return arcRes(Object.fromEntries((body.p_ids || []).filter(id => ARC.cigThumbs[id]).map(id => [id, ARC.cigThumbs[id]])));
+      case 'rpc/get_cig_photo': return arcRes(await arcPhoto('c', body.p_id));
+    }
+    return arcRes({code: 'archive', message: 'Voyage terminé : plus rien ne s\'ajoute.'}, 410);   // toute écriture
+  }
+  const api = (path, opts = {}) => ARCHIVE ? arcApi(path, opts) : fetch(`${SB_URL.replace(/\/$/, '')}/rest/v1/${path}`, {...opts, headers: {...sbHeaders(), ...(opts.headers || {})}});
   // The crew code travels in the link (#code). Without it the page is read-only.
   const normCode = c => String(c || '').trim().toLowerCase().replace(/\s+/g, '');
   // The crew code rides in the link: /million-beers/<code> (served by 404.html on GitHub Pages) or #<code>.
@@ -1493,7 +1556,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   let verified = (() => { try { return !!CREW && localStorage.getItem('mcb.crewVerified') === CREW; } catch { return false; } })();
   if (verified) try { localStorage.setItem('mcb.crewTyped', CREW); } catch {}   // so the home-screen app (opened without the code in its address) has it
   let crewOk = !!CREW;
-  function markVerified(){ verified = true; crewOk = true; try { localStorage.setItem('mcb.crewVerified', CREW); localStorage.setItem('mcb.crewTyped', CREW); } catch {} loadLinks(); if (!ME) setTimeout(() => { try { whoOpen(); } catch {} }, 400); }
+  function markVerified(){ verified = true; crewOk = true; try { localStorage.setItem('mcb.crewVerified', CREW); localStorage.setItem('mcb.crewTyped', CREW); } catch {} loadLinks(); if (ARCHIVE){ arcBanner(); lastFull = 0; lastPhCheck = 0; lastCigCheck = 0; lastAvCheck = 0; sync(); loadAvatars(); return; } if (!ME) setTimeout(() => { try { whoOpen(); } catch {} }, 400); }
   // ---------- band-only links (trip doc): kept in Supabase, handed out only for the band code ----------
   function showLinks(l){
     const a = $('docLink'), u = l && l.carnet;
@@ -2531,7 +2594,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     $('whoModal').hidden = true; $('ntModal').hidden = false; ntRender();
     $('ntOn').click();   // same tap: the permission prompt is allowed
   });
-  if (CREW && !ME) whoOpen();
+  if (CREW && !ME && !ARCHIVE) whoOpen();
 
   // ---------- Ganbei Wrapped ----------
   const WR_OPEN = PARIS('2026-11-19T07:00:00');   // à l'atterrissage des derniers vols retour (AF111 05:50, GF019 06:45 à Paris)
@@ -2949,7 +3012,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
     const sc = document.querySelector('.score'); let t = 0, x0 = 0, y0 = 0, fired = false;
     const stop = () => { clearTimeout(t); sc.classList.remove('ad-hold'); };
     sc.addEventListener('pointerdown', e => {
-      if (ME !== 'pilou' || e.target.closest('[data-mm]')) return;
+      if (ARCHIVE || ME !== 'pilou' || e.target.closest('[data-mm]')) return;
       fired = false; x0 = e.clientX; y0 = e.clientY; sc.classList.add('ad-hold');
       t = setTimeout(() => { fired = true; sc.classList.remove('ad-hold'); if (navigator.vibrate) try { navigator.vibrate([20, 40, 20]); } catch {} adOpen(); }, 800);
     });
@@ -2962,7 +3025,7 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   // ---------- nouvelle version : l'app installée se remet à jour toute seule ----------
   // Une app rouverte depuis l'écran d'accueil reprend souvent l'ancienne page restée en mémoire.
   // Au retour au premier plan, on compare avec version.json et on recharge si besoin (jamais en pleine action).
-  const BUILD = '20261117-161648';
+  const BUILD = '20261119-134842';
   let hiddenAt = 0, verBusy = false;
   const busyNow = () => phTarget !== null
     || ['whoModal', 'ntModal', 'avModal', 'crewModal', 'adModal', 'phBig', 'wr', 'cigModal', 'cigView', 'kindModal'].some(id => $(id) && !$(id).hidden)
@@ -2994,7 +3057,23 @@ footer .cn{font-family:var(--f-cn);color:var(--gold);font-size:16px}
   setTimeout(checkVersion, 2500); setInterval(() => { if (document.visibilityState === 'visible') checkVersion(); }, 10 * 60000);
   for (const k of ['phFile', 'phCam']) $(k).addEventListener('cancel', () => { phTarget = null; });
 
-  if (!CONFIGURED){ setStatus('setup'); readOnly("<b>Base non configurée.</b> Il manque l'URL et la clé Supabase en haut du script."); }
+  function arcBanner(){
+    const n = ARC ? ARC.beers.length : 0;
+    readOnly(ARC ? `<b>🏁 Voyage terminé.</b> L'app est en mode souvenir : ${nf0(n)} verres, les photos, le Clopédex et le Wrapped restent consultables. Plus rien ne s'ajoute. 一路平安 !`
+      : `<b>🏁 Voyage terminé.</b> L'app est en mode souvenir. Ouvre le lien du groupe pour revoir le voyage.<br><button type="button" class="ro-btn" id="arcCode">J'ai le code</button>`);
+    const b = $('arcCode'); if (b) b.addEventListener('click', () => askCrew());
+  }
+  if (ARCHIVE){
+    canWrite = false; setStatus('pending', 'Archive');
+    arcOpen(CREW).then(r => {
+      if (r === false && CREW) dropCrew();
+      if (r === true && !verified) markVerified(); else arcBanner();
+      lastFull = 0; sync(); loadAvatars(); loadLinks();
+    });
+    applyData(0);
+    setInterval(() => { if (document.visibilityState === 'visible') sync(); }, 60000);
+  }
+  else if (!CONFIGURED){ setStatus('setup'); readOnly("<b>Base non configurée.</b> Il manque l'URL et la clé Supabase en haut du script."); }
   else {
     if (CREW && !verified) checkCrew(CREW).then(r => { if (r === true) markVerified(); else if (r === false) dropCrew(); });
     applyData(0);

@@ -18,6 +18,9 @@
 
 ---
 
+> **🏁 Voyage terminé (19/11/2026) : l'app est en mode souvenir.**
+> Tout le voyage est figé dans le dossier `archive/` : les verres, les photos, le Clopédex et les avatars, chiffrés avec le code du lien (AES-GCM). L'app ne lit plus que cette archive : le classement, les stats, le Journal, le Clopédex et le Wrapped restent consultables, mais plus rien ne s'ajoute. Elle ne dépend plus de Supabase, qui peut être mis en pause ou supprimé sans rien casser. La base a aussi été verrouillée en lecture seule (`supabase/migrations/20261119140000_freeze.sql`).
+
 ## Le principe
 
 On ouvre le lien de la bande sur son téléphone, on tape **+1** à chaque bière, et tout le monde voit le classement bouger en direct. Pas de compte, pas d'appli à installer, ça tient dans un onglet (ou sur l'écran d'accueil, avec Meimei en icône).
